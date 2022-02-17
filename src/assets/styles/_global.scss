@@ -1,0 +1,226 @@
+/* display -------------------------------------------------------- */
+.flex {
+  display: flex;
+
+  &__1 {
+    flex: 1;
+  }
+
+  &__0 {
+    flex: 0 0 auto;
+  }
+
+  &-sh__0 {
+    flex-shrink: 0;
+  }
+
+  &-h {
+    &__between {
+      justify-content: space-between;
+      @extend .flex;
+    }
+
+    &__center {
+      justify-content: center;
+      @extend .flex;
+    }
+
+    &__around {
+      justify-content: space-around;
+      @extend .flex;
+    }
+
+    &__end {
+      justify-content: flex-end;
+      @extend .flex;
+    }
+
+    &__start {
+      justify-content: flex-start;
+      @extend .flex;
+    }
+  }
+
+  &-v {
+    &__start {
+      align-items: flex-start;
+      @extend .flex;
+    }
+
+    &__end {
+      align-items: flex-end;
+      @extend .flex;
+    }
+
+    &__center {
+      align-items: center;
+      @extend .flex;
+    }
+
+    &__baseline {
+      align-items: baseline;
+      @extend .flex;
+    }
+
+    &__stretch {
+      align-items: stretch;
+      @extend .flex;
+    }
+  }
+
+  &-direction {
+    &__row {
+      flex-direction: row;
+      @extend .flex;
+    }
+
+    &__column {
+      flex-direction: column;
+      @extend .flex;
+    }
+  }
+
+  &-wrap {
+    &__wrap {
+      flex-wrap: wrap;
+      @extend .flex;
+    }
+
+    &__nowrap {
+      flex-wrap: nowrap;
+      @extend .flex;
+    }
+  }
+}
+
+.block {
+  display: block;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.d-none {
+  display: none;
+}
+
+/* position -------------------------------------------------------- */
+.position {
+  &-relative {
+    position: relative;
+  }
+
+  &-absolute {
+    position: absolute;
+  }
+
+  &-fixed {
+    position: fixed;
+  }
+
+  &-sticky {
+    position: sticky;
+  }
+}
+
+.overflow {
+  overflow: hidden;
+
+  &-y-auto {
+    overflow-y: auto;
+  }
+
+  &-x-auto {
+    overflow-y: auto;
+  }
+}
+
+.w {
+  &-auto {
+    width: auto;
+  }
+
+  &-25 {
+    width: 25%;
+  }
+
+  &-50 {
+    width: 25%;
+  }
+
+  &-75 {
+    width: 25%;
+  }
+
+  &-100 {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .width-full-mobile {
+    width: 100%;
+  }
+}
+
+.h {
+  &-auto {
+    height: auto;
+  }
+  &-100 {
+    height: 100%;
+  }
+}
+
+.cursor {
+  &-pointer {
+    cursor: pointer;
+  }
+  &-default {
+    cursor: default;
+  }
+}
+
+.no {
+  &-click {
+    pointer-events: none;
+  }
+  &-select {
+    user-select: none;
+  }
+}
+
+// #app -------------------------------------------------
+html,
+body,
+#app {
+  height: 100%;
+}
+
+// body -------------------------------------------------
+body {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.2;
+  overflow-x: hidden;
+  //user-select: none;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 0 24px;
+  max-width: 90%;
+  width: 100%;
+
+  @media screen and(min-width: 1600px) {
+    max-width: 1600px;
+  }
+  @media screen and(max-width: 500px) {
+    max-width: 100%;
+  }
+}

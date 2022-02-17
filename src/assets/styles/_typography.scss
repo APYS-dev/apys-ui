@@ -1,0 +1,86 @@
+/* --- typography --- */
+h1,
+.h1 {
+  font-weight: normal;
+}
+
+h2,
+.h2 {
+  font-weight: normal;
+}
+
+h3,
+.h3 {
+  font-weight: normal;
+}
+
+h4,
+.h4 {
+  font-weight: 500;
+}
+
+.text-center {
+  text-align: center !important;
+}
+.text-left {
+  text-align: left !important;
+}
+.text-right {
+  text-align: right !important;
+}
+
+.text-overflow {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.break-word {
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.break-all {
+  word-break: break-all;
+}
+
+.nowrap {
+  white-space: nowrap !important;
+}
+.prewrap {
+  white-space: pre-wrap !important;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+.underline {
+  text-decoration: underline !important;
+}
+
+.decoration-none {
+  text-decoration: none !important;
+}
+
+.fw-normal {
+  font-weight: normal !important;
+}
+
+.fw-300 {
+  font-weight: 300 !important;
+}
+
+.fw-500 {
+  font-weight: 500 !important;
+}
+
+.fw-600 {
+  font-weight: 600 !important;
+}
+
+.text-lowercase {
+  text-transform: lowercase;
+}
+.text-uppercase {
+  text-transform: uppercase;
+}

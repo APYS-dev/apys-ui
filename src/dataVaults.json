@@ -1,0 +1,22 @@
+{
+  "vaults": [
+    {
+      "name": "USDT-USDC-DAI",
+      "tvl": 23840,
+      "apy": 43,
+      "logoesUrl": ["/static/images/tokens/usdt.svg", "/static/images/tokens/usdc.svg", "/static/images/tokens/dai.svg"]
+    },
+    {
+      "name": "DAI-USDC-USDT",
+      "tvl": 28345,
+      "apy": 54,
+      "logoesUrl": ["/static/images/tokens/dai.svg", "/static/images/tokens/usdc.svg", "/static/images/tokens/usdt.svg"]
+    },
+    {
+      "name": "NEAR-USDC-DAI",
+      "tvl": 21002,
+      "apy": 58,
+      "logoesUrl": ["/static/images/tokens/near.svg", "/static/images/tokens/usdc.svg", "/static/images/tokens/dai.svg"]
+    }
+  ]
+}
