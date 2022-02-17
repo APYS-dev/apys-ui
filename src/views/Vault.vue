@@ -1,7 +1,7 @@
 <template>
   <div class="vault">
     <div class="vault__logo">
-      <img v-for="logo in logoesUrl" :key="logo" :src="logo" :alt="name" />
+      <img v-for="logo in logoesUrl" :key="logo" :src="logo" :alt="logo" />
     </div>
 
     <div class="vault__name">
@@ -51,8 +51,7 @@ export default {
     logoesUrl: {
       type: Array,
       required: false,
-      // FIXME: default coin
-      default: () => ['/static/images/tokens/dai.svg'],
+      default: () => ['/static/images/tokens/defaultCoin.png'],
     },
   },
 };
@@ -74,8 +73,10 @@ export default {
     display: flex;
 
     img {
-      margin-right: -12px;
-      width: 30px;
+      &:not(:last-child) {
+        margin-right: -12px;
+      }
+
       height: 30px;
     }
   }
