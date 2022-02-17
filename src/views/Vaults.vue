@@ -9,6 +9,7 @@
         <button>In progress</button>
       </div>
     </header>
+
     <main>
       <div class="vaults">
         <div v-for="vault in vaults" :key="vault.name" class="vault">
