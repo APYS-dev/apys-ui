@@ -20,14 +20,7 @@
       </template>
     </div>
   </div>
-  <g-modal
-    v-model="isShowModal"
-    name="withdraw"
-    :click-to-close="true"
-    :is-show-close-button="true"
-    :width="580"
-    @close-modal="closeModal"
-  >
+  <g-modal name="withdraw" :click-to-close="true" :is-show-close-button="true" :width="580" @close-modal="closeModal">
     <template #header>
       <h3 class="m-b-36">Header</h3>
     </template>
