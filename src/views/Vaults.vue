@@ -11,26 +11,45 @@
     </header>
 
     <main>
-      <div class="vaults">
-        <div v-for="vault in vaults" :key="vault.name" class="vault">
-          <vault :name="vault.name" :tvl="vault.tvl" :apy="vault.apy" :logoes-url="vault.logoesUrl"></vault>
-        </div>
-      </div>
+      <vault
+        v-for="vault in vaults"
+        :key="vault.name"
+        :name="vault.name"
+        :tvl="vault.tvl"
+        :apy="vault.apy"
+        :logoes-url="vault.logoesUrl"
+      ></vault>
     </main>
   </div>
+
+  <g-modal name="calculate" :click-to-close="true" :is-show-close-button="true" :width="580" @close-modal="closeModal">
+    <template #header>
+      <h3 class="m-b-36">Calculating rewards</h3>
+    </template>
+
+    <template #content>
+      <div class="modal__inp-group">
+        Stake
+        <g-autonumeric v-model="amountToStake" />
+        <span style="margin-left: -50px">USDT</span>
+      </div>
+    </template>
+  </g-modal>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import Vault from '@/views/Vault.vue';
+import GAutonumeric from '@/components/G-autonumeric.vue';
 
 export default {
   name: 'Vaults',
 
-  components: { Vault },
+  components: { Vault, GAutonumeric },
 
   data: () => ({
     vaults: {},
+    amountToStake: 0,
   }),
 
   computed: {
@@ -44,6 +63,10 @@ export default {
 
   methods: {
     ...mapActions(['loadVaults']),
+
+    closeModal() {
+      this.$vfm.hide('calculate');
+    },
   },
 };
 </script>
@@ -52,6 +75,7 @@ export default {
 <style scoped lang="scss">
 .vaults {
   header {
+    margin-bottom: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
