@@ -161,6 +161,11 @@ export default {
 
 <style lang="scss">
 .vfm {
+  &--overlay {
+    // background
+    background-color: #000;
+  }
+
   &__container {
     display: flex;
     justify-content: center;
@@ -169,8 +174,43 @@ export default {
 
   &__content {
     padding: 20px 50px;
-    background-color: #000;
+    background-color: rgb(82, 81, 81);
     color: #fff;
+  }
+
+  &--modal-close {
+    position: absolute;
+    top: 28px;
+    right: 32px;
+    width: 32px;
+    height: 32px;
+
+    &:hover {
+      &:before,
+      &:after {
+        background-color: lighten(#000, 20%);
+      }
+    }
+
+    &:before,
+    &:after {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 2px;
+      width: 28px;
+      height: 1px;
+      background-color: #000;
+      transition: background-color 0.2s linear;
+    }
+
+    &:before {
+      transform: rotate(45deg);
+    }
+
+    &:after {
+      transform: rotate(-45deg);
+    }
   }
 }
 </style>

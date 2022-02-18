@@ -11,4 +11,9 @@
 #app {
   background-color: #ddd;
 }
+
+#nav {
+  margin: 0 auto;
+  width: max-content;
+}
 </style>
