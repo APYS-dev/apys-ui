@@ -12,7 +12,7 @@ export default {
   },
 
   actions: {
-    async loadVaults(context) {
+    loadVaults(context) {
       const response = vaults;
 
       context.commit('updateVaults', response.vaults);

@@ -12,7 +12,7 @@ export default {
   },
 
   actions: {
-    async loadBalances(context) {
+    loadBalances(context) {
       const response = balances;
 
       context.commit('updateBalances', response.balances);

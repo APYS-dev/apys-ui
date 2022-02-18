@@ -12,7 +12,7 @@ export default {
   },
 
   actions: {
-    async loadTotalTVL(context) {
+    loadTotalTVL(context) {
       const response = totalTVL;
 
       context.commit('updateTotalTVL', response.totalTvl);
