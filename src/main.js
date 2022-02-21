@@ -6,6 +6,7 @@ import formatters from './formatters.js';
 import uniqueId from './vueUniqueId';
 import { vfmPlugin } from 'vue-final-modal';
 
+import gTooltip from '@/components/G-tooltip.vue';
 import gDropdown from '@/components/G-dropdown.vue';
 import gModal from '@/components/G-modal.vue';
 
@@ -28,5 +29,6 @@ app
 
 app.component('GDropdown', gDropdown);
 app.component('GModal', gModal);
+app.component('GTooltip', gTooltip);
 
 app.mount('#app');
