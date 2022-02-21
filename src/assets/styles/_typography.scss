@@ -1,22 +1,30 @@
 /* --- typography --- */
 h1,
 .h1 {
+  font-size: 24px;
   font-weight: normal;
 }
 
 h2,
 .h2 {
-  font-weight: normal;
+  font-size: 18px;
+  font-weight: 500;
 }
 
 h3,
 .h3 {
-  font-weight: normal;
+  font-size: 14px;
 }
 
 h4,
 .h4 {
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 300;
+}
+
+h5,
+.h5 {
+  font-size: 11px;
 }
 
 .text-center {

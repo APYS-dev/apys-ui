@@ -11,6 +11,17 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html,
+body,
+#app {
+  height: 100%;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+}
+
 main,
 nav,
 section,

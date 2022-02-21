@@ -1,19 +1,22 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link>
-    |
-    <router-link to="/components">Components</router-link>
-  </div>
-  <router-view />
+  <the-header></the-header>
+  <router-view class="content" />
+  <the-footer></the-footer>
 </template>
 
-<style lang="scss">
-#app {
-  background-color: #ddd;
-}
+<script>
+import TheHeader from '@/views/TheHeader.vue';
+import TheFooter from './views/TheFooter.vue';
 
-#nav {
-  margin: 0 auto;
-  width: max-content;
+export default {
+  name: 'App',
+
+  components: { TheHeader, TheFooter },
+};
+</script>
+
+<style lang="scss">
+.content {
+  height: 100%;
 }
 </style>
