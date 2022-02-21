@@ -1,8 +1,7 @@
-$background-main: #000;
-
-$color-main: #fff;
-$color-main-90: rgba($color-main, 0.9);
-
-$transition: all ease 0.5s;
-
-$color-danger: #c93030;
+:root {
+  --background-color: #fff;
+  --color-main: rgb(49, 170, 183);
+  --color-main-90: rgba(49, 170, 183, 0.9);
+  --color-main-10: rgba(49, 170, 183, 0.12);
+  --color-text: rgb(13, 13, 13);
+}
