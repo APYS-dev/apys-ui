@@ -195,20 +195,17 @@
   }
 }
 
-// #app -------------------------------------------------
-html,
-body,
-#app {
-  height: 100%;
-}
-
 // body -------------------------------------------------
 body {
+  background-image: url('/static/images/bg.png');
+  background-size: cover;
+  background-attachment: fixed;
+  font-family: 'WorkSans', sans-serif;
   font-size: 1rem;
   font-weight: 400;
+  color: var(--color-text);
   line-height: 1.2;
   overflow-x: hidden;
-  //user-select: none;
 }
 
 .container {
