@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
+import PageNotFound from '../views/PageNotFound.vue';
 
 const routes = [
   {
@@ -8,12 +9,8 @@ const routes = [
     component: Home,
   },
   {
-    path: '/components',
-    name: 'Components',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Components.vue'),
+    path: '/:catchAll(.*)', // Unrecognized path automatically matches 404
+    component: PageNotFound,
   },
 ];
 
