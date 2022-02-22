@@ -1,6 +1,6 @@
 <template>
   <div class="vault-wrap">
-    <div class="vault">
+    <div class="vault" @click="show = !show">
       <div class="vault__name-wrap">
         <div class="vault__logo">
           <img v-for="logo in logoesUrl" :key="logo" :src="logo" :alt="logo" />
@@ -10,7 +10,7 @@
           {{ name }}
         </div>
 
-        <g-tooltip position="right" content="Copy adress" :custom-icon="false" animation> 3 </g-tooltip>
+        <button class="icon-info" @click.stop="showVaultModal"></button>
       </div>
 
       <div class="vault__dex">
@@ -24,57 +24,119 @@
       </div>
 
       <div class="vault__apy">
-        <span class="light-text">apy</span>
+        <div class="light-text">
+          apy
+          <button class="icon-info" @click.stop="showApyModal"></button>
+        </div>
+
         <div class="amount">
           {{ $formatIntegerPercent(apy) }}
-          <span @click="showModal">calc</span>
+          <button class="calculator" @click.stop="showCalcModal">
+            <img src="@/assets/img/calculator.png" alt="Calc" />
+          </button>
         </div>
       </div>
 
-      <div class="vault__arrow" @click="show = !show"></div>
+      <div :class="{ active: show }" class="vault__arrow">
+        <img src="@/assets/img/arrow-down.png" alt="↓" />
+      </div>
     </div>
 
     <div class="vault-more-wrap" :class="{ active: show }">
-      <div class="vault-more row flex-v__center flex-h__between">
-        <div class="col-4">
+      <div class="vault-more">
+        <div>
           <h3 class="vault-more__header">Deposited</h3>
 
-          <div class="vault-more__body row flex-v__center">
-            <div class="col-8">
-              <div class="amount">0</div>
-              <div class="price">{{ $formatPrice(0) }}</div>
+          <div class="vault-more__body">
+            <div>
+              <div class="amount">{{ $formatPrice(1000, true) }}</div>
+              <div class="price">{{ $formatPrice(1000) }}</div>
             </div>
-            <div class="col-4">USDT</div>
+            <div class="currency">USDT</div>
           </div>
         </div>
 
-        <div class="col-4">
+        <div>
           <h3 class="vault-more__header">Rewards</h3>
 
-          <div class="vault-more__body row flex-v__center">
-            <div class="col-8">
-              <div class="amount">0</div>
-              <div class="price">{{ $formatPrice(0) }}</div>
+          <div class="vault-more__body">
+            <div>
+              <div class="amount">{{ $formatPrice(45, true) }}</div>
+              <div class="price">{{ $formatPrice(45) }}</div>
             </div>
-            <div class="col-4">USDT</div>
+            <div class="currency">USDT</div>
           </div>
         </div>
 
-        <div class="col-3 vault-more__btns">
+        <div class="vault-more__btns">
           <button class="btn-bg">Desposit</button>
           <button class="btn-border">Withdraw</button>
         </div>
       </div>
     </div>
   </div>
+
+  <g-modal
+    :name="$id('vault-info')"
+    :click-to-close="true"
+    :is-show-close-button="true"
+    :width="580"
+    @close-modal="closeVaultModal"
+  >
+    <template #header>
+      <h3 class="m-b-36">vault-info</h3>
+    </template>
+
+    <template #content>
+      <div class="modal__inp-group"></div>
+    </template>
+  </g-modal>
+
+  <g-modal
+    :name="$id('apy-info')"
+    :click-to-close="true"
+    :is-show-close-button="true"
+    :width="580"
+    @close-modal="closeApyModal"
+  >
+    <template #header>
+      <h3 class="m-b-36">Apy info</h3>
+    </template>
+
+    <template #content>
+      <div class="modal__inp-group"></div>
+    </template>
+  </g-modal>
+
+  <g-modal
+    :name="$id('calc')"
+    :click-to-close="true"
+    :is-show-close-button="true"
+    :width="580"
+    @close-modal="closeCalcModal"
+  >
+    <template #header>
+      <h3 class="m-b-36">Calculating rewards</h3>
+    </template>
+
+    <template #content>
+      <div class="modal__inp-group">
+        Stake
+        <g-autonumeric v-model="amountToStake" />
+        <span style="margin-left: -50px; color: #000">USDT</span>
+      </div>
+    </template>
+  </g-modal>
 </template>
 
 <script>
-import gTooltip from '@/components/G-tooltip.vue';
+import GModal from '@/components/G-modal.vue';
+import GAutonumeric from '@/components/G-autonumeric.vue';
+
 export default {
   name: 'Vault',
 
-  components: { gTooltip },
+  components: { GModal, GAutonumeric },
 
   props: {
     name: {
@@ -103,11 +165,32 @@ export default {
 
   data: () => ({
     show: false,
+    amountToStake: 0,
   }),
 
   methods: {
-    showModal() {
-      this.$vfm.show('calculate');
+    showCalcModal() {
+      this.$vfm.show(this.$id('calc'));
+    },
+
+    closeCalcModal() {
+      this.$vfm.hide(this.$id('calc'));
+    },
+
+    showVaultModal() {
+      this.$vfm.show(this.$id('vault-info'));
+    },
+
+    closeVaultModal() {
+      this.$vfm.hide(this.$id('vault-info'));
+    },
+
+    showApyModal() {
+      this.$vfm.show(this.$id('apy-info'));
+    },
+
+    closeApyModal() {
+      this.$vfm.hide(this.$id('apy-info'));
     },
   },
 };
@@ -131,6 +214,7 @@ export default {
   gap: 16px;
   background-color: var(--background-color);
   border-radius: 4px;
+  cursor: pointer;
 
   &__name-wrap {
     display: flex;
@@ -160,23 +244,45 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 5px;
+    gap: 4px;
+
+    .amount {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    .calculator img {
+      width: 8px;
+      height: 10px;
+    }
 
     img {
       width: 17px;
-      margin: 0 auto;
+    }
+
+    button {
+      width: 11px;
+      height: 11px;
+      font-size: 8px;
     }
   }
 
   &__arrow {
-    width: 30px;
-    height: 30px;
-    background: linear-gradient(lightgray, white);
+    display: flex;
+    align-items: center;
+    width: 21px;
+    transition: all 0.3s;
     cursor: pointer;
+
+    &.active {
+      transform: rotate(180deg);
+    }
   }
 
   .light-text {
-    font-size: 10px;
+    font-size: 9px;
     color: rgba(0, 0, 0, 0.3);
     text-transform: uppercase;
   }
@@ -185,16 +291,68 @@ export default {
 .vault-more-wrap {
   overflow: hidden;
   max-height: 0;
-  transition: all 0.5s ease-out;
+  transition: all 0.3s ease-out;
 
   &.active {
-    max-height: 200px;
+    max-height: 120px;
   }
 }
 
 .vault-more {
-  padding: 12px 20px;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background-color: var(--background-color);
-  border-top: 1px solid #ccc;
+  border-top: 1px solid rgba(13, 13, 13, 0.1);
+  border-radius: 4px;
+
+  & > div {
+    flex: 0;
+
+    &:not(.vault-more__btns) {
+      flex: 1;
+    }
+
+    &:first-child {
+      margin-right: 24px;
+      border-right: 1px solid rgba(13, 13, 13, 0.1);
+    }
+  }
+
+  &__header {
+    font-size: 11px;
+    color: rgba(13, 13, 13, 0.4);
+  }
+
+  &__body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .amount {
+    margin: 8px 0;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--color-main);
+  }
+
+  .currency {
+    margin-right: 12px;
+    font-size: 12px;
+    color: rgba(13, 13, 13, 0.3);
+  }
+
+  &__btns {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.icon-info {
+  display: inline-flex;
+  cursor: pointer;
 }
 </style>

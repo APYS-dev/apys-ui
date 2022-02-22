@@ -179,10 +179,10 @@
 
 .cursor {
   &-pointer {
-    cursor: pointer;
+    cursor: pointer !important;
   }
   &-default {
-    cursor: default;
+    cursor: default !important;
   }
 }
 
@@ -219,5 +219,29 @@ body {
   }
   @media screen and(max-width: 500px) {
     max-width: 100%;
+  }
+}
+
+.icon-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--color-text);
+  border-radius: 50%;
+  color: var(--color-text);
+  font-size: 10px;
+  opacity: 0.2;
+  cursor: default;
+
+  &:before {
+    content: 'i';
+    margin-top: 1px;
+    font-family: Arial, sans-serif;
+
+    @media screen and (max-width: 768px) {
+      margin-left: 1px;
+    }
   }
 }

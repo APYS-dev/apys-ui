@@ -21,35 +21,19 @@
       ></vault>
     </main>
   </div>
-
-  <g-modal name="calculate" :click-to-close="true" :is-show-close-button="true" :width="580" @close-modal="closeModal">
-    <template #header>
-      <h3 class="m-b-36">Calculating rewards</h3>
-    </template>
-
-    <template #content>
-      <div class="modal__inp-group">
-        Stake
-        <g-autonumeric v-model="amountToStake" />
-        <span style="margin-left: -50px; color: #000">USDT</span>
-      </div>
-    </template>
-  </g-modal>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import Vault from './Vault.vue';
-import GAutonumeric from '@/components/G-autonumeric.vue';
 
 export default {
   name: 'Vaults',
 
-  components: { Vault, GAutonumeric },
+  components: { Vault },
 
   data: () => ({
     vaults: {},
-    amountToStake: 0,
   }),
 
   computed: {
@@ -63,10 +47,6 @@ export default {
 
   methods: {
     ...mapActions(['loadVaults']),
-
-    closeModal() {
-      this.$vfm.hide('calculate');
-    },
   },
 };
 </script>

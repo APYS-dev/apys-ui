@@ -272,12 +272,7 @@ $border: #394736;
   font-weight: 400;
   width: max-content;
   max-width: 300px;
-  background: radial-gradient(
-      147.63% 62.14% at 111.49% 78.66%,
-      rgba($color-main, 0.128) 0%,
-      rgba($color-main, 0.0096) 100%
-    ),
-    $background-main;
+  background: $background-main;
   background-size: 150% 150%;
   background-position: 5% 5%;
   border: 1px solid;
@@ -294,26 +289,26 @@ $border: #394736;
   word-break: break-word;
   word-wrap: break-word;
 
-  &:before,
-  &:after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    border-width: 8px;
-    border-style: solid;
-    transform: translateY(-50%);
-    z-index: 2;
-  }
+  // &:before,
+  // &:after {
+  //   content: '';
+  //   position: absolute;
+  //   top: 50%;
+  //   border-width: 8px;
+  //   border-style: solid;
+  //   transform: translateY(-50%);
+  //   z-index: 2;
+  // }
 
-  &:before {
-    right: 100%;
-    border-color: transparent rgba($border, 0.5) transparent transparent;
-  }
+  // &:before {
+  //   right: 100%;
+  //   border-color: transparent rgba($border, 0.5) transparent transparent;
+  // }
 
-  &:after {
-    right: calc(100% - 1px);
-    border-color: transparent $background-main transparent transparent;
-  }
+  // &:after {
+  //   right: calc(100% - 1px);
+  //   border-color: transparent $background-main transparent transparent;
+  // }
 
   &-inner {
     max-height: 400px;

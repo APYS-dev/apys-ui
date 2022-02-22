@@ -20,7 +20,7 @@ export default {
 
 <style lang="scss" scoped>
 header {
-  margin: 16px 92px;
+  margin: 16px 92px 48px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -32,8 +32,10 @@ header {
 
   @media screen and (max-width: 1600px) {
     & {
-      margin: 16px auto;
+      margin-right: auto;
+      margin-right: auto;
       padding: 0 24px;
+      width: 100%;
       max-width: 90%;
     }
   }

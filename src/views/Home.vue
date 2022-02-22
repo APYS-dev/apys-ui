@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="row m-t-32">
+    <div class="row">
       <div class="col-4">
         <total-tvl></total-tvl>
         <balances></balances>
