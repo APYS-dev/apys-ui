@@ -160,56 +160,86 @@ export default {
 </script>
 
 <style lang="scss">
+$border: rgba(0, 0, 0, 0.1);
+
 .vfm {
-  &--overlay {
-    // background
-    background-color: #000;
+  div.vfm__overlay.vfm--overlay {
+    background-color: rgba(245, 245, 245, 0.8);
   }
 
-  &__container {
+  &--modal {
     display: flex;
     justify-content: center;
     align-items: center;
-  }
 
-  &__content {
-    padding: 20px 50px;
-    background-color: rgb(82, 81, 81);
-    color: #fff;
-  }
+    &-container {
+      position: relative;
+      margin: 16px;
+      padding: 28px 36px;
+      width: calc(100% - 24px);
+      max-height: 100vh;
+      background: #fff;
+      border-radius: 4px;
+      overflow-y: auto;
+      overflow-x: hidden;
 
-  &--modal-close {
-    position: absolute;
-    top: 28px;
-    right: 32px;
-    width: 32px;
-    height: 32px;
+      &::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
 
-    &:hover {
-      &:before,
-      &:after {
-        background-color: lighten(#000, 20%);
+        &-track {
+          background-color: transparent;
+        }
+
+        &-thumb {
+          background-color: #cbcbcb59;
+          border-radius: 4px;
+        }
       }
     }
 
-    &:before,
-    &:after {
-      content: '';
+    &-fullscreen {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    &-close {
       position: absolute;
-      top: 15px;
-      left: 2px;
-      width: 28px;
-      height: 1px;
-      background-color: #000;
-      transition: background-color 0.2s linear;
+      top: 16px;
+      right: 16px;
+      width: 24px;
+      height: 24px;
+
+      &:before,
+      &:after {
+        content: '';
+        position: absolute;
+        top: 11px;
+        left: 2px;
+        width: 22px;
+        height: 1px;
+        background-color: $border;
+      }
+
+      &:before {
+        transform: rotate(45deg);
+      }
+
+      &:after {
+        transform: rotate(-45deg);
+      }
     }
 
-    &:before {
-      transform: rotate(45deg);
+    &-header {
+      h3 {
+        font-size: 18px;
+        font-weight: 400;
+      }
     }
 
-    &:after {
-      transform: rotate(-45deg);
+    &-content {
+      font-size: 14px;
+      font-weight: 300;
     }
   }
 }

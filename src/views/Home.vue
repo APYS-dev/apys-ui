@@ -1,14 +1,14 @@
 <template>
   <div class="container">
-    <div class="row">
-      <div class="col-4">
+    <main>
+      <div class="col-4 col-md-6 col-sm-12">
         <total-tvl></total-tvl>
         <balances></balances>
       </div>
-      <div class="col-8">
+      <div class="col-8 col-md-12">
         <vaults></vaults>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 <script>
@@ -22,3 +22,17 @@ export default {
   components: { TotalTvl, Balances, Vaults },
 };
 </script>
+
+<style lang="scss" scoped>
+main {
+  margin-left: -8px;
+  margin-right: -8px;
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 12px;
+
+  & > div {
+    min-width: 320px;
+  }
+}
+</style>

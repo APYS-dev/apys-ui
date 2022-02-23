@@ -39,6 +39,7 @@ export default {
   align-items: center;
   height: 55px;
   background-color: var(--background-color);
+  box-shadow: 0px -4px 50px rgba(47, 91, 96, 0.08);
   border-radius: 4px;
 
   img {
