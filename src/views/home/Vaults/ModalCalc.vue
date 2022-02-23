@@ -171,6 +171,7 @@ export default {
 
       &-apy {
         font-size: 18px;
+        font-weight: 400;
 
         .amount {
           color: var(--color-main);
