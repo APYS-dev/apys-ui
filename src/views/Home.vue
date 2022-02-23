@@ -12,9 +12,9 @@
   </div>
 </template>
 <script>
-import TotalTvl from '@/views/home/TotalTVL.vue';
-import Balances from '@/views/home/Balances.vue';
-import Vaults from '@/views/home/Vaults.vue';
+import TotalTvl from '@/views/home/TotalTvl/TotalTVL.vue';
+import Balances from '@/views/home/Balances/Balances.vue';
+import Vaults from '@/views/home/Vaults/Vaults.vue';
 
 export default {
   name: 'Home',

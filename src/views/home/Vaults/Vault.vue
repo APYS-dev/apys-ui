@@ -116,7 +116,7 @@
 
 <script>
 import GModal from '@/components/G-modal.vue';
-import ModalCalc from '@/components/ModalCalc.vue';
+import ModalCalc from './ModalCalc.vue';
 
 export default {
   name: 'Vault',
