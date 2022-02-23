@@ -111,35 +111,17 @@
     </template>
   </g-modal>
 
-  <g-modal
-    :name="$id('calc')"
-    :click-to-close="true"
-    :is-show-close-button="true"
-    :width="580"
-    @close-modal="closeCalcModal"
-  >
-    <template #header>
-      <h3 class="m-b-36">Calculating rewards</h3>
-    </template>
-
-    <template #content>
-      <div class="modal__inp-group">
-        Stake
-        <g-autonumeric v-model="amountToStake" />
-        <span style="margin-left: -50px; color: #000">USDT</span>
-      </div>
-    </template>
-  </g-modal>
+  <modal-calc :name="$id('calc')"></modal-calc>
 </template>
 
 <script>
 import GModal from '@/components/G-modal.vue';
-import GAutonumeric from '@/components/G-autonumeric.vue';
+import ModalCalc from '@/components/ModalCalc.vue';
 
 export default {
   name: 'Vault',
 
-  components: { GModal, GAutonumeric },
+  components: { GModal, ModalCalc },
 
   props: {
     name: {
@@ -168,16 +150,11 @@ export default {
 
   data: () => ({
     show: false,
-    amountToStake: 0,
   }),
 
   methods: {
     showCalcModal() {
       this.$vfm.show(this.$id('calc'));
-    },
-
-    closeCalcModal() {
-      this.$vfm.hide(this.$id('calc'));
     },
 
     showVaultModal() {
@@ -203,6 +180,7 @@ export default {
 <style scoped lang="scss">
 .vault-wrap {
   overflow: hidden;
+  box-shadow: 0px -4px 50px rgba(47, 91, 96, 0.08);
 
   &:not(:first-child) {
     margin: 16px auto 0;
