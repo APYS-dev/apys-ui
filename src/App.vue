@@ -12,6 +12,10 @@ export default {
   name: 'App',
 
   components: { TheHeader, TheFooter },
+
+  data: () => ({
+    isLogged: true,
+  }),
 };
 </script>
 

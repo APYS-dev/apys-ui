@@ -49,8 +49,8 @@
 
           <div class="vault-more__body">
             <div>
-              <div class="amount">{{ $formatPrice(1000, true) }}</div>
-              <div class="price">{{ $formatPrice(1000) }}</div>
+              <div class="amount">{{ $root.isLogged ? $formatPrice(1000, true) : '–' }}</div>
+              <div class="price">{{ $root.isLogged ? $formatPrice(1000) : '–' }}</div>
             </div>
             <div class="currency">USDT</div>
           </div>
@@ -61,16 +61,19 @@
 
           <div class="vault-more__body">
             <div>
-              <div class="amount">{{ $formatPrice(45, true) }}</div>
-              <div class="price">{{ $formatPrice(45) }}</div>
+              <div class="amount">{{ $root.isLogged ? $formatPrice(45, true) : '–' }}</div>
+              <div class="price">{{ $root.isLogged ? $formatPrice(45) : '–' }}</div>
             </div>
             <div class="currency">USDT</div>
           </div>
         </div>
 
         <div class="vault-more__btns">
-          <button class="btn-bg">Desposit</button>
-          <button class="btn-border">Withdraw</button>
+          <template v-if="$root.isLogged">
+            <button class="btn-bg">Desposit</button>
+            <button class="btn-border">Withdraw</button>
+          </template>
+          <button v-else class="btn-medium btn-bg">Connect wallet</button>
         </div>
       </div>
     </div>
@@ -235,6 +238,7 @@ export default {
   }
 
   &__name {
+    font-size: 14px;
     font-weight: 500;
   }
 
@@ -250,7 +254,7 @@ export default {
       display: flex;
       align-items: center;
       gap: 4px;
-      font-size: 12px;
+      font-size: 14px;
     }
 
     .calculator img {
@@ -282,7 +286,7 @@ export default {
   }
 
   .light-text {
-    font-size: 9px;
+    font-size: 11px;
     color: rgba(0, 0, 0, 0.3);
     text-transform: uppercase;
   }
@@ -305,7 +309,8 @@ export default {
   justify-content: space-between;
   background-color: var(--background-color);
   border-top: 1px solid rgba(13, 13, 13, 0.1);
-  border-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
 
   & > div {
     flex: 0;
@@ -348,6 +353,10 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 8px;
+
+    button {
+      min-width: max-content;
+    }
   }
 }
 

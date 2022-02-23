@@ -8,8 +8,8 @@
           <img :src="balance.logoUrl" :alt="balance.name" />
 
           <div class="balances__item-amount">
-            <p class="amount">{{ $formatPrice(balance.amount, true) }}</p>
-            <p class="name">{{ balance.name }}</p>
+            <p class="amount">{{ $root.isLogged ? $formatPrice(balance.amount, true) : '–' }}</p>
+            <p class="name">{{ $root.isLogged ? balance.name : '–' }}</p>
           </div>
 
           <div class="balances__item-buttons">

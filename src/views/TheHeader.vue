@@ -3,18 +3,15 @@
     <router-link to="/">
       <img class="logo" src="@/assets/img/logo.svg" alt="Apys" />
     </router-link>
-    <button v-if="isLogged" class="btn-big btn-border">logout</button>
-    <button v-else class="btn-border">Connect wallet</button>
+
+    <button v-if="$root.isLogged" class="btn-big btn-border">logout</button>
+    <button v-else class="btn-big btn-bg">Connect wallet</button>
   </header>
 </template>
 
 <script>
 export default {
   name: 'TheHeader',
-
-  data: () => ({
-    isLogged: true,
-  }),
 };
 </script>
 
