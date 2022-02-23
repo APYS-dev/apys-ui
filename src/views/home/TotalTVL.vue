@@ -55,6 +55,7 @@ export default {
     margin-left: 12px;
     color: var(--color-main);
     font-size: 18px;
+    font-weight: 500;
   }
 }
 </style>
