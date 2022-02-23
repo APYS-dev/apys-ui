@@ -32,8 +32,8 @@
         Recieve
         <div>
           <div class="modal__recieve-amount">
-            <span class="amount"> {{ $formatPrice(1032) }}</span>
-            <span class="currency">USDT</span>
+            <span class="amount">{{ $formatPrice(1032) }}</span>
+            <span class="currency no-select">USDT</span>
           </div>
 
           <div class="modal__recieve-apy">

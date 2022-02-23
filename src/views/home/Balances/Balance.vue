@@ -79,6 +79,7 @@ export default {
     text-align: center;
 
     .amount {
+      font-size: 14px;
       font-weight: bold;
     }
 
