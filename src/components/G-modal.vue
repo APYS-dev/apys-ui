@@ -234,6 +234,7 @@ $border: rgba(0, 0, 0, 0.1);
       h3 {
         font-size: 18px;
         font-weight: 400;
+        opacity: 0.8;
       }
     }
 

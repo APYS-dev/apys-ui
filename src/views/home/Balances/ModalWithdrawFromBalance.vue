@@ -5,8 +5,8 @@
     </template>
 
     <template #content>
-      <div class="amount">You have {{ $formatPrice(amount, true) }} {{ name }}</div>
-      <div class="input">
+      <div class="amountToWithdraw">You have {{ $formatPrice(amount, true) }} {{ name }}</div>
+      <div class="inputToWithdraw">
         <g-autonumeric v-model="amountToWithdraw" />
         <span>Max</span>
       </div>
@@ -54,4 +54,42 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss"></style>
+<style lang="scss">
+.vfm--modal-container {
+  width: 363px;
+
+  button.btn-bg {
+    width: 100%;
+  }
+}
+
+.amountToWithdraw {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 300;
+  color: rgba(13, 13, 13, 0.4);
+  text-align: right;
+}
+
+.inputToWithdraw {
+  margin: 8px 0 16px;
+  display: flex;
+  position: relative;
+
+  input {
+    padding: 8px 64px 8px 12px;
+    width: 100%;
+    flex: 1;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  span {
+    padding: 8px 16px;
+    position: absolute;
+    right: 0;
+    color: var(--color-main);
+    cursor: pointer;
+    user-select: none;
+  }
+}
+</style>
