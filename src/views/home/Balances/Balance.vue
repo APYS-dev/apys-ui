@@ -8,24 +8,32 @@
     </div>
 
     <div class="balance-buttons">
-      <button class="btn-small" @click="$vfm.show($id('withdrawFormBalance'))">Withdraw</button>
-      <button class="btn-small btn-bg-light">Deposit</button>
+      <button class="btn-small" @click="$vfm.show($id('withdrawFromBalance'))">Withdraw</button>
+      <button class="btn-small btn-bg-light" @click="$vfm.show($id('depositFromBalance'))">Deposit</button>
     </div>
   </div>
+
   <modal-withdraw-from-balance
-    :name-modal="$id('withdrawFormBalance')"
+    :name-modal="$id('withdrawFromBalance')"
     :name="name"
     :amount="amount"
   ></modal-withdraw-from-balance>
+
+  <modal-deposit-from-balance
+    :name-modal="$id('depositFromBalance')"
+    :name="name"
+    :amount="amount"
+  ></modal-deposit-from-balance>
 </template>
 
 <script>
+import ModalDepositFromBalance from './ModalDepositFromBalance.vue';
 import ModalWithdrawFromBalance from './ModalWithdrawFromBalance.vue';
 
 export default {
   name: 'Balance',
 
-  components: { ModalWithdrawFromBalance },
+  components: { ModalWithdrawFromBalance, ModalDepositFromBalance },
 
   props: {
     name: {
@@ -45,8 +53,12 @@ export default {
   },
 
   methods: {
-    showModal() {
-      this.$vfm.show(this.$id('withdrawFormBalance'));
+    showWithdrawModal() {
+      this.$vfm.show(this.$id('withdrawFromBalance'));
+    },
+
+    showDepositModal() {
+      this.$vfm.show(this.$id('depositFromBalance'));
     },
   },
 };

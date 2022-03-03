@@ -1,7 +1,7 @@
 <template>
   <g-modal :name="nameModal" :click-to-close="true" :is-show-close-button="true" :width="580" @close-modal="closeModal">
     <template #header>
-      <h3>Withdraw {{ name }}</h3>
+      <h3>Deposit {{ name }}</h3>
     </template>
 
     <template #content>
@@ -10,7 +10,7 @@
         <g-autonumeric v-model="modalBalanceAmount" />
         <span>Max</span>
       </div>
-      <button class="btn-bg">Withdraw</button>
+      <button class="btn-bg">Deposit</button>
     </template>
   </g-modal>
 </template>
@@ -20,7 +20,7 @@ import gModal from '@/components/G-modal.vue';
 import GAutonumeric from '@/components/G-autonumeric.vue';
 
 export default {
-  name: 'ModalWithdrawFromBalance',
+  name: 'ModalDepositFromBalance',
 
   components: { gModal, GAutonumeric },
 
