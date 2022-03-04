@@ -7,7 +7,7 @@
     @close-modal="closeModal"
   >
     <template #header>
-      <h3>Deposit</h3>
+      <h3>Withdraw</h3>
     </template>
 
     <template #content>
@@ -37,14 +37,14 @@
         <g-autonumeric v-model="modalVaultAmount" />
         <span>Max</span>
       </div>
-      <button class="btn-bg">Deposit</button>
+      <button class="btn-bg">Withdraw</button>
     </template>
   </g-modal>
 </template>
 
 <script>
 export default {
-  name: 'ModalDepositFromVault',
+  name: 'ModalWithdrawFromVault',
 
   props: {
     nameModal: {

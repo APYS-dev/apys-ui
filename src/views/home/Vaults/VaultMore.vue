@@ -28,7 +28,7 @@
       <div class="vault-more__btns">
         <template v-if="$root.isLogged">
           <button class="btn-bg" @click="showDepositFromVault">Desposit</button>
-          <button class="btn-border">Withdraw</button>
+          <button class="btn-border" @click="showWithdrawFromVault">Withdraw</button>
         </template>
         <button v-else class="btn-medium btn-bg">Connect wallet</button>
       </div>
@@ -36,14 +36,16 @@
   </div>
 
   <modal-deposit-from-vault :name-modal="$id('DepositFromVault')"></modal-deposit-from-vault>
+  <modal-withdraw-from-vault :name-modal="$id('WithdrawFromVault')"></modal-withdraw-from-vault>
 </template>
 
 <script>
 import ModalDepositFromVault from './ModalDepositFromVault.vue';
+import ModalWithdrawFromVault from './ModalWithdrawFromVault.vue';
 export default {
   name: 'VaultMore',
 
-  components: { ModalDepositFromVault },
+  components: { ModalDepositFromVault, ModalWithdrawFromVault },
 
   props: {
     show: {
@@ -59,6 +61,14 @@ export default {
 
     closeDepositFromVault() {
       this.$vfm.hide(this.$id('DepositFromVault'));
+    },
+
+    showWithdrawFromVault() {
+      this.$vfm.show(this.$id('WithdrawFromVault'));
+    },
+
+    closeWithdrawFromVault() {
+      this.$vfm.hide(this.$id('WithdrawFromVault'));
     },
   },
 };
