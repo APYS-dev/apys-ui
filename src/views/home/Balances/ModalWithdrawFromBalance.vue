@@ -1,5 +1,11 @@
 <template>
-  <g-modal :name="nameModal" :click-to-close="true" :is-show-close-button="true" :width="580" @close-modal="closeModal">
+  <g-modal
+    :name="nameModal"
+    :click-to-close="true"
+    :is-show-close-button="true"
+    :min-width="363"
+    @close-modal="closeModal"
+  >
     <template #header>
       <h3>Withdraw {{ name }}</h3>
     </template>
@@ -16,13 +22,8 @@
 </template>
 
 <script>
-import gModal from '@/components/G-modal.vue';
-import GAutonumeric from '@/components/G-autonumeric.vue';
-
 export default {
   name: 'ModalWithdrawFromBalance',
-
-  components: { gModal, GAutonumeric },
 
   props: {
     name: {

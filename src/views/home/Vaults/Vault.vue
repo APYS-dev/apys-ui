@@ -81,14 +81,13 @@
 </template>
 
 <script>
-import GModal from '@/components/G-modal.vue';
 import ModalCalc from './ModalCalc.vue';
 import VaultMore from './VaultMore.vue';
 
 export default {
   name: 'Vault',
 
-  components: { GModal, ModalCalc, VaultMore },
+  components: { ModalCalc, VaultMore },
 
   props: {
     name: {

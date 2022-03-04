@@ -51,13 +51,8 @@
 </template>
 
 <script>
-import GModal from '@/components/G-modal.vue';
-import GAutonumeric from '@/components/G-autonumeric.vue';
-
 export default {
   name: 'ModalCalc',
-
-  components: { GModal, GAutonumeric },
 
   props: {
     name: {

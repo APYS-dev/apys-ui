@@ -21,7 +21,10 @@
       @before-open="beforeOpen"
       @opened="$emit('opened')"
     >
-      <div class="vfm--modal-container" :style="[`max-width: ${width}px; max-height: ${height}px;`]">
+      <div
+        class="vfm--modal-container"
+        :style="[`max-width: ${maxWidth}px; min-width: ${minWidth}px; width: ${width}px; max-height: ${height}px;`]"
+      >
         <button
           v-if="isShowCloseButton"
           type="button"
@@ -105,7 +108,7 @@ export default {
     },
     width: {
       type: [Number, String],
-      default: 500,
+      default: '100%',
     },
     height: {
       type: [Number, String],
@@ -174,9 +177,8 @@ $border: rgba(0, 0, 0, 0.1);
 
     &-container {
       position: relative;
-      margin: 16px;
       padding: 28px 36px;
-      width: calc(100% - 24px);
+      width: 100%;
       max-height: 100vh;
       background: #fff;
       border-radius: 4px;

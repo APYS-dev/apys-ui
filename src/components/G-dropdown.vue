@@ -212,50 +212,53 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .dropdown {
   &-wrap {
     position: relative;
   }
 
+  &-active {
+    .dropdown-icon:after {
+      border-width: 2px 2px 0 0;
+      transform: rotate(-45deg) translate(-1px, 3px);
+    }
+  }
+
   &-toggle {
     display: block;
     cursor: pointer;
-
-    &:hover {
-      .dropdown-icon:after {
-        border-color: rgb(23, 72, 13);
-      }
-    }
   }
 
   &-icon:after {
     content: '';
-    margin-left: 30px;
+    margin-right: 3px;
     height: 10px;
     width: 10px;
     border-width: 0 0 2px 2px;
     border-style: solid;
-    border-color: rgba(255, 255, 255, 0.08);
     transform: rotate(-45deg) translateX(3px);
   }
 
   &-box {
     position: fixed;
+    z-index: 1001;
   }
 
   &-box {
     .list-dropbox {
-      padding: 8px 0;
+      padding: 8px 12px;
       min-width: max-content;
       font-size: 18px;
-      background: rgba(0, 0, 0, 0.51);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--color-main-10);
       -webkit-backdrop-filter: blur(17px);
       backdrop-filter: blur(17px);
 
       li {
         padding: 8px 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
         cursor: pointer;
 
         & > * {
@@ -264,7 +267,7 @@ export default {
         }
 
         & + li {
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
+          border-top: 1px solid var(--color-main-90);
         }
 
         &.disabled,
@@ -274,7 +277,6 @@ export default {
 
         &:hover > * {
           opacity: 1;
-          transform: scale(1.2);
         }
       }
     }
@@ -293,8 +295,7 @@ export default {
 
     &.to-top {
       transform: translate(-50%, calc(-100% + 4px));
-
-      &-start {
+      x &-start {
         transform: translate(-12px, calc(-100% + 4px));
       }
 
