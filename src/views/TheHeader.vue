@@ -1,5 +1,5 @@
 <template>
-  <header>
+  <header class="container">
     <router-link to="/">
       <img class="logo" src="@/assets/img/logo.svg" alt="Apys" />
     </router-link>
@@ -17,7 +17,8 @@ export default {
 
 <style lang="scss" scoped>
 header {
-  margin: 16px 92px 48px;
+  margin-top: 16px;
+  margin-bottom: 48px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -27,12 +28,10 @@ header {
     width: auto;
   }
 
-  @media screen and (max-width: 1600px) {
-    & {
-      margin-right: auto;
-      margin-right: auto;
-      padding: 0 24px;
-      width: 100%;
+  @media screen and (min-width: 1600px) {
+    &.container {
+      margin-left: 92px;
+      margin-right: 92px;
       max-width: 90%;
     }
   }

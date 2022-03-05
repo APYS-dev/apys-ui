@@ -49,7 +49,7 @@
     :name="$id('vault-info')"
     :click-to-close="true"
     :is-show-close-button="true"
-    :width="580"
+    :max-width="580"
     @close-modal="closeVaultModal"
   >
     <template #header>
@@ -65,7 +65,7 @@
     :name="$id('apy-info')"
     :click-to-close="true"
     :is-show-close-button="true"
-    :width="580"
+    :max-width="580"
     @close-modal="closeApyModal"
   >
     <template #header>

@@ -82,6 +82,10 @@ export default {
   .btn-bg-light {
     padding: 4px 12px;
   }
+
+  & + .btn-bg {
+    width: 100%;
+  }
 }
 
 .btn-bg-light,

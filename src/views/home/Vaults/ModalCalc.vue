@@ -3,7 +3,7 @@
     :name="name"
     :click-to-close="true"
     :is-show-close-button="true"
-    :width="580"
+    :max-width="580"
     :classes="'modalCalc'"
     @close-modal="closeCalcModal"
   >
@@ -125,7 +125,6 @@ export default {
         margin-top: 8px;
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-between;
         gap: 4px;
 
         button {
