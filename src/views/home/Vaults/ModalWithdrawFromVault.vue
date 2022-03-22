@@ -35,7 +35,7 @@
         </g-dropdown>
 
         <g-autonumeric v-model="modalVaultAmount" />
-        <span>Max</span>
+        <button @click="maxAmount">Max</button>
       </div>
       <button class="btn-bg">Withdraw</button>
     </template>
@@ -89,6 +89,11 @@ export default {
       }
       return;
     },
+
+    maxAmount() {
+      const amount = this.balancesByToken[this.activeCurrency];
+      this.modalVaultAmount = this.$formatPrice(amount, true);
+    }
   },
 };
 </script>

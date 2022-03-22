@@ -36,9 +36,9 @@
         </g-dropdown>
 
         <g-autonumeric v-model="modalVaultAmount" />
-        <span>Max</span>
+        <button @click="maxAmount">Max</button>
       </div>
-      <button class="btn-bg" @click="deposit">Deposit</button>
+      <button class="btn-bg" @click="maxAmount">Deposit</button>
     </template>
   </g-modal>
 </template>
@@ -118,8 +118,24 @@ export default {
     },
     async deposit() {
       console.log('deposit to strategy');
-      await startStrategy(this.contractId, this.tokenContractIdByToken[this.activeCurrency], this.modalVaultAmount);
+      let amount = 0;
+
+      // Check that amount in the input same as the max amount
+      const isPriceSame = this.$formatPrice(this.modalVaultAmount, true) === this.$formatPrice(this.balancesByToken[this.activeCurrency], true);
+      if (isPriceSame) {
+        amount = this.balancesByToken[this.activeCurrency];
+      } else {
+        amount = this.modalVaultAmount;
+      }
+
+      // Start strategy
+      await startStrategy(this.contractId, this.tokenContractIdByToken[this.activeCurrency], amount);
     },
+
+    maxAmount() {
+      const amount = this.balancesByToken[this.activeCurrency];
+      this.modalVaultAmount = this.$formatPrice(amount, true);
+    }
   },
 };
 </script>
