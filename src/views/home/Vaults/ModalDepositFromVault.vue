@@ -5,6 +5,7 @@
     :is-show-close-button="true"
     :min-width="467"
     @close-modal="closeModal"
+    @before-close="clearDropdown"
   >
     <template #header>
       <h3>Deposit</h3>
@@ -13,9 +14,9 @@
     <template #content>
       <div class="modalBalanceAmount">You have {{ $formatPrice(balancesByToken[activeCurrency], true) }}</div>
       <div class="modalBalanceInput">
-        <g-dropdown :ref="$id('currency')" position="bottom">
-          <div :key="$id('USDT')" class="btn btn-bg-light dropdown-icon">
-            <img :src="logoByToken[activeCurrency]" :alt="currency" /> {{ activeCurrency }}
+        <g-dropdown :ref="$id('token')" position="bottom">
+          <div :key="$id(activeCurrency)" class="btn btn-bg-light dropdown-icon">
+            <img :src="logoByToken[activeCurrency]" :alt="token" /> {{ activeCurrency }}
           </div>
 
           <template #content>
@@ -37,13 +38,14 @@
         <g-autonumeric v-model="modalVaultAmount" />
         <span>Max</span>
       </div>
-      <button class="btn-bg">Deposit</button>
+      <button class="btn-bg" @click="deposit">Deposit</button>
     </template>
   </g-modal>
 </template>
 
 <script>
 import {mapGetters} from "vuex";
+import {startStrategy} from "@/near/utils";
 
 export default {
   name: 'ModalDepositFromVault',
@@ -62,6 +64,10 @@ export default {
       type: Array,
       required: true,
     },
+    contractId: {
+      type: [String],
+      required: true,
+    },
   },
 
   data: () => ({
@@ -69,6 +75,7 @@ export default {
     activeCurrency: '',
     logoByToken: {},
     balancesByToken: {},
+    tokenContractIdByToken: {},
   }),
 
   computed: {
@@ -87,7 +94,12 @@ export default {
       acc[next.name] = next.appBalance;
       return acc;
     }, {});
-    console.log('this.balancesByToken', this.balancesByToken);
+
+    this.tokenContractIdByToken = this.getBalances.reduce((acc, next) => {
+      acc[next.name] = next.token;
+      return acc;
+    }, {});
+    console.log('this.tokenContractIdByToken', this.tokenContractIdByToken);
   },
 
   methods: {
@@ -95,11 +107,18 @@ export default {
       this.$vfm.hide(this.nameModal);
     },
 
+    clearDropdown() {
+      this.$refs[this.$id('token')].closeDropdown();
+    },
     setActiveCurrency(currency) {
       if (currency) {
         this.activeCurrency = currency;
       }
       return;
+    },
+    async deposit() {
+      console.log('deposit to strategy');
+      await startStrategy(this.contractId, this.tokenContractIdByToken[this.activeCurrency], this.modalVaultAmount);
     },
   },
 };

@@ -62,6 +62,10 @@ export default {
       type: Array,
       required: true,
     },
+    contractId: {
+      type: [String],
+      required: true,
+    },
   },
 
   data: () => ({

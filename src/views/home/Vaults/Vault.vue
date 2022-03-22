@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <vault-more :deposit-tokens="depositTokens" :logos-urls="logosUrls" :show="show"></vault-more>
+    <vault-more :deposit-tokens="depositTokens" :logos-urls="logosUrls" :contract-id="contractId" :show="show"></vault-more>
   </div>
 
   <g-modal

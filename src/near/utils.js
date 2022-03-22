@@ -14,7 +14,7 @@ export async function initContract() {
 
   window.contract = await new Contract(window.walletConnection.account(), nearConfig.contractName, {
     viewMethods: ['get_whitelisted_tokens'],
-    changeMethods: ['withdraw'],
+    changeMethods: ['start','withdraw'],
   });
 
   window.near = near;
@@ -71,6 +71,18 @@ export async function withdrawFt(ftContractId, amount) {
       token_id: ftContractId,
     },
     amount: 1,
+    gas: 300000000000000,
+  });
+}
+
+export async function startStrategy(strategyId, ftContractId, amount) {
+  const meta = tokenMeta[ftContractId];
+  return await window.contract.start({
+    args: {
+      strategy_id: strategyId,
+      balance: toUnits(amount, meta.decimals),
+      token_id: ftContractId,
+    },
     gas: 300000000000000,
   });
 }
