@@ -3,7 +3,7 @@
     <div class="vault" @click="show = !show">
       <div class="vault__name-wrap">
         <div class="vault__logo">
-          <img v-for="logo in logoesUrl" :key="logo" :src="logo" :alt="logo" />
+          <img v-for="logo in logosUrls" :key="logo" :src="logo" :alt="logo" />
         </div>
 
         <div class="vault__name">
@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <vault-more :show="show"></vault-more>
+    <vault-more :deposit-tokens="depositTokens" :logos-urls="logosUrls" :show="show"></vault-more>
   </div>
 
   <g-modal
@@ -107,10 +107,21 @@ export default {
       default: 'n/a',
     },
 
-    logoesUrl: {
+    contractId: {
+      type: [String],
+      required: true,
+    },
+
+    logosUrls: {
       type: Array,
       required: false,
       default: () => ['/static/images/tokens/defaultCoin.png'],
+    },
+
+    depositTokens: {
+      type: Array,
+      required: true,
+      default: () => [],
     },
   },
 
@@ -120,6 +131,9 @@ export default {
 
   methods: {
     showCalcModal() {
+      console.log('this.contractId', this.contractId);
+      console.log('this.depositTokens', this.depositTokens);
+      console.log('this.logosUrls', this.logosUrls);
       this.$vfm.show(this.$id('calc'));
     },
 

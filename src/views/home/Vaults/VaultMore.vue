@@ -6,8 +6,8 @@
 
         <div class="vault-more__body">
           <div>
-            <div class="amount">{{ $root.isLogged ? $formatPrice(1000, true) : '–' }}</div>
-            <div class="price">{{ $root.isLogged ? $formatPrice(1000) : '–' }}</div>
+            <div class="amount">{{ $root.isLogged ? $formatPrice(0, true) : '–' }}</div>
+            <div class="price">{{ $root.isLogged ? $formatPrice(0) : '–' }}</div>
           </div>
           <div class="currency">USDT</div>
         </div>
@@ -18,8 +18,8 @@
 
         <div class="vault-more__body">
           <div>
-            <div class="amount">{{ $root.isLogged ? $formatPrice(45, true) : '–' }}</div>
-            <div class="price">{{ $root.isLogged ? $formatPrice(45) : '–' }}</div>
+            <div class="amount">{{ $root.isLogged ? $formatPrice(0, true) : '–' }}</div>
+            <div class="price">{{ $root.isLogged ? $formatPrice(0) : '–' }}</div>
           </div>
           <div class="currency">USDT</div>
         </div>
@@ -35,13 +35,14 @@
     </div>
   </div>
 
-  <modal-deposit-from-vault :name-modal="$id('DepositFromVault')"></modal-deposit-from-vault>
-  <modal-withdraw-from-vault :name-modal="$id('WithdrawFromVault')"></modal-withdraw-from-vault>
+  <modal-deposit-from-vault :deposit-tokens="depositTokens" :logos-urls="logosUrls" :name-modal="$id('DepositFromVault')"></modal-deposit-from-vault>
+  <modal-withdraw-from-vault :deposit-tokens="depositTokens" :logos-urls="logosUrls" :name-modal="$id('WithdrawFromVault')"></modal-withdraw-from-vault>
 </template>
 
 <script>
 import ModalDepositFromVault from './ModalDepositFromVault.vue';
 import ModalWithdrawFromVault from './ModalWithdrawFromVault.vue';
+
 export default {
   name: 'VaultMore',
 
@@ -51,6 +52,15 @@ export default {
     show: {
       type: Boolean,
       default: false,
+    },
+    depositTokens: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+    logosUrls: {
+      type: Array,
+      required: true,
     },
   },
 

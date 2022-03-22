@@ -43,12 +43,23 @@
 </template>
 
 <script>
+import {mapGetters} from "vuex";
+
 export default {
   name: 'ModalWithdrawFromVault',
 
   props: {
     nameModal: {
       type: String,
+      required: true,
+    },
+    depositTokens: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+    logosUrls: {
+      type: Array,
       required: true,
     },
   },
@@ -58,6 +69,10 @@ export default {
     currencyList: ['USDT', 'USDC', 'DAI'],
     activeCurrency: 'USDT',
   }),
+
+  computed: {
+    ...mapGetters(['getBalances']),
+  },
 
   methods: {
     closeModal() {

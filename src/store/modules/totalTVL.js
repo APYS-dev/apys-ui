@@ -1,4 +1,4 @@
-import totalTVL from '@/dataTotalTVL.json';
+import totalTVL from '@/data/dataTotalTVL.json';
 
 export default {
   state: {

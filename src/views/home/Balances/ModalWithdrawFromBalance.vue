@@ -16,16 +16,23 @@
         <g-autonumeric v-model="modalBalanceAmount" />
         <span>Max</span>
       </div>
-      <button class="btn-bg">Withdraw</button>
+      <button class="btn-bg" @click="withdraw">Withdraw</button>
     </template>
   </g-modal>
 </template>
 
 <script>
+import {withdrawFt} from "@/near/utils";
+
 export default {
   name: 'ModalWithdrawFromBalance',
 
   props: {
+    token: {
+      type: String,
+      required: true,
+    },
+
     name: {
       type: String,
       required: true,
@@ -47,6 +54,9 @@ export default {
   }),
 
   methods: {
+    async withdraw() {
+      await withdrawFt(this.token, this.modalBalanceAmount);
+    },
     closeModal() {
       this.$vfm.hide(this.nameModal);
     },

@@ -4,8 +4,8 @@
       <img class="logo" src="@/assets/img/logo.svg" alt="Apys" />
     </router-link>
 
-    <button v-if="$root.isLogged" class="btn-big btn-border">logout</button>
-    <button v-else class="btn-big btn-bg">Connect wallet</button>
+    <button v-if="$root.isLogged" v-on:click="$root.logout" class="btn-big btn-border">logout</button>
+    <button v-else v-on:click="$root.login" class="btn-big btn-bg">Connect wallet</button>
   </header>
 </template>
 

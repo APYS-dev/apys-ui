@@ -17,7 +17,9 @@
         :name="vault.name"
         :tvl="vault.tvl"
         :apy="vault.apy"
-        :logoes-url="vault.logoesUrl"
+        :contract-id="vault.contractId"
+        :deposit-tokens="vault.depositTokens"
+        :logos-urls="vault.logosUrls"
       ></vault>
     </main>
   </div>
@@ -40,8 +42,8 @@ export default {
     ...mapGetters(['getVaults']),
   },
 
-  mounted() {
-    this.loadVaults();
+  async mounted() {
+    await this.loadVaults();
     this.vaults = this.getVaults;
   },
 

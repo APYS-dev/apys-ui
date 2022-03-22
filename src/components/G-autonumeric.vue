@@ -6,9 +6,9 @@
 import AutoNumeric from 'autonumeric/dist/autoNumeric.min.js';
 
 const DEFAULT_OPTIONS = {
-  allowDecimalPadding: false,
+  allowDecimalPadding: true,
   caretPositionOnFocus: 'end',
-  decimalPlaces: 18,
+  decimalPlaces: 0,
   modifyValueOnWheel: false,
   showWarnings: true,
   selectOnFocus: false,

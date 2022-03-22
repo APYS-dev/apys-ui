@@ -3,7 +3,7 @@
     <img :src="logoUrl" :alt="name" />
 
     <div class="balance-amount">
-      <p class="amount">{{ $root.isLogged ? $formatPrice(amount, true) : '–' }}</p>
+      <p class="amount">{{ $root.isLogged ? $formatPrice(appBalance, true) : '–' }}</p>
       <p class="name">{{ $root.isLogged ? name : '–' }}</p>
     </div>
 
@@ -16,13 +16,15 @@
   <modal-withdraw-from-balance
     :name-modal="$id('withdrawFromBalance')"
     :name="name"
-    :amount="amount"
+    :token="token"
+    :amount="appBalance"
   ></modal-withdraw-from-balance>
 
   <modal-deposit-from-balance
     :name-modal="$id('depositFromBalance')"
     :name="name"
-    :amount="amount"
+    :token="token"
+    :amount="walletBalance"
   ></modal-deposit-from-balance>
 </template>
 
@@ -36,13 +38,23 @@ export default {
   components: { ModalWithdrawFromBalance, ModalDepositFromBalance },
 
   props: {
+    token: {
+      type: String,
+      required: true,
+    },
+
     name: {
       type: String,
       required: true,
     },
 
-    amount: {
-      type: [String, Number],
+    walletBalance: {
+      type: [String],
+      default: '–',
+    },
+
+    appBalance: {
+      type: [String],
       default: '–',
     },
 

@@ -11,23 +11,23 @@
     </template>
 
     <template #content>
-      <div class="modalBalanceAmount">You have {{ $formatPrice(1000, true) }}</div>
+      <div class="modalBalanceAmount">You have {{ $formatPrice(balancesByToken[activeCurrency], true) }}</div>
       <div class="modalBalanceInput">
         <g-dropdown :ref="$id('currency')" position="bottom">
           <div :key="$id('USDT')" class="btn btn-bg-light dropdown-icon">
-            <img src="/static/images/tokens/usdt.svg" :alt="currency" /> {{ activeCurrency }}
+            <img :src="logoByToken[activeCurrency]" :alt="currency" /> {{ activeCurrency }}
           </div>
 
           <template #content>
             <ul class="list-dropbox">
-              <template v-for="currency in currencyList">
+              <template v-for="token in depositTokens">
                 <li
-                  v-if="currency !== activeCurrency"
-                  :key="$id(currency)"
-                  @click="setActiveCurrency(currency), $refs[$id('currency')].closeDropdown()"
+                  v-if="token !== activeCurrency"
+                  :key="$id(token)"
+                  @click="setActiveCurrency(token), $refs[$id('token')].closeDropdown()"
                 >
-                  <img src="/static/images/tokens/usdt.svg" :alt="currency" />
-                  <span>{{ currency }}</span>
+                  <img :src="logoByToken[token]" :alt="token" />
+                  <span>{{ token }}</span>
                 </li>
               </template>
             </ul>
@@ -43,6 +43,8 @@
 </template>
 
 <script>
+import {mapGetters} from "vuex";
+
 export default {
   name: 'ModalDepositFromVault',
 
@@ -51,13 +53,42 @@ export default {
       type: String,
       required: true,
     },
+    depositTokens: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+    logosUrls: {
+      type: Array,
+      required: true,
+    },
   },
 
   data: () => ({
     modalVaultAmount: 0,
-    currencyList: ['USDT', 'USDC', 'DAI'],
-    activeCurrency: 'USDT',
+    activeCurrency: '',
+    logoByToken: {},
+    balancesByToken: {},
   }),
+
+  computed: {
+    ...mapGetters(['getBalances']),
+  },
+
+  mounted() {
+    this.activeCurrency = this.depositTokens[0];
+    const logoByToken = {};
+    for (let i = 0; i < this.depositTokens.length; i++) {
+      logoByToken[this.depositTokens[i]] = this.logosUrls[i];
+    }
+    this.logoByToken = logoByToken;
+
+    this.balancesByToken = this.getBalances.reduce((acc, next) => {
+      acc[next.name] = next.appBalance;
+      return acc;
+    }, {});
+    console.log('this.balancesByToken', this.balancesByToken);
+  },
 
   methods: {
     closeModal() {

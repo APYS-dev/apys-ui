@@ -1,4 +1,4 @@
-import vaults from '@/dataVaults.json';
+import vaults from '@/data/dataVaults.json';
 
 export default {
   state: {
@@ -12,7 +12,7 @@ export default {
   },
 
   actions: {
-    loadVaults(context) {
+    async loadVaults(context) {
       const response = vaults;
 
       context.commit('updateVaults', response.vaults);

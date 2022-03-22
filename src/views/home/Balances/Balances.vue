@@ -1,13 +1,15 @@
 <template>
   <div class="balances">
-    <h3>walletname.near</h3>
+    <h3 v-text="$root.accountId"></h3>
 
     <div class="balances__items">
       <balance
         v-for="balance in balances"
         :key="balance.name"
         :name="balance.name"
-        :amount="balance.amount"
+        :token="balance.token"
+        :wallet-balance="balance.walletBalance"
+        :app-balance="balance.appBalance"
         :logo-url="balance.logoUrl"
       ></balance>
     </div>
@@ -15,7 +17,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
 import Balance from './Balance.vue';
 
 export default {
@@ -31,13 +33,8 @@ export default {
     ...mapGetters(['getBalances']),
   },
 
-  mounted() {
-    this.loadBalances();
+  async mounted() {
     this.balances = this.getBalances;
-  },
-
-  methods: {
-    ...mapActions(['loadBalances']),
   },
 };
 </script>

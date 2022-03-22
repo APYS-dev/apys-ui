@@ -16,16 +16,23 @@
         <g-autonumeric v-model="modalBalanceAmount" />
         <span>Max</span>
       </div>
-      <button class="btn-bg">Deposit</button>
+      <button class="btn-bg" @click="deposit">Deposit</button>
     </template>
   </g-modal>
 </template>
 
 <script>
+import {depositFt} from "@/near/utils";
+
 export default {
   name: 'ModalDepositFromBalance',
 
   props: {
+    token: {
+      type: String,
+      required: true,
+    },
+
     name: {
       type: String,
       required: true,
@@ -37,8 +44,8 @@ export default {
     },
 
     amount: {
-      type: [String, Number],
-      default: 0,
+      type: [String],
+      default: '0',
     },
   },
 
@@ -47,6 +54,9 @@ export default {
   }),
 
   methods: {
+    async deposit() {
+      await depositFt(this.token, this.modalBalanceAmount);
+    },
     closeModal() {
       this.$vfm.hide(this.nameModal);
     },
