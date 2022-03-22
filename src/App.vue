@@ -20,7 +20,6 @@ export default {
   components: { TheHeader, TheFooter },
 
   async mounted() {
-    console.log('load balances:');
     await this.loadBalances();
     this.isLoading = false;
   },

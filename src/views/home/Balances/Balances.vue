@@ -33,7 +33,7 @@ export default {
     ...mapGetters(['getBalances']),
   },
 
-  async mounted() {
+  mounted() {
     this.balances = this.getBalances;
   },
 };

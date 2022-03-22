@@ -6,7 +6,7 @@
       <div class="vaults__tabs">
         <button class="active">Live</button>
         <button>Upcoming</button>
-        <button>In progress</button>
+        <button>Finished</button>
       </div>
     </header>
 
