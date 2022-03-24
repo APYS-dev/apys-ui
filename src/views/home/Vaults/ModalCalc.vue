@@ -21,10 +21,9 @@
       <div class="modal__duration">
         For
         <div class="modal__duration-btns">
-          <button class="btn-bg-light">1 day</button>
-          <button class="btn-bg">7 days</button>
-          <button class="btn-bg-light">30 days</button>
-          <button class="btn-bg-light">1 year</button>
+          <template v-for="duration in durations" :key="duration.label">
+            <button :class="[(duration === currentDuration ? 'btn-bg' : 'btn-bg-light')]" @click="changeDuration(duration)">{{ duration.label }}</button>
+          </template>
         </div>
       </div>
 
@@ -32,7 +31,7 @@
         Recieve
         <div>
           <div class="modal__recieve-amount">
-            <span class="amount">{{ $formatPrice(1032) }}</span>
+            <span class="amount">{{ $formatPrice(amountToStake * (this.apy / 365 * currentDuration.days)) }}</span>
             <span class="currency no-select">USDT</span>
           </div>
 
@@ -59,16 +58,29 @@ export default {
       type: String,
       default: 'calc',
     },
+    apy: {
+      type: Number,
+      default: 0.26
+    }
   },
 
-  data: () => ({
-    amountToStake: 0,
-  }),
+  data: () => {
+    const durations =  [{"label": "7 days", "days": 7}, {"label": "30 days", "days": 30}, {"label": "6 month", "days": 180}, {"label": "1 year", "days": 365}];
+
+    return {
+      amountToStake: 0,
+      durations,
+      currentDuration: durations[0],
+    };
+  },
 
   methods: {
     closeCalcModal() {
       this.$vfm.hide(this.name);
     },
+    changeDuration(duration) {
+      this.currentDuration = duration;
+    }
   },
 };
 </script>
@@ -83,7 +95,7 @@ export default {
   .vfm--modal-container {
     padding-left: 0;
     padding-right: 0;
-    width: 365px;
+    width: 380px;
 
     & > div {
       padding-left: 36px;

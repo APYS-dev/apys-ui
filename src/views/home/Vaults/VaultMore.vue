@@ -37,14 +37,12 @@
 
   <modal-deposit-from-vault
       :deposit-tokens="depositTokens"
-      :logos-urls="logosUrls"
       :name-modal="$id('DepositFromVault')"
       :contract-id="contractId"
   ></modal-deposit-from-vault>
 
   <modal-withdraw-from-vault
       :deposit-tokens="depositTokens"
-      :logos-urls="logosUrls"
       :name-modal="$id('WithdrawFromVault')"
       :contract-id="contractId"
   ></modal-withdraw-from-vault>
@@ -68,10 +66,6 @@ export default {
       type: Array,
       required: true,
       default: () => [],
-    },
-    logosUrls: {
-      type: Array,
-      required: true,
     },
     contractId: {
       type: [String],

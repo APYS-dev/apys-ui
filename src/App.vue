@@ -21,6 +21,7 @@ export default {
 
   async mounted() {
     await this.loadBalances();
+    await this.loadVaults();
     this.isLoading = false;
   },
   data: () => ({
@@ -31,7 +32,7 @@ export default {
     isLoading: true,
   }),
   methods: {
-    ...mapActions(['loadBalances']),
+    ...mapActions(['loadBalances', 'loadVaults']),
   },
 };
 </script>
