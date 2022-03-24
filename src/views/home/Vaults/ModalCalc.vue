@@ -31,13 +31,13 @@
         Recieve
         <div>
           <div class="modal__recieve-amount">
-            <span class="amount">{{ $formatPrice(amountToStake * (this.apy / 365 * currentDuration.days)) }}</span>
+            <span class="amount">{{ $formatPrice(calculateAmountWithApy()) }}</span>
             <span class="currency no-select">USDT</span>
           </div>
 
           <div class="modal__recieve-apy">
             APY:
-            <span class="amount">{{ $formatIntegerPercent(26) }}</span>
+            <span class="amount">{{ $formatAndCalculateApy(apr, currentDuration.days) }}</span>
           </div>
         </div>
       </div>
@@ -80,7 +80,11 @@ export default {
     },
     changeDuration(duration) {
       this.currentDuration = duration;
-    }
+    },
+    calculateAmountWithApy() {
+      const apy = Math.pow(1 + (this.apr / 100) / this.currentDuration.days, this.currentDuration.days) - 1;
+      return ((this.amountToStake * apy) / 365 * this.currentDuration.days).toFixed(2);
+    },
   },
 };
 </script>

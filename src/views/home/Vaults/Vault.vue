@@ -77,7 +77,7 @@
     </template>
   </g-modal>
 
-  <modal-calc :name="$id('calc')"></modal-calc>
+  <modal-calc :name="$id('calc')" :apr="apr"></modal-calc>
 </template>
 
 <script>
@@ -108,7 +108,7 @@ export default {
 
     apr: {
       type: [Number, String],
-      required: false,
+      required: true,
       default: 'n/a',
     },
 
@@ -130,8 +130,6 @@ export default {
 
   methods: {
     showCalcModal() {
-      console.log('this.contractId', this.contractId);
-      console.log('this.depositTokens', this.depositTokens);
       this.$vfm.show(this.$id('calc'));
     },
 
