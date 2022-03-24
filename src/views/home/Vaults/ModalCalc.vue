@@ -22,7 +22,12 @@
         For
         <div class="modal__duration-btns">
           <template v-for="duration in durations" :key="duration.label">
-            <button :class="[(duration === currentDuration ? 'btn-bg' : 'btn-bg-light')]" @click="changeDuration(duration)">{{ duration.label }}</button>
+            <button
+              :class="[duration === currentDuration ? 'btn-bg' : 'btn-bg-light']"
+              @click="changeDuration(duration)"
+            >
+              {{ duration.label }}
+            </button>
           </template>
         </div>
       </div>
@@ -58,14 +63,20 @@ export default {
       type: String,
       default: 'calc',
     },
-    apy: {
-      type: Number,
-      default: 0.26
-    }
+    apr: {
+      type: [Number, String],
+      required: true,
+      default: 'n/a',
+    },
   },
 
   data: () => {
-    const durations =  [{"label": "7 days", "days": 7}, {"label": "30 days", "days": 30}, {"label": "6 month", "days": 180}, {"label": "1 year", "days": 365}];
+    const durations = [
+      { 'label': '7 days', 'days': 7 },
+      { 'label': '30 days', 'days': 30 },
+      { 'label': '6 month', 'days': 180 },
+      { 'label': '1 year', 'days': 365 },
+    ];
 
     return {
       amountToStake: 0,

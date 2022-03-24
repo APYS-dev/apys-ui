@@ -16,7 +16,8 @@
       <div class="modalBalanceInput">
         <g-dropdown :ref="$id('token')" position="bottom">
           <div :key="$id(activeCurrency)" class="btn btn-bg-light dropdown-icon">
-            <img :src="`/static/images/tokens/${activeCurrency}.svg`" :alt="activeCurrency" /> {{ activeCurrency }}
+            <img :src="`/static/images/tokens/${activeCurrency}.svg`" :alt="activeCurrency" />
+            {{ activeCurrency }}
           </div>
 
           <template #content>
@@ -44,8 +45,8 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
-import {startStrategy} from "@/near/utils";
+import { mapGetters } from 'vuex';
+import { startStrategy } from '@/near/utils';
 
 export default {
   name: 'ModalDepositFromVault',
@@ -89,7 +90,6 @@ export default {
       acc[next.name] = next.token;
       return acc;
     }, {});
-    console.log('this.tokenContractIdByToken', this.tokenContractIdByToken);
   },
 
   methods: {
@@ -110,7 +110,9 @@ export default {
       let amount = 0;
 
       // Check that amount in the input same as the max amount
-      const isPriceSame = this.$formatPrice(this.modalVaultAmount, true) === this.$formatPrice(this.balancesByToken[this.activeCurrency], true);
+      const isPriceSame =
+        this.$formatPrice(this.modalVaultAmount, true) ===
+        this.$formatPrice(this.balancesByToken[this.activeCurrency], true);
       if (isPriceSame) {
         amount = this.balancesByToken[this.activeCurrency];
       } else {
@@ -124,7 +126,7 @@ export default {
     maxAmount() {
       const amount = this.balancesByToken[this.activeCurrency];
       this.modalVaultAmount = this.$formatPrice(amount, true);
-    }
+    },
   },
 };
 </script>

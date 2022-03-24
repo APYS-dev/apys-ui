@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import {withdrawFt} from "@/near/utils";
+import { withdrawFt } from '@/near/utils';
 
 export default {
   name: 'ModalWithdrawFromBalance',

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 export default {
   state: {
@@ -13,12 +13,11 @@ export default {
 
   actions: {
     async loadVaults(context) {
-      const response = await axios.get("http://localhost:3060/info");
+      const response = await axios.get('http://localhost:3060/info');
       console.log(response.data);
       if (response.data) {
         context.commit('updateVaults', response.data.strategies);
       }
-
     },
   },
 

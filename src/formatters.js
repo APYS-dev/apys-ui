@@ -89,7 +89,7 @@ export default {
         return defaultValue;
       }
 
-      const apy = Math.pow((1 + (apr / 100) / period), period) - 1;
+      const apy = Math.pow(1 + apr / 100 / period, period) - 1;
 
       return parseFloat(apy * 100).toFixed(2) + '%';
     };

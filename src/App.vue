@@ -1,6 +1,5 @@
 <template>
-  <div v-if="isLoading" class="loader">
-  </div>
+  <div v-if="isLoading" class="loader"></div>
   <div v-else>
     <the-header></the-header>
     <router-view class="content" />
@@ -11,19 +10,13 @@
 <script>
 import TheHeader from '@/views/TheHeader.vue';
 import TheFooter from './views/TheFooter.vue';
-import {login, logout} from "@/near/utils";
-import {mapActions} from "vuex";
+import { login, logout } from '@/near/utils';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'App',
 
   components: { TheHeader, TheFooter },
-
-  async mounted() {
-    await this.loadBalances();
-    await this.loadVaults();
-    this.isLoading = false;
-  },
   data: () => ({
     accountId: window.walletConnection.getAccountId(),
     isLogged: window.walletConnection.isSignedIn(),
@@ -31,6 +24,12 @@ export default {
     logout: () => logout(),
     isLoading: true,
   }),
+
+  async mounted() {
+    await this.loadBalances();
+    await this.loadVaults();
+    this.isLoading = false;
+  },
   methods: {
     ...mapActions(['loadBalances', 'loadVaults']),
   },
@@ -49,7 +48,6 @@ export default {
   width: 100%;
   height: 100%;
   z-index: 9999;
-  background: url('/static/images/loading_spinner.gif')
-  50% 50% no-repeat rgb(249,249,249);
+  background: url('/static/images/loading_spinner.gif') 50% 50% no-repeat rgb(249, 249, 249);
 }
 </style>

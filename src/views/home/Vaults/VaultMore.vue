@@ -36,15 +36,15 @@
   </div>
 
   <modal-deposit-from-vault
-      :deposit-tokens="depositTokens"
-      :name-modal="$id('DepositFromVault')"
-      :contract-id="contractId"
+    :deposit-tokens="depositTokens"
+    :name-modal="$id('DepositFromVault')"
+    :contract-id="contractId"
   ></modal-deposit-from-vault>
 
   <modal-withdraw-from-vault
-      :deposit-tokens="depositTokens"
-      :name-modal="$id('WithdrawFromVault')"
-      :contract-id="contractId"
+    :deposit-tokens="depositTokens"
+    :name-modal="$id('WithdrawFromVault')"
+    :contract-id="contractId"
   ></modal-withdraw-from-vault>
 </template>
 
@@ -55,7 +55,7 @@ import ModalWithdrawFromVault from './ModalWithdrawFromVault.vue';
 export default {
   name: 'VaultMore',
 
-  components: {ModalDepositFromVault, ModalWithdrawFromVault},
+  components: { ModalDepositFromVault, ModalWithdrawFromVault },
 
   props: {
     show: {

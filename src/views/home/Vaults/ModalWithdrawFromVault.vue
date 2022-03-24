@@ -15,7 +15,8 @@
       <div class="modalBalanceInput">
         <g-dropdown :ref="$id('token')" position="bottom">
           <div :key="$id(activeCurrency)" class="btn btn-bg-light dropdown-icon">
-            <img :src="`/static/images/tokens/${activeCurrency}.svg`" :alt="activeCurrency" /> {{ activeCurrency }}
+            <img :src="`/static/images/tokens/${activeCurrency}.svg`" :alt="activeCurrency" />
+            {{ activeCurrency }}
           </div>
 
           <template #content>
@@ -43,7 +44,7 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'ModalWithdrawFromVault',
@@ -91,7 +92,7 @@ export default {
     maxAmount() {
       const amount = this.balancesByToken[this.activeCurrency];
       this.modalVaultAmount = this.$formatPrice(amount, true);
-    }
+    },
   },
 };
 </script>
