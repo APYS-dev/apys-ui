@@ -1,10 +1,10 @@
 {
-  "usdc.apyst.testnet": {
+  "usdc.box_sand.testnet": {
     "img":"/static/images/tokens/usdc.svg",
     "symbol": "USDC",
     "decimals": 6
   },
-  "usdt.apyst.testnet":{
+  "usdt.box_sand.testnet":{
     "img":"/static/images/tokens/usdt.svg",
     "symbol": "USDT",
     "decimals": 6

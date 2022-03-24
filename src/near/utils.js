@@ -13,7 +13,7 @@ export async function initContract() {
   window.accountId = window.walletConnection.getAccountId();
 
   window.contract = await new Contract(window.walletConnection.account(), nearConfig.contractName, {
-    viewMethods: ['get_whitelisted_tokens'],
+    viewMethods: ['get_whitelisted_tokens', 'get_user_actions'],
     changeMethods: ['start','withdraw'],
   });
 

@@ -20,7 +20,9 @@ export default {
   components: { TheHeader, TheFooter },
 
   async mounted() {
+    await this.loadVaults();
     await this.loadBalances();
+    await this.loadUserActions();
     this.isLoading = false;
   },
   data: () => ({
@@ -31,7 +33,7 @@ export default {
     isLoading: true,
   }),
   methods: {
-    ...mapActions(['loadBalances']),
+    ...mapActions(['loadVaults', 'loadBalances', 'loadUserActions']),
   },
 };
 </script>

@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
 import Vault from './Vault.vue';
 
 export default {
@@ -43,13 +43,10 @@ export default {
   },
 
   async mounted() {
-    await this.loadVaults();
     this.vaults = this.getVaults;
   },
 
-  methods: {
-    ...mapActions(['loadVaults']),
-  },
+  methods: {},
 };
 </script>
 

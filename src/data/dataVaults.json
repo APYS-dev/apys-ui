@@ -2,7 +2,7 @@
   "vaults": [
     {
       "name": "USDT-USDC-DAI",
-      "contractId": "stable-farm.apyst.testnet",
+      "contractId": "stable-farm.box_sand.testnet",
       "depositTokens": ["USDT", "USDC", "DAI"],
       "tvl": 23840,
       "apy": 43,

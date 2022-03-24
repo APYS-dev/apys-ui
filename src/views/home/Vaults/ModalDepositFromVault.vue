@@ -36,9 +36,9 @@
         </g-dropdown>
 
         <g-autonumeric v-model="modalVaultAmount" />
-        <button @click="maxAmount">Max</button>
+        <span @click="maxAmount">Max</span>
       </div>
-      <button class="btn-bg" @click="maxAmount">Deposit</button>
+      <button class="btn-bg" @click="deposit">Deposit</button>
     </template>
   </g-modal>
 </template>
