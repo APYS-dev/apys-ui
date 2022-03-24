@@ -1,4 +1,4 @@
-import vaults from '@/data/dataVaults.json';
+import axios from 'axios';
 import {toRaw} from "vue";
 
 export default {
@@ -18,9 +18,11 @@ export default {
 
   actions: {
     async loadVaults(context) {
-      const response = vaults;
-
-      context.commit('updateVaults', response.vaults);
+      const response = await axios.get('http://localhost:3060/info');
+      console.log(response.data);
+      if (response.data) {
+        context.commit('updateVaults', response.data.strategies);
+      }
     },
     async loadUserActions(context) {
       if (window.accountId) {

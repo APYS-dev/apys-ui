@@ -1,4 +1,4 @@
-import {connect, Contract, keyStores, WalletConnection} from 'near-api-js';
+import { connect, Contract, keyStores, WalletConnection } from 'near-api-js';
 import getConfig from './config';
 import tokenMeta from '@/data/tokenMeta.json';
 import Big from 'big.js';
@@ -6,7 +6,9 @@ import Big from 'big.js';
 const nearConfig = getConfig(process.env.NODE_ENV || 'development');
 
 export async function initContract() {
-  const near = await connect(Object.assign({deps: {keyStore: new keyStores.BrowserLocalStorageKeyStore()}}, nearConfig));
+  const near = await connect(
+    Object.assign({ deps: { keyStore: new keyStores.BrowserLocalStorageKeyStore() } }, nearConfig)
+  );
 
   window.walletConnection = new WalletConnection(near, null);
 
@@ -14,7 +16,7 @@ export async function initContract() {
 
   window.contract = await new Contract(window.walletConnection.account(), nearConfig.contractName, {
     viewMethods: ['get_whitelisted_tokens', 'get_user_actions'],
-    changeMethods: ['start','withdraw'],
+    changeMethods: ['start', 'withdraw'],
   });
 
   window.near = near;
@@ -29,7 +31,7 @@ export function login() {
   window.walletConnection.requestSignIn(nearConfig.contractName);
 }
 
-export function view({contractId, methodName, args = {}}) {
+export function view({ contractId, methodName, args = {} }) {
   const nearAPI = window.near;
 
   return nearAPI.connection.provider
@@ -40,7 +42,7 @@ export function view({contractId, methodName, args = {}}) {
       method_name: methodName,
       request_type: 'call_function',
     })
-    .then(({result}) => JSON.parse(Buffer.from(result).toString()));
+    .then(({ result }) => JSON.parse(Buffer.from(result).toString()));
 }
 
 export async function depositFt(ftContractId, amount) {

@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import {depositFt} from "@/near/utils";
+import { depositFt } from '@/near/utils';
 
 export default {
   name: 'ModalDepositFromBalance',

@@ -1,5 +1,5 @@
 import tokenMeta from '../../data/tokenMeta.json';
-import {fromUnits, view} from '@/near/utils';
+import { fromUnits, view } from '@/near/utils';
 
 export default {
   state: {
@@ -14,16 +14,18 @@ export default {
 
   actions: {
     async loadBalances(context) {
-      const tokens = await window.contract.get_whitelisted_tokens();
+      // const tokens = await window.contract.get_whitelisted_tokens();
+      const tokens = ['usdc.zeiris-sandbox.testnet', 'usdt.zeiris-sandbox.testnet'];
 
       let app_deposits = tokens.reduce((acc, next) => {
         acc[next] = '0';
         return acc;
       }, {});
 
-      if (window.accountId) { // todo: replace with global variable
+      if (window.accountId) {
+        // todo: replace with global variable
         app_deposits = await view({
-          args: {account_id: window.accountId},
+          args: { account_id: window.accountId },
           contractId: window.contract.contractId,
           methodName: 'get_deposits',
         });
@@ -38,7 +40,7 @@ export default {
         let wallet_balance = '0';
         if (window.accountId) {
           wallet_balance = await view({
-            args: {account_id: window.accountId},
+            args: { account_id: window.accountId },
             contractId: token,
             methodName: 'ft_balance_of',
           });

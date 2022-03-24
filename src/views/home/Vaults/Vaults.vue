@@ -13,13 +13,13 @@
     <main>
       <vault
         v-for="vault in vaults"
-        :key="vault.name"
-        :name="vault.name"
+        :key="vault.label"
+        :name="vault.label"
         :tvl="vault.tvl"
-        :apy="vault.apy"
+        :apr="vault.apr"
+        :dex="vault.dex"
         :contract-id="vault.contractId"
         :deposit-tokens="vault.depositTokens"
-        :logos-urls="vault.logosUrls"
       ></vault>
     </main>
   </div>

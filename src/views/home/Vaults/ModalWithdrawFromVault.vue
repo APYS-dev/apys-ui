@@ -13,21 +13,22 @@
     <template #content>
       <div class="modalBalanceAmount">You have {{ $formatPrice(1000, true) }}</div>
       <div class="modalBalanceInput">
-        <g-dropdown :ref="$id('currency')" position="bottom">
-          <div :key="$id('USDT')" class="btn btn-bg-light dropdown-icon">
-            <img src="/static/images/tokens/usdt.svg" :alt="currency" /> {{ activeCurrency }}
+        <g-dropdown :ref="$id('token')" position="bottom">
+          <div :key="$id(activeCurrency)" class="btn btn-bg-light dropdown-icon">
+            <img :src="`/static/images/tokens/${activeCurrency}.svg`" :alt="activeCurrency" />
+            {{ activeCurrency }}
           </div>
 
           <template #content>
             <ul class="list-dropbox">
-              <template v-for="currency in currencyList">
+              <template v-for="token in depositTokens">
                 <li
-                  v-if="currency !== activeCurrency"
-                  :key="$id(currency)"
-                  @click="setActiveCurrency(currency), $refs[$id('currency')].closeDropdown()"
+                  v-if="token !== activeCurrency"
+                  :key="$id(token)"
+                  @click="setActiveCurrency(token), $refs[$id('token')].closeDropdown()"
                 >
-                  <img src="/static/images/tokens/usdt.svg" :alt="currency" />
-                  <span>{{ currency }}</span>
+                  <img :src="`/static/images/tokens/${token}.svg`" :alt="token" />
+                  <span>{{ token }}</span>
                 </li>
               </template>
             </ul>
@@ -43,7 +44,7 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'ModalWithdrawFromVault',
@@ -58,10 +59,6 @@ export default {
       required: true,
       default: () => [],
     },
-    logosUrls: {
-      type: Array,
-      required: true,
-    },
     contractId: {
       type: [String],
       required: true,
@@ -70,12 +67,15 @@ export default {
 
   data: () => ({
     modalVaultAmount: 0,
-    currencyList: ['USDT', 'USDC', 'DAI'],
-    activeCurrency: 'USDT',
+    activeCurrency: '',
   }),
 
   computed: {
     ...mapGetters(['getBalances']),
+  },
+
+  mounted() {
+    this.activeCurrency = this.depositTokens[0];
   },
 
   methods: {
@@ -87,13 +87,12 @@ export default {
       if (currency) {
         this.activeCurrency = currency;
       }
-      return;
     },
 
     maxAmount() {
       const amount = this.balancesByToken[this.activeCurrency];
       this.modalVaultAmount = this.$formatPrice(amount, true);
-    }
+    },
   },
 };
 </script>

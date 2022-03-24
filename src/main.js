@@ -12,7 +12,7 @@ import gModal from '@/components/G-modal.vue';
 import gAutonumeric from '@/components/G-autonumeric.vue';
 
 import './assets/styles/main.scss';
-import {initContract} from "@/near/utils";
+import { initContract } from '@/near/utils';
 
 const app = createApp(App);
 

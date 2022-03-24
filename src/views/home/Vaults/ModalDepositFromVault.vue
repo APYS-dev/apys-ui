@@ -16,7 +16,8 @@
       <div class="modalBalanceInput">
         <g-dropdown :ref="$id('token')" position="bottom">
           <div :key="$id(activeCurrency)" class="btn btn-bg-light dropdown-icon">
-            <img :src="logoByToken[activeCurrency]" :alt="token" /> {{ activeCurrency }}
+            <img :src="`/static/images/tokens/${activeCurrency}.svg`" :alt="activeCurrency" />
+            {{ activeCurrency }}
           </div>
 
           <template #content>
@@ -27,7 +28,7 @@
                   :key="$id(token)"
                   @click="setActiveCurrency(token), $refs[$id('token')].closeDropdown()"
                 >
-                  <img :src="logoByToken[token]" :alt="token" />
+                  <img :src="`/static/images/tokens/${token}.svg`" :alt="token" />
                   <span>{{ token }}</span>
                 </li>
               </template>
@@ -44,8 +45,8 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
-import {startStrategy} from "@/near/utils";
+import { mapGetters } from 'vuex';
+import { startStrategy } from '@/near/utils';
 
 export default {
   name: 'ModalDepositFromVault',
@@ -60,10 +61,6 @@ export default {
       required: true,
       default: () => [],
     },
-    logosUrls: {
-      type: Array,
-      required: true,
-    },
     contractId: {
       type: [String],
       required: true,
@@ -73,7 +70,6 @@ export default {
   data: () => ({
     modalVaultAmount: 0,
     activeCurrency: '',
-    logoByToken: {},
     balancesByToken: {},
     tokenContractIdByToken: {},
   }),
@@ -84,11 +80,6 @@ export default {
 
   mounted() {
     this.activeCurrency = this.depositTokens[0];
-    const logoByToken = {};
-    for (let i = 0; i < this.depositTokens.length; i++) {
-      logoByToken[this.depositTokens[i]] = this.logosUrls[i];
-    }
-    this.logoByToken = logoByToken;
 
     this.balancesByToken = this.getBalances.reduce((acc, next) => {
       acc[next.name] = next.appBalance;
@@ -99,7 +90,6 @@ export default {
       acc[next.name] = next.token;
       return acc;
     }, {});
-    console.log('this.tokenContractIdByToken', this.tokenContractIdByToken);
   },
 
   methods: {
@@ -114,14 +104,15 @@ export default {
       if (currency) {
         this.activeCurrency = currency;
       }
-      return;
     },
     async deposit() {
       console.log('deposit to strategy');
       let amount = 0;
 
       // Check that amount in the input same as the max amount
-      const isPriceSame = this.$formatPrice(this.modalVaultAmount, true) === this.$formatPrice(this.balancesByToken[this.activeCurrency], true);
+      const isPriceSame =
+        this.$formatPrice(this.modalVaultAmount, true) ===
+        this.$formatPrice(this.balancesByToken[this.activeCurrency], true);
       if (isPriceSame) {
         amount = this.balancesByToken[this.activeCurrency];
       } else {
@@ -135,7 +126,7 @@ export default {
     maxAmount() {
       const amount = this.balancesByToken[this.activeCurrency];
       this.modalVaultAmount = this.$formatPrice(amount, true);
-    }
+    },
   },
 };
 </script>
