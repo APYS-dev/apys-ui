@@ -14,7 +14,7 @@
       <div class="modalBalanceAmount">You have {{ $formatPrice(amount, true) }} {{ name }}</div>
       <div class="modalBalanceInput">
         <g-autonumeric v-model="modalBalanceAmount" />
-        <span>Max</span>
+        <span @click="maxAmount">Max</span>
       </div>
       <button class="btn-bg" @click="deposit">Deposit</button>
     </template>
@@ -59,6 +59,9 @@ export default {
     },
     closeModal() {
       this.$vfm.hide(this.nameModal);
+    },
+    maxAmount() {
+      this.modalBalanceAmount = this.amount;
     },
   },
 };

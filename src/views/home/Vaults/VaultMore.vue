@@ -6,7 +6,7 @@
 
         <div class="vault-more__body">
           <div>
-            <div class="amount">{{ $root.isLogged ? $formatPrice(0, true) : '–' }}</div>
+            <div class="amount">{{ $root.isLogged ? $formatPrice(strategyAmount, true) : '–' }}</div>
             <div class="price">{{ $root.isLogged ? $formatPrice(0) : '–' }}</div>
           </div>
           <div class="currency">USDT</div>
@@ -26,11 +26,11 @@
       </div>
 
       <div class="vault-more__btns">
-        <template v-if="$root.isLogged">
+        <template v-if="$root.isLogged && !depositAction.amount">
           <button class="btn-bg" @click="showDepositFromVault">Desposit</button>
           <button class="btn-border" @click="showWithdrawFromVault">Withdraw</button>
         </template>
-        <button v-else class="btn-medium btn-bg">Connect wallet</button>
+        <button v-else-if="!$root.isLogged" class="btn-medium btn-bg">Connect wallet</button>
       </div>
     </div>
   </div>
@@ -71,8 +71,22 @@ export default {
       type: [String],
       required: true,
     },
+    depositAction: {
+      type: Object,
+      required: true,
+      default: () => {},
+    },
   },
 
+  data() {
+    return {
+      strategyAmount: '0',
+    };
+  },
+
+  mounted() {
+    this.strategyAmount = this.depositAction.amount;
+  },
   methods: {
     showDepositFromVault() {
       this.$vfm.show(this.$id('DepositFromVault'));

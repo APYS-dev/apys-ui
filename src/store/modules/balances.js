@@ -14,8 +14,7 @@ export default {
 
   actions: {
     async loadBalances(context) {
-      // const tokens = await window.contract.get_whitelisted_tokens();
-      const tokens = ['usdc.zeiris-sandbox.testnet', 'usdt.zeiris-sandbox.testnet'];
+      const tokens = await window.contract.get_whitelisted_tokens();
 
       let app_deposits = tokens.reduce((acc, next) => {
         acc[next] = '0';

@@ -65,6 +65,15 @@ export async function depositFt(ftContractId, amount) {
   });
 }
 
+export async function strategyGetDepositBalance(strategyContractId) {
+  const strategyContract = await new Contract(window.walletConnection.account(), strategyContractId, {
+    viewMethods: ['get_account_deposit_balance'],
+    changeMethods: [],
+  });
+
+  return strategyContract.get_account_deposit_balance({ account_id: window.accountId });
+}
+
 export async function withdrawFt(ftContractId, amount) {
   const meta = tokenMeta[ftContractId];
   return await window.contract.withdraw({
