@@ -45,11 +45,14 @@ export default {
     // Load all user actions
     await this.loadUserActions();
 
+    // Load user strategy state
+    await this.loadStrategyState();
+
     // Change state to loaded
     this.isLoading = false;
   },
   methods: {
-    ...mapActions(['loadBalances', 'initVaults', 'initTokens', 'loadUserActions']),
+    ...mapActions(['loadBalances', 'initVaults', 'initTokens', 'loadUserActions', 'loadStrategyState']),
   },
 };
 </script>

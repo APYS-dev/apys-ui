@@ -44,7 +44,8 @@
 
     <vault-more
         :deposit-tokens="depositTokens"
-        :deposit-action="userActions"
+        :deposit-action="depositAction"
+        :strategy-balance="strategyBalance"
         :contract-id="contractId" :show="show"></vault-more>
   </div>
 
@@ -126,7 +127,12 @@ export default {
       default: () => [],
     },
 
-    userActions: {
+    depositAction: {
+      type: Object,
+      required: false,
+      default: () => {},
+    },
+    strategyBalance: {
       type: Object,
       required: false,
       default: () => {},
@@ -139,6 +145,7 @@ export default {
 
   methods: {
     showCalcModal() {
+      console.log('strategyBalance', this.strategyBalance);
       this.$vfm.show(this.$id('calc'));
     },
 

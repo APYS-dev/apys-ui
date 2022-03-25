@@ -26,10 +26,10 @@
       </div>
 
       <div class="vault-more__btns">
-        <template v-if="depositAction.amount">
+        <template v-if="isInProcess">
           <div>processing...</div>
         </template>
-        <template v-if="$root.isLogged && !depositAction.amount">
+        <template v-if="$root.isLogged && !isInProcess">
           <button class="btn-bg" @click="showDepositFromVault">Desposit</button>
           <button class="btn-border" @click="showWithdrawFromVault">Withdraw</button>
         </template>
@@ -80,17 +80,29 @@ export default {
       required: false,
       default: () => {},
     },
+    strategyBalance: {
+      type: Object,
+      required: false,
+      default: () => {},
+    },
   },
 
   data() {
     return {
       strategyAmount: '0',
+      isInProcess: true,
       login: () => login(),
     };
   },
 
   mounted() {
-    this.strategyAmount = this.depositAction?.amount;
+    const deposited = this.depositAction?.amount || this.strategyBalance?.amount;
+    if (deposited) {
+      this.strategyAmount = deposited;
+      this.isInProcess = true;
+    } else {
+      this.isInProcess = false;
+    }
   },
 
   methods: {

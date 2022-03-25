@@ -20,7 +20,8 @@
         :dex="vault.dex"
         :contract-id="vault.contractId"
         :deposit-tokens="vault.depositTokens"
-        :user-actions="userActions[vault.contractId]"
+        :deposit-action="depositAction[vault.contractId]"
+        :strategy-balance="strategyBalances[vault.contractId]"
       ></vault>
     </main>
   </div>
@@ -37,16 +38,18 @@ export default {
 
   data: () => ({
     vaults: {},
-    userActions: {},
+    depositAction: {},
+    strategyBalances: {},
   }),
 
   computed: {
-    ...mapGetters(['getVaults', 'getUserActions']),
+    ...mapGetters(['getVaults', 'getDepositAction', 'getStrategyBalances']),
   },
 
   async mounted() {
     this.vaults = this.getVaults;
-    this.userActions = this.getUserActions;
+    this.depositAction = this.getDepositAction;
+    this.strategyBalances = this.getStrategyBalances;
   },
 
   methods: {},

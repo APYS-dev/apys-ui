@@ -1,10 +1,11 @@
 import {toRaw} from "vue";
-import {fromUnits} from "@/near/utils";
+import {fromUnits, strategyGetDepositBalance} from "@/near/utils";
 
 export default {
   state: {
     vaults: [],
-    userActions: {},
+    depositAction: {},
+    strategyBalances: {},
   },
 
   mutations: {
@@ -12,13 +13,37 @@ export default {
       state.vaults = vaults;
     },
     updateUserActions(state, actions) {
-      state.userActions = actions;
+      state.depositAction = actions;
+    },
+    updateStrategyBalances(state, actions) {
+      state.strategyBalances = actions;
     },
   },
 
   actions: {
     initVaults(context, vaults) {
       context.commit('updateVaults', vaults);
+    },
+    async loadStrategyState(context) {
+      const vaultsArr = toRaw(context.getters.getVaults);
+
+      const strategyBalances = {};
+      for (const strategy of vaultsArr) {
+        const strategyBalance = await strategyGetDepositBalance(strategy.contractId);
+        const { external, internal } = strategyBalance;
+        let strategyInternalBalance;
+        let usedTokenId;
+        for (const [tokenId, balance] of Object.entries({ ...external, ...internal })) {
+          const token = strategy.depositTokens.find(t => t.contractId === tokenId);
+          strategyInternalBalance = fromUnits(balance, token.decimals);
+          usedTokenId = tokenId;
+        }
+        strategyBalances[strategy.contractId] = {
+          token_id: usedTokenId,
+          amount: strategyInternalBalance,
+        };
+      }
+      context.commit('updateStrategyBalances', strategyBalances);
     },
     async loadUserActions(context) {
       if (window.accountId) {
@@ -38,7 +63,7 @@ export default {
           }
         }
 
-        const userActions = {};
+        const depositAction = {};
         const actionsRes = await Promise.all(getActionsPromises);
         // todo: replace this logic when we have one more strategy
         for (let i = 0; i < tokens.length; i++) {
@@ -47,7 +72,7 @@ export default {
 
           for (const action of actionsByToken) {
             if (action.account_id === window.accountId) {
-              userActions[action.strategy_id] = {
+              depositAction[action.strategy_id] = {
                 token_id: tokenId,
                 amount: fromUnits(action.amount, decimals),
               };
@@ -55,7 +80,7 @@ export default {
           }
         }
 
-        context.commit('updateUserActions', userActions);
+        context.commit('updateUserActions', depositAction);
       }
     },
   },
@@ -64,8 +89,11 @@ export default {
     getVaults(state) {
       return state.vaults;
     },
-    getUserActions(state) {
-      return state.userActions;
+    getDepositAction(state) {
+      return state.depositAction;
+    },
+    getStrategyBalances(state) {
+      return state.strategyBalances;
     },
   },
 };
