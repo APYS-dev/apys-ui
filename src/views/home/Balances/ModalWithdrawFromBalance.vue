@@ -7,11 +7,11 @@
     @close-modal="closeModal"
   >
     <template #header>
-      <h3>Withdraw {{ name }}</h3>
+      <h3>Withdraw {{ token.symbol }}</h3>
     </template>
 
     <template #content>
-      <div class="modalBalanceAmount">You have {{ $formatPrice(amount, true) }} {{ name }}</div>
+      <div class="modalBalanceAmount">You have {{ $formatPrice(amount, true) }} {{ token.symbol }}</div>
       <div class="modalBalanceInput">
         <g-autonumeric v-model="modalBalanceAmount" />
         <span>Max</span>
@@ -29,12 +29,7 @@ export default {
 
   props: {
     token: {
-      type: String,
-      required: true,
-    },
-
-    name: {
-      type: String,
+      type: Object,
       required: true,
     },
 

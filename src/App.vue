@@ -12,18 +12,12 @@ import TheHeader from '@/views/TheHeader.vue';
 import TheFooter from './views/TheFooter.vue';
 import { login, logout } from '@/near/utils';
 import { mapActions } from 'vuex';
+import axios from "axios";
 
 export default {
   name: 'App',
 
   components: { TheHeader, TheFooter },
-
-  async mounted() {
-    await this.loadVaults();
-    await this.loadBalances();
-    await this.loadUserActions();
-    this.isLoading = false;
-  },
   data: () => ({
     accountId: window.walletConnection.getAccountId(),
     isLogged: window.walletConnection.isSignedIn(),
@@ -31,8 +25,31 @@ export default {
     logout: () => logout(),
     isLoading: true,
   }),
+
+  async mounted() {
+    // Preload general info about tokens and strategies
+    const response = await axios.get('http://localhost:3060/info');
+    if (!response.data) {
+      throw "Can not preload initial data"
+    }
+
+    // Set vaults
+    this.initVaults(response.data.strategies);
+
+    // Set balance tokens
+    this.initTokens(response.data.tokens);
+
+    // Load balances
+    await this.loadBalances();
+
+    // Load all user actions
+    await this.loadUserActions();
+
+    // Change state to loaded
+    this.isLoading = false;
+  },
   methods: {
-    ...mapActions(['loadVaults', 'loadBalances', 'loadUserActions']),
+    ...mapActions(['loadBalances', 'initVaults', 'initTokens', 'loadUserActions']),
   },
 };
 </script>

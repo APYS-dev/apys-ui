@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {toRaw} from "vue";
 import {fromUnits} from "@/near/utils";
 
@@ -18,17 +17,8 @@ export default {
   },
 
   actions: {
-    async loadVaults(context) {
-      const response = await axios.get('http://localhost:3060/info');
-      response.data.strategies[0].depositTokens = [{
-        symbol: 'USDT',
-        contractId: 'usdt.box_sand.testnet',
-        decimals: 6,
-      }];
-      console.log(response.data);
-      if (response.data) {
-        context.commit('updateVaults', response.data.strategies);
-      }
+    initVaults(context, vaults) {
+      context.commit('updateVaults', vaults);
     },
     async loadUserActions(context) {
       if (window.accountId) {

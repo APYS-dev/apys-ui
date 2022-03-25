@@ -1,6 +1,5 @@
 import { connect, Contract, keyStores, WalletConnection } from 'near-api-js';
 import getConfig from './config';
-import tokenMeta from '@/data/tokenMeta.json';
 import Big from 'big.js';
 
 const nearConfig = getConfig(process.env.NODE_ENV || 'development');
@@ -45,20 +44,29 @@ export function view({ contractId, methodName, args = {} }) {
     .then(({ result }) => JSON.parse(Buffer.from(result).toString()));
 }
 
-export async function depositFt(ftContractId, amount) {
-  const ftContract = await new Contract(window.walletConnection.account(), ftContractId, {
+export async function depositFt(token, amount) {
+  const ftContract = await new Contract(window.walletConnection.account(), token.contractId, {
     viewMethods: [],
     changeMethods: ['ft_transfer_call'],
   });
-
-  const meta = tokenMeta[ftContractId];
 
   console.log('ftContract.ft_transfer_call1', ftContract.ft_transfer_call);
   return ftContract.ft_transfer_call({
     args: {
       receiver_id: nearConfig.contractName,
-      amount: toUnits(amount, meta.decimals),
+      amount: toUnits(amount, token.decimals),
       msg: '',
+    },
+    amount: 1,
+    gas: 300000000000000,
+  });
+}
+
+export async function withdrawFt(token, amount) {
+  return await window.contract.withdraw({
+    args: {
+      amount: toUnits(amount, token.decimals),
+      token_id: token.contractId,
     },
     amount: 1,
     gas: 300000000000000,
@@ -74,25 +82,12 @@ export async function strategyGetDepositBalance(strategyContractId) {
   return strategyContract.get_account_deposit_balance({ account_id: window.accountId });
 }
 
-export async function withdrawFt(ftContractId, amount) {
-  const meta = tokenMeta[ftContractId];
-  return await window.contract.withdraw({
-    args: {
-      amount: toUnits(amount, meta.decimals),
-      token_id: ftContractId,
-    },
-    amount: 1,
-    gas: 300000000000000,
-  });
-}
-
-export async function startStrategy(strategyId, ftContractId, amount) {
-  const meta = tokenMeta[ftContractId];
+export async function startStrategy(strategyId, token, amount) {
   return await window.contract.start({
     args: {
       strategy_id: strategyId,
-      balance: toUnits(amount, meta.decimals),
-      token_id: ftContractId,
+      balance: toUnits(amount, token.decimals),
+      token_id: token.contractId,
     },
     gas: 300000000000000,
   });

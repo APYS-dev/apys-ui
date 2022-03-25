@@ -13,8 +13,8 @@
     <main>
       <vault
         v-for="vault in vaults"
-        :key="vault.label"
-        :name="vault.label"
+        :key="vault.name"
+        :name="vault.name"
         :tvl="vault.tvl"
         :apr="vault.apr"
         :dex="vault.dex"

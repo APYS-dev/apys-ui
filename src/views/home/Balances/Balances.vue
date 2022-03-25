@@ -5,12 +5,10 @@
     <div class="balances__items">
       <balance
         v-for="balance in balances"
-        :key="balance.name"
-        :name="balance.name"
+        :key="balance.token"
         :token="balance.token"
         :wallet-balance="balance.walletBalance"
         :app-balance="balance.appBalance"
-        :logo-url="balance.logoUrl"
       ></balance>
     </div>
   </div>

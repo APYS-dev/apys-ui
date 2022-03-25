@@ -3,7 +3,7 @@
     <div class="vault" @click="show = !show">
       <div class="vault__name-wrap">
         <div class="vault__logo">
-          <img v-for="token in depositTokens" :key="token" :src="`/static/images/tokens/${token}.svg`" :alt="token" />
+          <img v-for="token in depositTokens" :key="token" :src="`/static/images/tokens/${token.symbol}.svg`" :alt="token.symbol" />
         </div>
 
         <div class="vault__name">
