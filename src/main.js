@@ -12,7 +12,6 @@ import gModal from '@/components/G-modal.vue';
 import gAutonumeric from '@/components/G-autonumeric.vue';
 
 import './assets/styles/main.scss';
-import { initContract } from '@/near/utils';
 
 const app = createApp(App);
 
@@ -34,6 +33,4 @@ app.component('GModal', gModal);
 app.component('GTooltip', gTooltip);
 app.component('GAutonumeric', gAutonumeric);
 
-initContract().then(() => {
-  app.mount('#app');
-});
+app.mount('#app');

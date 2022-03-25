@@ -25,6 +25,9 @@ export default {
       context.commit('updateVaults', vaults);
     },
     async loadStrategyState(context) {
+      if (!window.accountId) {
+        return;
+      }
       const vaultsArr = toRaw(context.getters.getVaults);
 
       const strategyBalances = {};

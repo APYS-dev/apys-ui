@@ -10,7 +10,7 @@
 <script>
 import TheHeader from '@/views/TheHeader.vue';
 import TheFooter from './views/TheFooter.vue';
-import { login, logout } from '@/near/utils';
+import {initContract, login, logout} from '@/near/utils';
 import { mapActions } from 'vuex';
 import axios from "axios";
 
@@ -19,8 +19,8 @@ export default {
 
   components: { TheHeader, TheFooter },
   data: () => ({
-    accountId: window.walletConnection.getAccountId(),
-    isLogged: window.walletConnection.isSignedIn(),
+    accountId: 'n/a',
+    isLogged: false,
     login: () => login(),
     logout: () => logout(),
     isLoading: true,
@@ -32,6 +32,14 @@ export default {
     if (!response.data) {
       throw "Can not preload initial data"
     }
+
+    const metadata = response.data.metadata;
+
+    const { accountId, walletConnection } = await initContract(metadata.apysContractId);
+    console.log('accountId', accountId);
+    this.accountId = accountId;
+    this.walletConnection = walletConnection;
+    this.isLogged = this.walletConnection.isSignedIn();
 
     // Set vaults
     this.initVaults(response.data.strategies);

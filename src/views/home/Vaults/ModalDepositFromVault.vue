@@ -79,9 +79,8 @@ export default {
 
   mounted() {
     this.activeCurrency = this.depositTokens[0];
-
     this.balancesByToken = this.getBalances.reduce((acc, next) => {
-      acc[next.name] = next.appBalance;
+      acc[next.token.symbol] = next.appBalance;
       return acc;
     }, {});
   },

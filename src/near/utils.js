@@ -4,7 +4,7 @@ import Big from 'big.js';
 
 const nearConfig = getConfig(process.env.NODE_ENV || 'development');
 
-export async function initContract() {
+export async function initContract(apysContractId) {
   const near = await connect(
     Object.assign({ deps: { keyStore: new keyStores.BrowserLocalStorageKeyStore() } }, nearConfig)
   );
@@ -13,12 +13,18 @@ export async function initContract() {
 
   window.accountId = window.walletConnection.getAccountId();
 
-  window.contract = await new Contract(window.walletConnection.account(), nearConfig.contractName, {
+  window.apysContractId = apysContractId;
+
+  window.contract = await new Contract(window.walletConnection.account(), apysContractId, {
     viewMethods: ['get_whitelisted_tokens', 'get_user_actions'],
     changeMethods: ['start', 'withdraw'],
   });
 
   window.near = near;
+  return {
+    walletConnection: window.walletConnection,
+    accountId: window.accountId,
+  };
 }
 
 export function logout() {
@@ -27,7 +33,7 @@ export function logout() {
 }
 
 export function login() {
-  window.walletConnection.requestSignIn(nearConfig.contractName);
+  window.walletConnection.requestSignIn();
 }
 
 export function view({ contractId, methodName, args = {} }) {
@@ -53,7 +59,7 @@ export async function depositFt(token, amount) {
   console.log('ftContract.ft_transfer_call1', ftContract.ft_transfer_call);
   return ftContract.ft_transfer_call({
     args: {
-      receiver_id: nearConfig.contractName,
+      receiver_id: window.apysContractId,
       amount: toUnits(amount, token.decimals),
       msg: '',
     },
