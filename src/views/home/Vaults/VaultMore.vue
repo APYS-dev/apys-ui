@@ -26,11 +26,14 @@
       </div>
 
       <div class="vault-more__btns">
+        <template v-if="depositAction.amount">
+          <div>processing...</div>
+        </template>
         <template v-if="$root.isLogged && !depositAction.amount">
           <button class="btn-bg" @click="showDepositFromVault">Desposit</button>
           <button class="btn-border" @click="showWithdrawFromVault">Withdraw</button>
         </template>
-        <button v-else-if="!$root.isLogged" class="btn-medium btn-bg">Connect wallet</button>
+        <button v-else-if="!$root.isLogged" @click="login" class="btn-medium btn-bg">Connect wallet</button>
       </div>
     </div>
   </div>
@@ -51,6 +54,7 @@
 <script>
 import ModalDepositFromVault from './ModalDepositFromVault.vue';
 import ModalWithdrawFromVault from './ModalWithdrawFromVault.vue';
+import {login} from "@/near/utils";
 
 export default {
   name: 'VaultMore',
@@ -73,7 +77,7 @@ export default {
     },
     depositAction: {
       type: Object,
-      required: true,
+      required: false,
       default: () => {},
     },
   },
@@ -81,12 +85,14 @@ export default {
   data() {
     return {
       strategyAmount: '0',
+      login: () => login(),
     };
   },
 
   mounted() {
-    this.strategyAmount = this.depositAction.amount;
+    this.strategyAmount = this.depositAction?.amount;
   },
+
   methods: {
     showDepositFromVault() {
       this.$vfm.show(this.$id('DepositFromVault'));

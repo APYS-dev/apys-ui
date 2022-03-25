@@ -42,7 +42,10 @@
       </div>
     </div>
 
-    <vault-more :deposit-tokens="depositTokens" :deposit-action="userActions" :contract-id="contractId" :show="show"></vault-more>
+    <vault-more
+        :deposit-tokens="depositTokens"
+        :deposit-action="userActions"
+        :contract-id="contractId" :show="show"></vault-more>
   </div>
 
   <g-modal
@@ -125,7 +128,7 @@ export default {
 
     userActions: {
       type: Object,
-      required: true,
+      required: false,
       default: () => {},
     },
   },

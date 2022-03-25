@@ -44,7 +44,7 @@ export default {
           });
         }
 
-        const appBalance = fromUnits(app_deposits[token.symbol] || 0, token.decimals);
+        const appBalance = fromUnits(app_deposits[token.contractId] || 0, token.decimals);
         const walletBalance = fromUnits(wallet_balance, token.decimals);
         console.log('--------');
         console.log('token', token.symbol);
