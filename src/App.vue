@@ -12,6 +12,7 @@ import TheHeader from '@/views/TheHeader.vue';
 import TheFooter from './views/TheFooter.vue';
 import { login, logout } from '@/near/utils';
 import { mapActions } from 'vuex';
+import axios from "axios";
 
 export default {
   name: 'App',
@@ -26,12 +27,26 @@ export default {
   }),
 
   async mounted() {
+    // Preload general info about tokens and strategies
+    const response = await axios.get('http://localhost:3060/info');
+    if (!response.data) {
+      throw "Can not preload initial data"
+    }
+
+    // Set vaults
+    this.initVaults(response.data.strategies);
+
+    // Set balance tokens
+    this.initTokens(response.data.tokens);
+
+    // Load balances
     await this.loadBalances();
-    await this.loadVaults();
+
+    // Change state to loaded
     this.isLoading = false;
   },
   methods: {
-    ...mapActions(['loadBalances', 'loadVaults']),
+    ...mapActions(['loadBalances', 'initVaults', 'initTokens']),
   },
 };
 </script>

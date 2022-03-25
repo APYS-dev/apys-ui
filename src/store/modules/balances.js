@@ -1,24 +1,27 @@
-import tokenMeta from '../../data/tokenMeta.json';
 import { fromUnits, view } from '@/near/utils';
 
 export default {
   state: {
+    tokens: [],
     balances: [],
   },
 
   mutations: {
+    updateTokens(state, tokens) {
+      state.tokens = tokens;
+    },
     updateBalances(state, balances) {
       state.balances = balances;
     },
   },
 
   actions: {
+    initTokens(context, tokens) {
+      context.commit('updateTokens', tokens);
+    },
     async loadBalances(context) {
-      // const tokens = await window.contract.get_whitelisted_tokens();
-      const tokens = ['usdc.zeiris-sandbox.testnet', 'usdt.zeiris-sandbox.testnet'];
-
-      let app_deposits = tokens.reduce((acc, next) => {
-        acc[next] = '0';
+      let app_deposits = context.state.tokens.reduce((acc, next) => {
+        acc[next.symbol] = '0';
         return acc;
       }, {});
 
@@ -31,34 +34,27 @@ export default {
         });
       }
 
-      const balances = tokens.map(async (token) => {
-        const meta = tokenMeta[token];
-        if (!meta) {
-          return null;
-        }
-
+      const balances = context.state.tokens.map(async (token) => {
         let wallet_balance = '0';
         if (window.accountId) {
           wallet_balance = await view({
             args: { account_id: window.accountId },
-            contractId: token,
+            contractId: token.contractId,
             methodName: 'ft_balance_of',
           });
         }
 
-        const appBalance = fromUnits(app_deposits[token] || 0, meta.decimals);
-        const walletBalance = fromUnits(wallet_balance, meta.decimals);
+        const appBalance = fromUnits(app_deposits[token.symbol] || 0, token.decimals);
+        const walletBalance = fromUnits(wallet_balance, token.decimals);
         console.log('--------');
-        console.log('token', token);
+        console.log('token', token.symbol);
         console.log('balance', walletBalance);
         console.log('appBalance', appBalance);
         console.log('--------');
         return {
-          token,
           appBalance,
           walletBalance,
-          name: meta.symbol,
-          logoUrl: meta.img,
+          token,
         };
       });
       const res = (await Promise.all(balances)).filter((el) => !!el);
@@ -67,6 +63,9 @@ export default {
   },
 
   getters: {
+    getTokens(state) {
+      return state.tokens;
+    },
     getBalances(state) {
       return state.balances;
     },

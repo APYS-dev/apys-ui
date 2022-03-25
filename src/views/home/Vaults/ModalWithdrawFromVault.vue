@@ -14,21 +14,21 @@
       <div class="modalBalanceAmount">You have {{ $formatPrice(1000, true) }}</div>
       <div class="modalBalanceInput">
         <g-dropdown :ref="$id('token')" position="bottom">
-          <div :key="$id(activeCurrency)" class="btn btn-bg-light dropdown-icon">
-            <img :src="`/static/images/tokens/${activeCurrency}.svg`" :alt="activeCurrency" />
-            {{ activeCurrency }}
+          <div :key="$id(activeCurrency.symbol)" class="btn btn-bg-light dropdown-icon">
+            <img :src="`/static/images/tokens/${activeCurrency.symbol}.svg`" :alt="activeCurrency.symbol" />
+            {{ activeCurrency.symbol }}
           </div>
 
           <template #content>
             <ul class="list-dropbox">
               <template v-for="token in depositTokens">
                 <li
-                  v-if="token !== activeCurrency"
-                  :key="$id(token)"
+                  v-if="token.symbol !== activeCurrency.symbol"
+                  :key="$id(token.symbol)"
                   @click="setActiveCurrency(token), $refs[$id('token')].closeDropdown()"
                 >
-                  <img :src="`/static/images/tokens/${token}.svg`" :alt="token" />
-                  <span>{{ token }}</span>
+                  <img :src="`/static/images/tokens/${token.symbol}.svg`" :alt="token.symbol" />
+                  <span>{{ token.symbol }}</span>
                 </li>
               </template>
             </ul>
@@ -90,7 +90,7 @@ export default {
     },
 
     maxAmount() {
-      const amount = this.balancesByToken[this.activeCurrency];
+      const amount = this.balancesByToken[this.activeCurrency.symbol];
       this.modalVaultAmount = this.$formatPrice(amount, true);
     },
   },

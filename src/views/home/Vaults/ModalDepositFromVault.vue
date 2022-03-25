@@ -12,24 +12,24 @@
     </template>
 
     <template #content>
-      <div class="modalBalanceAmount">You have {{ $formatPrice(balancesByToken[activeCurrency], true) }}</div>
+      <div class="modalBalanceAmount">You have {{ $formatPrice(balancesByToken[activeCurrency.symbol], true) }}</div>
       <div class="modalBalanceInput">
         <g-dropdown :ref="$id('token')" position="bottom">
-          <div :key="$id(activeCurrency)" class="btn btn-bg-light dropdown-icon">
-            <img :src="`/static/images/tokens/${activeCurrency}.svg`" :alt="activeCurrency" />
-            {{ activeCurrency }}
+          <div :key="$id(activeCurrency.symbol)" class="btn btn-bg-light dropdown-icon">
+            <img :src="`/static/images/tokens/${activeCurrency.symbol}.svg`" :alt="activeCurrency.symbol" />
+            {{ activeCurrency.symbol }}
           </div>
 
           <template #content>
             <ul class="list-dropbox">
               <template v-for="token in depositTokens">
                 <li
-                  v-if="token !== activeCurrency"
-                  :key="$id(token)"
+                  v-if="token.symbol !== activeCurrency.symbol"
+                  :key="$id(token.symbol)"
                   @click="setActiveCurrency(token), $refs[$id('token')].closeDropdown()"
                 >
-                  <img :src="`/static/images/tokens/${token}.svg`" :alt="token" />
-                  <span>{{ token }}</span>
+                  <img :src="`/static/images/tokens/${token.symbol}.svg`" :alt="token.symbol" />
+                  <span>{{ token.symbol }}</span>
                 </li>
               </template>
             </ul>
@@ -71,7 +71,6 @@ export default {
     modalVaultAmount: 0,
     activeCurrency: '',
     balancesByToken: {},
-    tokenContractIdByToken: {},
   }),
 
   computed: {
@@ -83,11 +82,6 @@ export default {
 
     this.balancesByToken = this.getBalances.reduce((acc, next) => {
       acc[next.name] = next.appBalance;
-      return acc;
-    }, {});
-
-    this.tokenContractIdByToken = this.getBalances.reduce((acc, next) => {
-      acc[next.name] = next.token;
       return acc;
     }, {});
   },
@@ -112,19 +106,19 @@ export default {
       // Check that amount in the input same as the max amount
       const isPriceSame =
         this.$formatPrice(this.modalVaultAmount, true) ===
-        this.$formatPrice(this.balancesByToken[this.activeCurrency], true);
+        this.$formatPrice(this.balancesByToken[this.activeCurrency.symbol], true);
       if (isPriceSame) {
-        amount = this.balancesByToken[this.activeCurrency];
+        amount = this.balancesByToken[this.activeCurrency.symbol];
       } else {
         amount = this.modalVaultAmount;
       }
 
       // Start strategy
-      await startStrategy(this.contractId, this.tokenContractIdByToken[this.activeCurrency], amount);
+      await startStrategy(this.contractId, this.activeCurrency, amount);
     },
 
     maxAmount() {
-      const amount = this.balancesByToken[this.activeCurrency];
+      const amount = this.balancesByToken[this.activeCurrency.symbol];
       this.modalVaultAmount = this.$formatPrice(amount, true);
     },
   },

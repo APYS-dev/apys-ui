@@ -1,10 +1,10 @@
 <template>
   <div class="balance">
-    <img :src="logoUrl" :alt="name" />
+    <img :src="`/static/images/tokens/${token.symbol}.svg`" :alt="token.symbol" />
 
     <div class="balance-amount">
       <p class="amount">{{ $root.isLogged ? $formatPrice(appBalance, true) : '–' }}</p>
-      <p class="name">{{ $root.isLogged ? name : '–' }}</p>
+      <p class="name">{{ $root.isLogged ? token.symbol : '–' }}</p>
     </div>
 
     <div class="balance-buttons">
@@ -15,14 +15,12 @@
 
   <modal-withdraw-from-balance
     :name-modal="$id('withdrawFromBalance')"
-    :name="name"
     :token="token"
     :amount="appBalance"
   ></modal-withdraw-from-balance>
 
   <modal-deposit-from-balance
     :name-modal="$id('depositFromBalance')"
-    :name="name"
     :token="token"
     :amount="walletBalance"
   ></modal-deposit-from-balance>
@@ -39,14 +37,10 @@ export default {
 
   props: {
     token: {
-      type: String,
+      type: Object,
       required: true,
     },
 
-    name: {
-      type: String,
-      required: true,
-    },
 
     walletBalance: {
       type: [String],
@@ -56,11 +50,6 @@ export default {
     appBalance: {
       type: [String],
       default: '–',
-    },
-
-    logoUrl: {
-      type: String,
-      default: '/static/images/tokens/usdc.svg',
     },
   },
 
