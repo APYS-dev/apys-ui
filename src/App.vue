@@ -10,9 +10,9 @@
 <script>
 import TheHeader from '@/views/TheHeader.vue';
 import TheFooter from './views/TheFooter.vue';
-import {initContract, login, logout} from '@/near/utils';
+import { initContract, login, logout } from '@/near/utils';
 import { mapActions } from 'vuex';
-import axios from "axios";
+import axios from 'axios';
 
 export default {
   name: 'App',
@@ -30,7 +30,7 @@ export default {
     // Preload general info about tokens and strategies
     const response = await axios.get('http://localhost:3060/info');
     if (!response.data) {
-      throw "Can not preload initial data"
+      throw 'Can not preload initial data';
     }
 
     const metadata = response.data.metadata;
@@ -50,6 +50,10 @@ export default {
     // Load balances
     await this.loadBalances();
 
+    // Load user shares
+    const vaultsContractsIds = response.data.strategies.map((it) => it.contractId);
+    await this.loadShares(vaultsContractsIds);
+
     // Load all user actions
     await this.loadUserActions();
 
@@ -60,7 +64,7 @@ export default {
     this.isLoading = false;
   },
   methods: {
-    ...mapActions(['loadBalances', 'initVaults', 'initTokens', 'loadUserActions', 'loadStrategyState']),
+    ...mapActions(['loadBalances', 'initVaults', 'initTokens', 'loadUserActions', 'loadStrategyState', 'loadShares']),
   },
 };
 </script>

@@ -3,7 +3,12 @@
     <div class="vault" @click="show = !show">
       <div class="vault__name-wrap">
         <div class="vault__logo">
-          <img v-for="token in depositTokens" :key="token" :src="`/static/images/tokens/${token.symbol}.svg`" :alt="token.symbol" />
+          <img
+            v-for="token in depositTokens"
+            :key="token"
+            :alt="token.symbol"
+            :src="`/static/images/tokens/${token.symbol}.svg`"
+          />
         </div>
 
         <div class="vault__name">
@@ -32,28 +37,31 @@
         <div class="amount">
           {{ $formatAndCalculateApy(apr) }}
           <button class="calculator" @click.stop="showCalcModal">
-            <img src="@/assets/img/calculator.png" alt="Calc" />
+            <img alt="Calc" src="@/assets/img/calculator.png" />
           </button>
         </div>
       </div>
 
       <div :class="{ active: show }" class="vault__arrow">
-        <img src="@/assets/img/arrow-down.png" alt="↓" />
+        <img alt="↓" src="@/assets/img/arrow-down.png" />
       </div>
     </div>
 
     <vault-more
-        :deposit-tokens="depositTokens"
-        :deposit-action="depositAction"
-        :strategy-balance="strategyBalance"
-        :contract-id="contractId" :show="show"></vault-more>
+      :contract-id="contractId"
+      :deposit-action="depositAction"
+      :deposit-tokens="depositTokens"
+      :one-share-cost="osc"
+      :show="show"
+      :strategy-balance="strategyBalance"
+    ></vault-more>
   </div>
 
   <g-modal
-    :name="$id('vault-info')"
     :click-to-close="true"
     :is-show-close-button="true"
     :max-width="580"
+    :name="$id('vault-info')"
     @close-modal="closeVaultModal"
   >
     <template #header>
@@ -66,10 +74,10 @@
   </g-modal>
 
   <g-modal
-    :name="$id('apy-info')"
     :click-to-close="true"
     :is-show-close-button="true"
     :max-width="580"
+    :name="$id('apy-info')"
     @close-modal="closeApyModal"
   >
     <template #header>
@@ -81,7 +89,7 @@
     </template>
   </g-modal>
 
-  <modal-calc :name="$id('calc')" :apr="apr"></modal-calc>
+  <modal-calc :apr="apr" :name="$id('calc')"></modal-calc>
 </template>
 
 <script>
@@ -114,6 +122,11 @@ export default {
       type: [Number, String],
       required: true,
       default: 'n/a',
+    },
+
+    osc: {
+      type: Number,
+      required: true,
     },
 
     contractId: {
@@ -169,7 +182,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .vault-wrap {
   overflow: hidden;
   box-shadow: 0px -4px 50px rgba(47, 91, 96, 0.08);

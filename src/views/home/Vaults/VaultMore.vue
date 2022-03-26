@@ -1,15 +1,11 @@
 <template>
-  <div class="vault-more-wrap" :class="{ active: show }">
+  <div :class="{ active: show }" class="vault-more-wrap">
     <div class="vault-more">
       <div>
         <h3 class="vault-more__header">Deposited</h3>
 
         <div class="vault-more__body">
-          <div>
-            <div class="amount">{{ $root.isLogged ? $formatPrice(strategyAmount, true) : '–' }}</div>
-            <div class="price">{{ $root.isLogged ? $formatPrice(0) : '–' }}</div>
-          </div>
-          <div class="currency">USDT</div>
+          <div class="amount">{{ $root.isLogged ? $formatPrice(strategyAmount) : '–' }}</div>
         </div>
       </div>
 
@@ -17,11 +13,7 @@
         <h3 class="vault-more__header">Rewards</h3>
 
         <div class="vault-more__body">
-          <div>
-            <div class="amount">{{ $root.isLogged ? $formatPrice(0, true) : '–' }}</div>
-            <div class="price">{{ $root.isLogged ? $formatPrice(0) : '–' }}</div>
-          </div>
-          <div class="currency">USDT</div>
+          <div class="amount">{{ $root.isLogged ? getRewards() : '–' }}</div>
         </div>
       </div>
 
@@ -33,28 +25,30 @@
           <button class="btn-bg" @click="showDepositFromVault">Desposit</button>
           <button class="btn-border" @click="showWithdrawFromVault">Withdraw</button>
         </template>
-        <button v-else-if="!$root.isLogged" @click="login" class="btn-medium btn-bg">Connect wallet</button>
+        <button v-else-if="!$root.isLogged" class="btn-medium btn-bg" @click="login">Connect wallet</button>
       </div>
     </div>
   </div>
 
   <modal-deposit-from-vault
+    :contract-id="contractId"
     :deposit-tokens="depositTokens"
     :name-modal="$id('DepositFromVault')"
-    :contract-id="contractId"
   ></modal-deposit-from-vault>
 
   <modal-withdraw-from-vault
+    :contract-id="contractId"
     :deposit-tokens="depositTokens"
     :name-modal="$id('WithdrawFromVault')"
-    :contract-id="contractId"
   ></modal-withdraw-from-vault>
 </template>
 
 <script>
 import ModalDepositFromVault from './ModalDepositFromVault.vue';
 import ModalWithdrawFromVault from './ModalWithdrawFromVault.vue';
-import {login} from "@/near/utils";
+import { login } from '@/near/utils';
+import { mapGetters } from 'vuex';
+import Big from 'big.js';
 
 export default {
   name: 'VaultMore',
@@ -85,6 +79,10 @@ export default {
       required: false,
       default: () => {},
     },
+    oneShareCost: {
+      type: Number,
+      required: true,
+    },
   },
 
   data() {
@@ -93,6 +91,10 @@ export default {
       isInProcess: true,
       login: () => login(),
     };
+  },
+
+  computed: {
+    ...mapGetters(['getShares']),
   },
 
   mounted() {
@@ -121,12 +123,19 @@ export default {
     closeWithdrawFromVault() {
       this.$vfm.hide(this.$id('WithdrawFromVault'));
     },
+
+    getRewards() {
+      const shares = this.getShares[this.contractId];
+      const reward_shares = Big(shares.reward_shares).div(new Big(10).pow(18));
+      const reward_cost = reward_shares.mul(this.oneShareCost).toFixed(2);
+      return this.$formatPrice(reward_cost);
+    },
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .vault-more-wrap {
   overflow: hidden;
   max-height: 0;

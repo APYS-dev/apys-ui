@@ -4,6 +4,10 @@ export default {
   state: {
     tokens: [],
     balances: [],
+    shares: {
+      staked_shares: '0',
+      reward_shares: '0',
+    },
   },
 
   mutations: {
@@ -12,6 +16,9 @@ export default {
     },
     updateBalances(state, balances) {
       state.balances = balances;
+    },
+    updateShares(state, shares) {
+      state.shares = shares;
     },
   },
 
@@ -60,6 +67,28 @@ export default {
       const res = (await Promise.all(balances)).filter((el) => !!el);
       context.commit('updateBalances', res);
     },
+    async loadShares(context, vaultsContractsIds) {
+      // Get shares from contract
+      if (window.accountId) {
+        const fetchedShares = await Promise.all(
+          vaultsContractsIds.map((contractId) =>
+            view({
+              args: { account_id: window.accountId },
+              contractId,
+              methodName: 'get_account_shares',
+            })
+          )
+        );
+
+        const shares = {};
+        fetchedShares.forEach((contractShares, index) => {
+          shares[vaultsContractsIds[index]] = contractShares;
+        });
+
+        // Update shares in state
+        context.commit('updateShares', shares);
+      }
+    },
   },
 
   getters: {
@@ -68,6 +97,9 @@ export default {
     },
     getBalances(state) {
       return state.balances;
+    },
+    getShares(state) {
+      return state.shares;
     },
   },
 };
