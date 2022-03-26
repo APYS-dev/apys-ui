@@ -1,37 +1,38 @@
 <template>
   <div class="total-tvl">
-    <img src="@/assets/img/totalTvl.png" alt="tvl" />
+    <img alt="tvl" src="@/assets/img/totalTvl.png" />
     <span class="total-tvl__text">Total TVL</span>
-    <span class="total-tvl__count">{{ $formatPrice(tvl) }}</span>
+    <span class="total-tvl__count">{{ $formatPrice(totalTvl) }}</span>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'TotalTvl',
   data: () => ({
-    tvl: 'n/a',
+    totalTvl: 'n/a',
   }),
 
   computed: {
-    ...mapGetters(['getTotalTVL']),
+    ...mapGetters(['getVaults']),
   },
 
   mounted() {
-    this.loadTotalTVL();
-    this.tvl = this.getTotalTVL;
+    // Calculate total TVL
+    const totalTvl = this.getVaults.map((vault) => vault.tvl).reduce((a, b) => a + b, 0);
+    if (totalTvl > 0) {
+      this.totalTvl = totalTvl.toFixed(2);
+    }
   },
 
-  methods: {
-    ...mapActions(['loadTotalTVL']),
-  },
+  methods: {},
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .total-tvl {
   margin-bottom: 12px;
   padding: 16px 20px;
