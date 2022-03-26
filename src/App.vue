@@ -54,6 +54,9 @@ export default {
     const vaultsContractsIds = response.data.strategies.map((it) => it.contractId);
     await this.loadShares(vaultsContractsIds);
 
+    // Load vaults strategies
+    await this.loadVaultsBalances(response.data.strategies);
+
     // Load all user actions
     await this.loadUserActions();
 
@@ -64,7 +67,15 @@ export default {
     this.isLoading = false;
   },
   methods: {
-    ...mapActions(['loadBalances', 'initVaults', 'initTokens', 'loadUserActions', 'loadStrategyState', 'loadShares']),
+    ...mapActions([
+      'loadBalances',
+      'initVaults',
+      'initTokens',
+      'loadUserActions',
+      'loadStrategyState',
+      'loadShares',
+      'loadVaultsBalances',
+    ]),
   },
 };
 </script>

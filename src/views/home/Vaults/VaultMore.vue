@@ -5,7 +5,7 @@
         <h3 class="vault-more__header">Deposited</h3>
 
         <div class="vault-more__body">
-          <div class="amount">{{ $root.isLogged ? $formatPrice(strategyAmount) : '–' }}</div>
+          <div class="amount">{{ $root.isLogged ? getDeposit() : '–' }}</div>
         </div>
       </div>
 
@@ -94,7 +94,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getShares']),
+    ...mapGetters(['getShares', 'getVaultsBalances']),
   },
 
   mounted() {
@@ -122,6 +122,30 @@ export default {
 
     closeWithdrawFromVault() {
       this.$vfm.hide(this.$id('WithdrawFromVault'));
+    },
+
+    getDeposit() {
+      // Get vault balance
+      const balance = this.getVaultsBalances[this.contractId];
+
+      // Get contract shares balance
+      const contractShares = this.getShares[this.contractId];
+
+      console.log('balance', balance, 'contractShares', contractShares);
+
+      // Get and format shares balances
+      const shares = Big(contractShares.shares).div(new Big(10).pow(18));
+      const staked_shares = Big(contractShares.staked_shares).div(new Big(10).pow(18));
+      const withdraw_shares = Big(contractShares.withdraw_shares).div(new Big(10).pow(18));
+
+      // Summarize shares and calculate cost
+      const sharesCost = shares.plus(staked_shares).plus(withdraw_shares).mul(this.oneShareCost).toNumber();
+
+      // Calculate total balance
+      const totalBalance = (balance + sharesCost).toFixed(2);
+
+      // Format and return total balance
+      return this.$formatPrice(totalBalance);
     },
 
     getRewards() {
