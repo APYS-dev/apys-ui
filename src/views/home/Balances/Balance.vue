@@ -1,6 +1,6 @@
 <template>
   <div class="balance">
-    <img :src="`/static/images/tokens/${token.symbol}.svg`" :alt="token.symbol" />
+    <img :alt="token.symbol" :src="`/static/images/tokens/${token.symbol}.svg`" />
 
     <div class="balance-amount">
       <p class="amount">{{ $root.isLogged ? $formatPrice(appBalance, true) : '–' }}</p>
@@ -14,15 +14,15 @@
   </div>
 
   <modal-withdraw-from-balance
+    :amount="appBalance"
     :name-modal="$id('withdrawFromBalance')"
     :token="token"
-    :amount="appBalance"
   ></modal-withdraw-from-balance>
 
   <modal-deposit-from-balance
+    :amount="walletBalance"
     :name-modal="$id('depositFromBalance')"
     :token="token"
-    :amount="walletBalance"
   ></modal-deposit-from-balance>
 </template>
 
@@ -40,7 +40,6 @@ export default {
       type: Object,
       required: true,
     },
-
 
     walletBalance: {
       type: [String],
@@ -66,7 +65,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .balance {
   margin-bottom: 12px;
   padding-bottom: 16px;
@@ -90,6 +89,7 @@ export default {
 
   &-amount {
     text-align: center;
+    min-width: 36px;
 
     .amount {
       font-size: 14px;
