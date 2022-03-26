@@ -4,24 +4,24 @@
       <h2>Vaults</h2>
 
       <div class="vaults__tabs">
-        <button class="active">Live</button>
-        <button>Upcoming</button>
-        <button>Finished</button>
+        <button :class="selectedTab === 'live' ? 'active' : ''" @click="changeTab('live')">Live</button>
+        <button :class="selectedTab === 'upcoming' ? 'active' : ''" @click="changeTab('upcoming')">Upcoming</button>
+        <button :class="selectedTab === 'finished' ? 'active' : ''" @click="changeTab('finished')">Finished</button>
       </div>
     </header>
 
     <main>
       <vault
-        v-for="vault in vaults"
+        v-for="vault in vaults[selectedTab]"
         :key="vault.name"
-        :name="vault.name"
-        :tvl="vault.tvl"
         :apr="vault.apr"
-        :dex="vault.dex"
         :contract-id="vault.contractId"
-        :deposit-tokens="vault.depositTokens"
         :deposit-action="depositAction[vault.contractId]"
+        :deposit-tokens="vault.depositTokens"
+        :dex="vault.dex"
+        :name="vault.name"
         :strategy-balance="strategyBalances[vault.contractId]"
+        :tvl="vault.tvl"
       ></vault>
     </main>
   </div>
@@ -40,6 +40,7 @@ export default {
     vaults: {},
     depositAction: {},
     strategyBalances: {},
+    selectedTab: 'live',
   }),
 
   computed: {
@@ -47,17 +48,30 @@ export default {
   },
 
   async mounted() {
-    this.vaults = this.getVaults;
     this.depositAction = this.getDepositAction;
     this.strategyBalances = this.getStrategyBalances;
+
+    // Sort vaults by status
+    this.vaults = {
+      'live': this.getVaults.filter((it) => it.status === 'live'),
+      'upcoming': this.getVaults.filter((it) => it.status === 'upcoming'),
+      'finished': this.getVaults.filter((it) => it.status === 'finished'),
+    };
   },
 
-  methods: {},
+  methods: {
+    changeTab(selectedTab) {
+      console.log(selectedTab);
+      if (selectedTab !== this.selectedTab) {
+        this.selectedTab = selectedTab;
+      }
+    },
+  },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .vaults {
   header {
     margin-bottom: 12px;
