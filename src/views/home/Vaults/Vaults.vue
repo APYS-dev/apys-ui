@@ -20,7 +20,6 @@
         :deposit-tokens="vault.depositTokens"
         :dex="vault.dex"
         :name="vault.name"
-        :osc="vault.osc"
         :strategy-balance="strategyBalances[vault.contractId]"
         :tvl="vault.tvl"
       ></vault>

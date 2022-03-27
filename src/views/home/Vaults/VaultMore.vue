@@ -48,7 +48,6 @@ import ModalDepositFromVault from './ModalDepositFromVault.vue';
 import ModalWithdrawFromVault from './ModalWithdrawFromVault.vue';
 import { login } from '@/near/utils';
 import { mapGetters } from 'vuex';
-import Big from 'big.js';
 
 export default {
   name: 'VaultMore',
@@ -78,10 +77,6 @@ export default {
       type: Object,
       required: false,
       default: () => {},
-    },
-    oneShareCost: {
-      type: Number,
-      required: true,
     },
   },
 
@@ -125,34 +120,20 @@ export default {
     },
 
     getDeposit() {
-      // Get vault balance
-      const balance = this.getVaultsBalances[this.contractId];
+      // Get vault deposit amount
+      const amount = this.getVaultsBalances[this.contractId].deposit;
+      console.log('getVaultsBalances', this.getVaultsBalances[this.contractId]);
 
-      // Get contract shares balance
-      const contractShares = this.getShares[this.contractId];
-
-      console.log('balance', balance, 'contractShares', contractShares);
-
-      // Get and format shares balances
-      const shares = Big(contractShares.shares).div(new Big(10).pow(18));
-      const staked_shares = Big(contractShares.staked_shares).div(new Big(10).pow(18));
-      const withdraw_shares = Big(contractShares.withdraw_shares).div(new Big(10).pow(18));
-
-      // Summarize shares and calculate cost
-      const sharesCost = shares.plus(staked_shares).plus(withdraw_shares).mul(this.oneShareCost).toNumber();
-
-      // Calculate total balance
-      const totalBalance = (balance + sharesCost).toFixed(2);
-
-      // Format and return total balance
-      return this.$formatPrice(totalBalance);
+      // Format and return deposit amount
+      return this.$formatPrice(amount);
     },
 
     getRewards() {
-      const shares = this.getShares[this.contractId];
-      const reward_shares = Big(shares.reward_shares).div(new Big(10).pow(18));
-      const reward_cost = reward_shares.mul(this.oneShareCost).toFixed(2);
-      return this.$formatPrice(reward_cost);
+      // Get vault rewards amount
+      const amount = this.getVaultsBalances[this.contractId].rewards;
+
+      // Format and return rewards amount
+      return this.$formatPrice(amount);
     },
   },
 };

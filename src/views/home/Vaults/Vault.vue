@@ -51,7 +51,6 @@
       :contract-id="contractId"
       :deposit-action="depositAction"
       :deposit-tokens="depositTokens"
-      :one-share-cost="osc"
       :show="show"
       :strategy-balance="strategyBalance"
     ></vault-more>
@@ -122,11 +121,6 @@ export default {
       type: [Number, String],
       required: true,
       default: 'n/a',
-    },
-
-    osc: {
-      type: Number,
-      required: true,
     },
 
     contractId: {

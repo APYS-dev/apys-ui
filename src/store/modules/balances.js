@@ -1,6 +1,5 @@
 import { fromUnits, view } from '@/near/utils';
 import Big from 'big.js';
-import { toPrecision } from '@/utils/math';
 
 export default {
   state: {
@@ -98,42 +97,35 @@ export default {
       // Get shares from contract
       if (window.accountId) {
         const fetchedBalances = await Promise.all(
-          strategies.map(async ({ contractId, depositTokens }) => {
-            const depositBalance = await view({
+          strategies.map(async ({ contractId, depositTokens, osc }) => {
+            const totalBalances = await view({
               args: { account_id: window.accountId },
               contractId,
-              methodName: 'get_account_deposit_balance',
+              methodName: 'get_total_account_balances',
             });
-            const withdrawBalance = await view({
-              args: { account_id: window.accountId },
-              contractId,
-              methodName: 'get_account_withdraw_balance',
-            });
-
-            // Find bigger decimal from tokens
-            const biggerDecimal = Math.max(...depositTokens.map((it) => it.decimals));
 
             // Summarize balances for each token
-            return depositTokens
-              .map(({ contractId, decimals }) => {
-                // Deposit balances
-                const depositInternal = Big(depositBalance.internal[contractId] ?? 0);
-                const depositExternal = Big(depositBalance.external[contractId] ?? 0);
+            const totalBalancesCost = depositTokens
+              .map(({ contractId, decimals, price }) => {
+                const amount = Big(totalBalances.amounts[contractId] ?? 0);
 
-                // Withdraw balances
-                const withdrawInternal = Big(withdrawBalance.internal[contractId] ?? 0);
-                const withdrawExternal = Big(withdrawBalance.external[contractId] ?? 0);
-
-                // Calculate total balance
-                const totalBalance = depositInternal
-                  .plus(depositExternal)
-                  .plus(withdrawInternal)
-                  .plus(withdrawExternal);
-
-                // Format by bigger decimals and return balance
-                return toPrecision(totalBalance.div(new Big(10).pow(decimals)), decimals, biggerDecimal).toNumber();
+                // Format and return balance
+                return amount.div(Big(10).pow(decimals)).mul(price).toNumber();
               })
               .reduce((a, b) => a + b, 0);
+
+            // Calculate shares cost
+            const totalSharesCost = Big(totalBalances.shares).div(Big(10).pow(18)).mul(osc).toNumber();
+
+            console.log(totalBalancesCost, totalSharesCost);
+
+            // Calculate deposit amount
+            const deposit = (totalBalancesCost + totalSharesCost).toFixed(2);
+
+            // Calculate rewards amount
+            const rewards = Big(totalBalances.reward_shares).div(Big(10).pow(18)).mul(osc).toFixed(2);
+
+            return { deposit, rewards };
           })
         );
 
