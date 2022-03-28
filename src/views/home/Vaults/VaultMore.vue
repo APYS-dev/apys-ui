@@ -5,7 +5,7 @@
         <h3 class="vault-more__header">Deposited</h3>
 
         <div class="vault-more__body">
-          <div class="amount">{{ $root.isLogged ? getDeposit() : '–' }}</div>
+          <div class="amount">{{ $root.isLogged ? $formatPrice(getDeposit()) : '–' }}</div>
         </div>
       </div>
 
@@ -13,17 +13,19 @@
         <h3 class="vault-more__header">Rewards</h3>
 
         <div class="vault-more__body">
-          <div class="amount">{{ $root.isLogged ? getRewards() : '–' }}</div>
+          <div class="amount">{{ $root.isLogged ? $formatPrice(getRewards()) : '–' }}</div>
         </div>
       </div>
 
       <div class="vault-more__btns">
         <template v-if="isInProcess">
-          <div>processing...</div>
+          <button class="btn-border-progress">Processing...</button>
         </template>
         <template v-if="$root.isLogged && !isInProcess">
           <button class="btn-bg" @click="showDepositFromVault">Desposit</button>
-          <button class="btn-border" @click="showWithdrawFromVault">Withdraw</button>
+          <button :disabled="getDeposit() + getRewards() === 0" class="btn-border" @click="showWithdrawFromVault">
+            Withdraw
+          </button>
         </template>
         <button v-else-if="!$root.isLogged" class="btn-medium btn-bg" @click="login">Connect wallet</button>
       </div>
@@ -120,20 +122,13 @@ export default {
     },
 
     getDeposit() {
-      // Get vault deposit amount
-      const amount = this.getVaultsBalances[this.contractId].deposit;
-      console.log('getVaultsBalances', this.getVaultsBalances[this.contractId]);
-
-      // Format and return deposit amount
-      return this.$formatPrice(amount);
+      // Get and return vault deposit amount
+      return this.getVaultsBalances[this.contractId].deposit;
     },
 
     getRewards() {
-      // Get vault rewards amount
-      const amount = this.getVaultsBalances[this.contractId].rewards;
-
-      // Format and return rewards amount
-      return this.$formatPrice(amount);
+      // Get and return vault rewards amount
+      return this.getVaultsBalances[this.contractId].rewards;
     },
   },
 };

@@ -81,4 +81,11 @@
       background-color: rgba($color-main, 3%);
     }
   }
+
+  &-border-progress {
+    @extend .btn;
+    background-color: transparent;
+    color: #EAC43E;
+    border: 1px solid #EAC43E;
+  }
 }
