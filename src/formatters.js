@@ -86,11 +86,14 @@ export default {
     };
 
     app.config.globalProperties.$formatAndCalculateApy = (apr, period = 365, defaultValue = 'n/a') => {
-      if (apr === null || apr === undefined || isNaN(apr) || apr === '') {
+      if (apr === null || apr === undefined || apr === '') {
         return defaultValue;
       }
 
-      const apy = new Big(1).add(apr).div(100).div(period).pow(period).minus(1)
+      const apy = new Big(apr).div(100).div(period).add(1)
+        .pow(period)
+        .minus(1)
+        .mul(100);
 
       return `${apy.toFixed(2)}%`;
     };
