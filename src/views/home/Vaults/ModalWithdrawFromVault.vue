@@ -1,9 +1,9 @@
 <template>
   <g-modal
-    :name="nameModal"
     :click-to-close="true"
     :is-show-close-button="true"
     :min-width="467"
+    :name="nameModal"
     @close-modal="closeModal"
   >
     <template #header>
@@ -15,7 +15,7 @@
       <div class="modalBalanceInput">
         <g-dropdown :ref="$id('token')" position="bottom">
           <div :key="$id(activeCurrency.symbol)" class="btn btn-bg-light dropdown-icon">
-            <img :src="`/static/images/tokens/${activeCurrency.symbol}.svg`" :alt="activeCurrency.symbol" />
+            <img :alt="activeCurrency.symbol" :src="`/static/images/tokens/${activeCurrency.symbol}.svg`" />
             {{ activeCurrency.symbol }}
           </div>
 
@@ -27,7 +27,7 @@
                   :key="$id(token.symbol)"
                   @click="setActiveCurrency(token), $refs[$id('token')].closeDropdown()"
                 >
-                  <img :src="`/static/images/tokens/${token.symbol}.svg`" :alt="token.symbol" />
+                  <img :alt="token.symbol" :src="`/static/images/tokens/${token.symbol}.svg`" />
                   <span>{{ token.symbol }}</span>
                 </li>
               </template>
@@ -38,7 +38,7 @@
         <g-autonumeric v-model="modalVaultAmount" />
         <button @click="maxAmount">Max</button>
       </div>
-      <button class="btn-bg">Withdraw</button>
+      <button :disabled="!canWithdraw()" class="btn-bg">Withdraw</button>
     </template>
   </g-modal>
 </template>
@@ -68,6 +68,7 @@ export default {
   data: () => ({
     modalVaultAmount: 0,
     activeCurrency: '',
+    balancesByToken: {},
   }),
 
   computed: {
@@ -76,6 +77,10 @@ export default {
 
   mounted() {
     this.activeCurrency = this.depositTokens[0];
+    this.balancesByToken = this.getBalances.reduce((acc, next) => {
+      acc[next.token.symbol] = next.appBalance;
+      return acc;
+    }, {});
   },
 
   methods: {
@@ -92,6 +97,10 @@ export default {
     maxAmount() {
       const amount = this.balancesByToken[this.activeCurrency.symbol];
       this.modalVaultAmount = this.$formatPrice(amount, true);
+    },
+
+    canWithdraw() {
+      return Number(this.balancesByToken[this.activeCurrency.symbol]) > 0;
     },
   },
 };
