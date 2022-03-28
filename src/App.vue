@@ -10,7 +10,7 @@
 <script>
 import TheHeader from '@/views/TheHeader.vue';
 import TheFooter from './views/TheFooter.vue';
-import { initContract, login, logout } from '@/near/utils';
+import { initContract, login, logout, waitForTransactionReady } from '@/near/utils';
 import { mapActions } from 'vuex';
 import axios from 'axios';
 
@@ -40,6 +40,12 @@ export default {
     this.accountId = accountId;
     this.walletConnection = walletConnection;
     this.isLogged = this.walletConnection.isSignedIn();
+
+    // Check transaction status
+    const transactionHashes = this.$route.query.transactionHashes;
+    if (transactionHashes) {
+      await waitForTransactionReady(transactionHashes).then(console.log, console.error);
+    }
 
     // Set vaults
     this.initVaults(response.data.strategies);

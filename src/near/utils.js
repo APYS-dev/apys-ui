@@ -85,7 +85,9 @@ export async function strategyGetDepositBalance(strategyContractId) {
     changeMethods: [],
   });
 
-  return strategyContract.get_account_deposit_balance({ account_id: window.accountId });
+  return strategyContract.get_account_deposit_balance({
+    account_id: window.accountId,
+  });
 }
 
 export async function startStrategy(strategyId, token, amount) {
@@ -97,6 +99,26 @@ export async function startStrategy(strategyId, token, amount) {
     },
     gas: 300000000000000,
   });
+}
+
+export async function checkTransactionReady(txHash) {
+  const result = await window.near.connection.provider.txStatus(txHash, window.accountId);
+  console.log('result', JSON.stringify(result));
+  const status = result.status;
+  return status['Failure'] !== undefined || status['SuccessValue'] !== undefined;
+}
+
+const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export async function waitForTransactionReady(txHash) {
+  const isReady = await checkTransactionReady(txHash);
+  if (isReady) {
+    console.log('READY');
+    return 0;
+  }
+
+  await timeout(500);
+  return waitForTransactionReady(txHash);
 }
 
 export function fromUnits(amount, decimals) {
