@@ -22,10 +22,8 @@
           <button class="btn-border-progress">Processing...</button>
         </template>
         <template v-if="$root.isLogged && !isInProcess">
-          <button class="btn-bg" @click="showDepositFromVault">Desposit</button>
-          <button :disabled="getDeposit() + getRewards() === 0" class="btn-border" @click="showWithdrawFromVault">
-            Withdraw
-          </button>
+          <button :disabled="!canDeposit()" class="btn-bg" @click="showDepositFromVault">Desposit</button>
+          <button :disabled="!canWithdraw()" class="btn-border" @click="showWithdrawFromVault">Withdraw</button>
         </template>
         <button v-else-if="!$root.isLogged" class="btn-medium btn-bg" @click="login">Connect wallet</button>
       </div>
@@ -91,7 +89,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getShares', 'getVaultsBalances']),
+    ...mapGetters(['getShares', 'getVaultsBalances', 'getBalances']),
   },
 
   mounted() {
@@ -129,6 +127,14 @@ export default {
     getRewards() {
       // Get and return vault rewards amount
       return this.getVaultsBalances[this.contractId].rewards;
+    },
+
+    canWithdraw() {
+      return Number(this.getDeposit()) + Number(this.getRewards()) > 0;
+    },
+
+    canDeposit() {
+      return this.getBalances.map((it) => Number(it.appBalance)).reduce((a, b) => a + b, 0) > 0;
     },
   },
 };

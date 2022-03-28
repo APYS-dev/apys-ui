@@ -8,8 +8,12 @@
     </div>
 
     <div class="balance-buttons">
-      <button class="btn-small" @click="$vfm.show($id('withdrawFromBalance'))">Withdraw</button>
-      <button class="btn-small btn-bg-light" @click="$vfm.show($id('depositFromBalance'))">Deposit</button>
+      <button :disabled="!canWithdraw()" class="btn-small" @click="$vfm.show($id('withdrawFromBalance'))">
+        Withdraw
+      </button>
+      <button :disabled="!canDeposit()" class="btn-small btn-bg-light" @click="$vfm.show($id('depositFromBalance'))">
+        Deposit
+      </button>
     </div>
   </div>
 
@@ -59,6 +63,14 @@ export default {
 
     showDepositModal() {
       this.$vfm.show(this.$id('depositFromBalance'));
+    },
+
+    canDeposit() {
+      return Number(this.walletBalance) > 0;
+    },
+
+    canWithdraw() {
+      return Number(this.appBalance) > 0;
     },
   },
 };
