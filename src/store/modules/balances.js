@@ -106,13 +106,14 @@ export default {
 
             // Summarize balances for each token
             const totalBalancesCost = depositTokens
-              .map(({ contractId, decimals, price }) => {
-                const amount = Big(totalBalances.amounts[contractId] ?? 0);
+              .map(({ tokenContractId, decimals, price }) => {
+                const amount = Big(totalBalances.amounts[tokenContractId] ?? 0);
 
                 // Format and return balance
                 return amount.div(Big(10).pow(decimals)).mul(price).toNumber();
               })
               .reduce((a, b) => a + b, 0);
+
 
             // Calculate shares cost
             const totalSharesCost = Big(totalBalances.shares).div(Big(10).pow(18)).mul(osc).toNumber();

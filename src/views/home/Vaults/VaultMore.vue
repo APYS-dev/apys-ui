@@ -48,6 +48,7 @@ import ModalDepositFromVault from './ModalDepositFromVault.vue';
 import ModalWithdrawFromVault from './ModalWithdrawFromVault.vue';
 import { login } from '@/near/utils';
 import { mapGetters } from 'vuex';
+import Big from "big.js";
 
 export default {
   name: 'VaultMore',
@@ -94,6 +95,7 @@ export default {
 
   mounted() {
     const deposited = this.depositAction?.amount || this.strategyBalance?.amount;
+
     if (deposited) {
       this.strategyAmount = deposited;
       this.isInProcess = true;
@@ -120,8 +122,7 @@ export default {
     },
 
     getDeposit() {
-      // Get and return vault deposit amount
-      return this.getVaultsBalances[this.contractId].deposit;
+      return new Big(this.strategyAmount || 0).add(this.getVaultsBalances[this.contractId].deposit).toString();
     },
 
     getRewards() {

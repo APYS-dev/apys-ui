@@ -12,7 +12,7 @@ export default {
     updateVaults(state, vaults) {
       state.vaults = vaults;
     },
-    updateUserActions(state, actions) {
+    updateDepositActions(state, actions) {
       state.depositAction = actions;
     },
     updateStrategyBalances(state, actions) {
@@ -46,6 +46,7 @@ export default {
           amount: strategyInternalBalance,
         };
       }
+      console.log('strategyBalances', strategyBalances);
       context.commit('updateStrategyBalances', strategyBalances);
     },
     async loadUserActions(context) {
@@ -83,7 +84,7 @@ export default {
           }
         }
 
-        context.commit('updateUserActions', depositAction);
+        context.commit('updateDepositActions', depositAction);
       }
     },
   },

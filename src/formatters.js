@@ -1,4 +1,5 @@
 import { ethers } from 'ethers';
+import Big from "big.js";
 
 export default {
   install: (app) => {
@@ -89,9 +90,9 @@ export default {
         return defaultValue;
       }
 
-      const apy = Math.pow(1 + apr / 100 / period, period) - 1;
+      const apy = new Big(1).add(apr).div(100).div(period).pow(period).minus(1)
 
-      return parseFloat(apy * 100).toFixed(2) + '%';
+      return `${apy.toFixed(2)}%`;
     };
   },
 };
