@@ -1,9 +1,9 @@
 <template>
   <g-modal
-    :name="nameModal"
     :click-to-close="true"
     :is-show-close-button="true"
     :min-width="363"
+    :name="nameModal"
     @close-modal="closeModal"
   >
     <template #header>
@@ -14,7 +14,7 @@
       <div class="modalBalanceAmount">You have {{ $formatPrice(amount, true) }} {{ token.symbol }}</div>
       <div class="modalBalanceInput">
         <g-autonumeric v-model="modalBalanceAmount" />
-        <span>Max</span>
+        <span @click="maxAmount">Max</span>
       </div>
       <button class="btn-bg" @click="withdraw">Withdraw</button>
     </template>
@@ -54,6 +54,9 @@ export default {
     },
     closeModal() {
       this.$vfm.hide(this.nameModal);
+    },
+    maxAmount() {
+      this.modalBalanceAmount = this.amount;
     },
   },
 };
