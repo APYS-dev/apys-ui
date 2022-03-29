@@ -114,8 +114,6 @@ export default {
               })
               .reduce((a, b) => a + b, 0);
 
-
-            console.log('osc', osc);
             // Calculate shares cost
             const totalSharesCost = Big(totalBalances.shares).div(Big(10).pow(18)).mul(osc).toNumber();
 

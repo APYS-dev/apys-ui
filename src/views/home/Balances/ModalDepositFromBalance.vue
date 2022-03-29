@@ -1,9 +1,9 @@
 <template>
   <g-modal
-    :name="nameModal"
     :click-to-close="true"
     :is-show-close-button="true"
     :min-width="363"
+    :name="nameModal"
     @close-modal="closeModal"
   >
     <template #header>

@@ -1,6 +1,11 @@
 import { connect, Contract, keyStores, WalletConnection } from 'near-api-js';
 import getConfig from './config';
 import Big from 'big.js';
+import { nearApi } from '@/near/NearApi';
+
+const DEFAULT_GAS = '50000000000000';
+const WITHDRAW_GAS = '100000000000000';
+const ONE_YOCTO_NEAR = '0.000000000000000000000001';
 
 const nearConfig = getConfig(process.env.NODE_ENV || 'development');
 
@@ -50,33 +55,83 @@ export function view({ contractId, methodName, args = {} }) {
     .then(({ result }) => JSON.parse(Buffer.from(result).toString()));
 }
 
-export async function depositFt(token, amount) {
-  const ftContract = await new Contract(window.walletConnection.account(), token.contractId, {
-    viewMethods: [],
-    changeMethods: ['ft_transfer_call'],
+async function checkNeedStorageDeposit(contractId = window.contract.contractId, accountId = window.accountId) {
+  const balance = await view({
+    contractId,
+    methodName: 'storage_balance_of',
+    args: {
+      account_id: accountId,
+    },
   });
 
-  console.log('ftContract.ft_transfer_call1', ftContract.ft_transfer_call);
-  return ftContract.ft_transfer_call({
+  return !balance || balance.total === '0';
+}
+
+export async function depositFt(token, amount) {
+  const transactions = [];
+
+  // Check storage deposit and create transaction if necessary
+  const needStorageDeposit = await checkNeedStorageDeposit(window.apysContractId);
+  if (needStorageDeposit) {
+    const action = {
+      amount: '0.01',
+      args: {},
+      gas: DEFAULT_GAS,
+      methodName: 'storage_deposit',
+    };
+    const transaction = await nearApi().actionsToTransaction(window.apysContractId, [action]);
+    transactions.push(transaction);
+  }
+
+  // Create transfer transaction
+  const transferAction = {
     args: {
       receiver_id: window.apysContractId,
       amount: toUnits(amount, token.decimals),
       msg: '',
     },
-    amount: 1,
-    gas: 300000000000000,
-  });
+    gas: DEFAULT_GAS,
+    amount: ONE_YOCTO_NEAR,
+    methodName: 'ft_transfer_call',
+  };
+  const transferTransaction = await nearApi().actionsToTransaction(token.contractId, [transferAction]);
+  transactions.push(transferTransaction);
+
+  // Execute transactions
+  return await nearApi().executeMultipleTransactions(transactions);
 }
 
 export async function withdrawFt(token, amount) {
-  return await window.contract.withdraw({
+  const transactions = [];
+
+  // Check storage deposit and create transaction if necessary
+  const needStorageDeposit = await checkNeedStorageDeposit(token.contractId);
+  if (needStorageDeposit) {
+    const action = {
+      amount: '0.00125',
+      args: {},
+      gas: DEFAULT_GAS,
+      methodName: 'storage_deposit',
+    };
+    const transaction = await nearApi().actionsToTransaction(token.contractId, [action]);
+    transactions.push(transaction);
+  }
+
+  // Create transfer transaction
+  const transferAction = {
     args: {
-      amount: toUnits(amount, token.decimals),
       token_id: token.contractId,
+      amount: toUnits(amount, token.decimals),
     },
-    amount: 1,
-    gas: 300000000000000,
-  });
+    amount: ONE_YOCTO_NEAR,
+    gas: WITHDRAW_GAS,
+    methodName: 'withdraw',
+  };
+  const transferTransaction = await nearApi().actionsToTransaction(window.apysContractId, [transferAction]);
+  transactions.push(transferTransaction);
+
+  // Execute transactions
+  return await nearApi().executeMultipleTransactions(transactions);
 }
 
 export async function strategyGetDepositBalance(strategyContractId) {
