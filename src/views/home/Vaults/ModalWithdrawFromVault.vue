@@ -90,6 +90,7 @@ export default {
 
     setActiveCurrency(currency) {
       if (currency) {
+        this.modalVaultAmount = 0;
         this.activeCurrency = currency;
       }
     },
