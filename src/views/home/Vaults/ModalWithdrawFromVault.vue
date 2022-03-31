@@ -2,7 +2,7 @@
   <g-modal
     :click-to-close="true"
     :is-show-close-button="true"
-    :min-width="467"
+    :min-width="500"
     :name="nameModal"
     @close-modal="closeModal"
   >
@@ -11,7 +11,6 @@
     </template>
 
     <template #content>
-      <div class="modalBalanceAmount">You have {{ $formatPrice(1000, true) }}</div>
       <div class="modalBalanceInput">
         <g-dropdown :ref="$id('token')" position="bottom">
           <div :key="$id(activeCurrency.symbol)" class="btn btn-bg-light dropdown-icon">
@@ -34,17 +33,21 @@
             </ul>
           </template>
         </g-dropdown>
-
-        <g-autonumeric v-model="modalVaultAmount" />
-        <button @click="maxAmount">Max</button>
+        <span>
+          You will receive
+          <b>~{{ receiveAmount }}</b>
+          amount of {{ activeCurrency.symbol }}
+        </span>
       </div>
-      <button :disabled="!canWithdraw()" class="btn-bg">Withdraw</button>
+      <button :disabled="!canWithdraw()" class="btn-bg" @click="withdraw()">Withdraw</button>
     </template>
   </g-modal>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+import Big from 'big.js';
+import { stopStrategy } from '@/near/utils';
 
 export default {
   name: 'ModalWithdrawFromVault',
@@ -66,21 +69,16 @@ export default {
   },
 
   data: () => ({
-    modalVaultAmount: 0,
     activeCurrency: '',
-    balancesByToken: {},
+    receiveAmount: '0',
   }),
 
   computed: {
-    ...mapGetters(['getBalances']),
+    ...mapGetters(['getVaultsBalances']),
   },
 
   mounted() {
-    this.activeCurrency = this.depositTokens[0];
-    this.balancesByToken = this.getBalances.reduce((acc, next) => {
-      acc[next.token.symbol] = next.appBalance;
-      return acc;
-    }, {});
+    this.setActiveCurrency(this.depositTokens[0]);
   },
 
   methods: {
@@ -89,19 +87,25 @@ export default {
     },
 
     setActiveCurrency(currency) {
-      if (currency) {
-        this.modalVaultAmount = 0;
-        this.activeCurrency = currency;
+      this.activeCurrency = currency;
+
+      if (this.$root.isLogged) {
+        // Recalculate receive amount
+        const balances = this.getVaultsBalances[this.contractId];
+        const tokenPrice = this.activeCurrency.price;
+        this.receiveAmount = Big(balances.deposit).plus(balances.rewards).div(tokenPrice).toFixed(2);
       }
     },
 
-    maxAmount() {
-      const amount = this.balancesByToken[this.activeCurrency.symbol];
-      this.modalVaultAmount = this.$formatPrice(amount, true);
+    async withdraw() {
+      console.log('withdraw from strategy', JSON.stringify(this.receiveAmount));
+
+      // Stop strategy
+      await stopStrategy(this.contractId, this.activeCurrency);
     },
 
     canWithdraw() {
-      return Number(this.balancesByToken[this.activeCurrency.symbol]) > 0;
+      return Number(this.receiveAmount) > 0;
     },
   },
 };
@@ -111,6 +115,11 @@ export default {
 .modalBalanceInput {
   display: flex;
   gap: 8px;
+
+  .text {
+    font-size: 14px;
+    font-weight: 300;
+  }
 
   .btn-bg-light {
     padding: 4px 12px;

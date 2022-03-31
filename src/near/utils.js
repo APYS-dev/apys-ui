@@ -22,7 +22,7 @@ export async function initContract(apysContractId) {
 
   window.contract = await new Contract(window.walletConnection.account(), apysContractId, {
     viewMethods: ['get_whitelisted_tokens', 'get_user_actions'],
-    changeMethods: ['start', 'withdraw'],
+    changeMethods: ['start', 'stop'],
   });
 
   window.near = near;
@@ -150,6 +150,16 @@ export async function startStrategy(strategyId, token, amount) {
     args: {
       strategy_id: strategyId,
       balance: toUnits(amount, token.decimals),
+      token_id: token.contractId,
+    },
+    gas: 300000000000000,
+  });
+}
+
+export async function stopStrategy(strategyId, token) {
+  return await window.contract.stop({
+    args: {
+      strategy_id: strategyId,
       token_id: token.contractId,
     },
     gas: 300000000000000,
