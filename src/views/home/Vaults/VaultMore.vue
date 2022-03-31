@@ -17,7 +17,7 @@
         </div>
       </div>
 
-      <div class="vault-more__btns">
+      <div v-if="$root.isLogged" class="vault-more__btns">
         <template v-if="isInProcess">
           <button class="btn-border-progress">Processing...</button>
         </template>
@@ -25,8 +25,8 @@
           <button :disabled="!canDeposit()" class="btn-bg" @click="showDepositFromVault">Desposit</button>
           <button :disabled="!canWithdraw()" class="btn-border" @click="showWithdrawFromVault">Withdraw</button>
         </template>
-        <button v-else-if="!$root.isLogged" class="btn-medium btn-bg" @click="login">Connect wallet</button>
       </div>
+      <button v-if="!$root.isLogged" class="btn-bg" @click="login">Connect wallet</button>
     </div>
   </div>
 
@@ -48,7 +48,7 @@ import ModalDepositFromVault from './ModalDepositFromVault.vue';
 import ModalWithdrawFromVault from './ModalWithdrawFromVault.vue';
 import { login } from '@/near/utils';
 import { mapGetters } from 'vuex';
-import Big from "big.js";
+import Big from 'big.js';
 
 export default {
   name: 'VaultMore',
