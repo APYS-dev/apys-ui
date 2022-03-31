@@ -19,6 +19,7 @@
         :deposit-action="depositAction[vault.contractId]"
         :deposit-tokens="vault.depositTokens"
         :dex="vault.dex"
+        :dex-url="vault.dexUrl"
         :name="vault.name"
         :strategy-balance="strategyBalances[vault.contractId]"
         :tvl="vault.tvl"

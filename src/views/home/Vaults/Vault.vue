@@ -20,7 +20,9 @@
 
       <div class="vault__dex">
         <span class="light-text">dex</span>
-        <img :src="`/static/images/dexes/${dex}.png`" alt="ref finance" />
+        <a :href="dexUrl" target="_blank">
+          <img :src="`/static/images/dexes/${dex}.png`" alt="ref finance" />
+        </a>
       </div>
 
       <div class="vault__tvl">
@@ -113,6 +115,11 @@ export default {
     },
 
     dex: {
+      type: String,
+      required: true,
+    },
+
+    dexUrl: {
       type: String,
       required: true,
     },
