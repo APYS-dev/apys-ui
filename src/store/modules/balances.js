@@ -29,17 +29,17 @@ export default {
       context.commit('updateTokens', tokens);
     },
     async loadBalances(context) {
-      let app_deposits = context.state.tokens.reduce((acc, next) => {
-        acc[next.symbol] = '0';
-        return acc;
-      }, {});
-
+      // Get account balances
+      let apysBalances = {
+        balance: {},
+        withdraw: {},
+        deposit: {},
+      };
       if (window.accountId) {
-        // todo: replace with global variable
-        app_deposits = await view({
+        apysBalances = await view({
           args: { account_id: window.accountId },
-          contractId: window.contract.contractId,
-          methodName: 'get_deposits',
+          contractId: window.apysContractId,
+          methodName: 'get_balances',
         });
       }
 
@@ -53,12 +53,21 @@ export default {
           });
         }
 
-        const appBalance = fromUnits(app_deposits[token.contractId] || 0, token.decimals);
+        // Recalculate app balance using processing balances from APYS contract
+        const apysBalance = apysBalances.balance[token.contractId] || 0;
+        const depositAmount = apysBalances.deposit[token.contractId] || 0;
+        const withdrawAmount = apysBalances.withdraw[token.contractId] || 0;
+
+        // Calculate and format app balance
+        const appBalance = fromUnits(apysBalance, token.decimals);
+
         const walletBalance = fromUnits(wallet_balance, token.decimals);
         console.log('--------');
         console.log('token', token.symbol);
         console.log('balance', walletBalance);
-        console.log('appBalance', appBalance);
+        console.log('apysBalance', appBalance);
+        console.log('depositAmount', depositAmount);
+        console.log('withdrawAmount', withdrawAmount);
         console.log('--------');
         return {
           appBalance,
