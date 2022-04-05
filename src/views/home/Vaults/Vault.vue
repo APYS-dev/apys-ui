@@ -49,12 +49,7 @@
       </div>
     </div>
 
-    <vault-more
-      :contract-id="contractId"
-      :deposit-tokens="depositTokens"
-      :show="show"
-      :strategy-balance="strategyBalance"
-    ></vault-more>
+    <vault-more :contract-id="contractId" :deposit-tokens="depositTokens" :show="show"></vault-more>
   </div>
 
   <g-modal
@@ -139,12 +134,6 @@ export default {
       required: true,
       default: () => [],
     },
-
-    strategyBalance: {
-      type: Object,
-      required: false,
-      default: () => {},
-    },
   },
 
   data: () => ({
@@ -153,7 +142,6 @@ export default {
 
   methods: {
     showCalcModal() {
-      console.log('strategyBalance', this.strategyBalance);
       this.$vfm.show(this.$id('calc'));
     },
 

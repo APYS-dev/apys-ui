@@ -134,17 +134,6 @@ export async function withdrawFt(token, amount) {
   return await nearApi().executeMultipleTransactions(transactions);
 }
 
-export async function strategyGetDepositBalance(strategyContractId) {
-  const strategyContract = await new Contract(window.walletConnection.account(), strategyContractId, {
-    viewMethods: ['get_account_deposit_balance'],
-    changeMethods: [],
-  });
-
-  return strategyContract.get_account_deposit_balance({
-    account_id: window.accountId,
-  });
-}
-
 export async function startStrategy(strategyId, token, amount) {
   return await window.contract.start({
     args: {
@@ -179,10 +168,11 @@ export async function waitForTransactionReady(txHash) {
   const isReady = await checkTransactionReady(txHash);
   if (isReady) {
     console.log('READY');
+    await timeout(350);
     return 0;
   }
 
-  await timeout(500);
+  await timeout(250);
   return waitForTransactionReady(txHash);
 }
 

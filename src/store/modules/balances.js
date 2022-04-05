@@ -5,7 +5,6 @@ export default {
   state: {
     tokens: [],
     balances: [],
-    shares: {},
     vaultsBalances: {},
   },
 
@@ -15,9 +14,6 @@ export default {
     },
     updateBalances(state, balances) {
       state.balances = balances;
-    },
-    updateShares(state, shares) {
-      state.shares = shares;
     },
     updateVaultsBalances(state, vaultsBalances) {
       state.vaultsBalances = vaultsBalances;
@@ -54,20 +50,20 @@ export default {
         }
 
         // Recalculate app balance using processing balances from APYS contract
-        const apysBalance = apysBalances.balance[token.contractId] || 0;
-        const depositAmount = apysBalances.deposit[token.contractId] || 0;
-        const withdrawAmount = apysBalances.withdraw[token.contractId] || 0;
+        const apysBalance = Big(apysBalances.balance[token.contractId] || 0);
+        const depositAmount = Big(apysBalances.deposit[token.contractId] || 0);
+        const withdrawAmount = Big(apysBalances.withdraw[token.contractId] || 0);
 
         // Calculate and format app balance
-        const appBalance = fromUnits(apysBalance, token.decimals);
+        const appBalance = fromUnits(apysBalance.minus(depositAmount), token.decimals);
 
         const walletBalance = fromUnits(wallet_balance, token.decimals);
         console.log('--------');
         console.log('token', token.symbol);
         console.log('balance', walletBalance);
         console.log('apysBalance', appBalance);
-        console.log('depositAmount', depositAmount);
-        console.log('withdrawAmount', withdrawAmount);
+        console.log('depositAmount', depositAmount.toFixed(4));
+        console.log('withdrawAmount', withdrawAmount.toFixed(4));
         console.log('--------');
         return {
           appBalance,
@@ -77,28 +73,6 @@ export default {
       });
       const res = (await Promise.all(balances)).filter((el) => !!el);
       context.commit('updateBalances', res);
-    },
-    async loadShares(context, vaultsContractsIds) {
-      // Get shares from contract
-      if (window.accountId) {
-        const fetchedShares = await Promise.all(
-          vaultsContractsIds.map((contractId) =>
-            view({
-              args: { account_id: window.accountId },
-              contractId,
-              methodName: 'get_account_shares',
-            })
-          )
-        );
-
-        const shares = {};
-        fetchedShares.forEach((contractShares, index) => {
-          shares[vaultsContractsIds[index]] = contractShares;
-        });
-
-        // Update shares in state
-        context.commit('updateShares', shares);
-      }
     },
     async loadVaultsBalances(context, strategies) {
       const vaultsContractsIds = strategies.map((it) => it.contractId);
@@ -182,9 +156,6 @@ export default {
     },
     getBalances(state) {
       return state.balances;
-    },
-    getShares(state) {
-      return state.shares;
     },
     getVaultsBalances(state) {
       return state.vaultsBalances;

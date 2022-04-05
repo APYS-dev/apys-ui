@@ -69,11 +69,6 @@ export default {
       type: [String],
       required: true,
     },
-    strategyBalance: {
-      type: Object,
-      required: false,
-      default: () => {},
-    },
   },
 
   data() {
@@ -85,7 +80,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getShares', 'getVaultsBalances', 'getBalances']),
+    ...mapGetters(['getVaultsBalances', 'getBalances']),
   },
 
   mounted() {},

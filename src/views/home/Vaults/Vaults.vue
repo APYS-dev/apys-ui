@@ -20,7 +20,6 @@
         :dex="vault.dex"
         :dex-url="vault.dexUrl"
         :name="vault.name"
-        :strategy-balance="strategyBalances[vault.contractId]"
         :tvl="vault.tvl"
       ></vault>
     </main>
@@ -38,17 +37,14 @@ export default {
 
   data: () => ({
     vaults: {},
-    strategyBalances: {},
     selectedTab: 'live',
   }),
 
   computed: {
-    ...mapGetters(['getVaults', 'getStrategyBalances']),
+    ...mapGetters(['getVaults']),
   },
 
   async mounted() {
-    this.strategyBalances = this.getStrategyBalances;
-
     // Sort vaults by status
     this.vaults = {
       'live': this.getVaults.filter((it) => it.status === 'live'),
