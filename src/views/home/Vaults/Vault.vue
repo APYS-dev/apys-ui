@@ -199,7 +199,9 @@ export default {
         margin-right: -12px;
       }
 
-      height: 30px;
+      height: 31px;
+      border: 3px solid #ffffff;
+      border-radius: 20px;
     }
   }
 

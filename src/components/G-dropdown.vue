@@ -1,5 +1,5 @@
 <template>
-  <div :ref="$id('dropdown')" class="dropdown-wrap" :class="{ 'dropdown-active': isShow }">
+  <div :ref="$id('dropdown')" :class="{ 'dropdown-active': isShow }" class="dropdown-wrap">
     <div :class="{ 'dropdown-toggle': isContent() }" @click="isShow = !isShow">
       <slot></slot>
     </div>
@@ -7,12 +7,12 @@
       <teleport to="#endofbody">
         <div
           :ref="$id('dropdown-box')"
-          class="dropdown-box"
           :class="[`to-${newPosition}`, getClassesBox]"
           :style="getStylePosition"
+          class="dropdown-box"
           @click.stop
         >
-          <slot name="content" :close-dropdown="closeDropdown"></slot>
+          <slot :close-dropdown="closeDropdown" name="content"></slot>
         </div>
       </teleport>
     </template>
@@ -250,7 +250,8 @@ export default {
       padding: 8px 12px;
       min-width: max-content;
       font-size: 18px;
-      background: var(--color-main-10);
+      background: rgba(245, 245, 245, 0.9);
+      border: 1px solid var(--color-main-10);
       -webkit-backdrop-filter: blur(17px);
       backdrop-filter: blur(17px);
 
@@ -295,6 +296,7 @@ export default {
 
     &.to-top {
       transform: translate(-50%, calc(-100% + 4px));
+
       x &-start {
         transform: translate(-12px, calc(-100% + 4px));
       }
