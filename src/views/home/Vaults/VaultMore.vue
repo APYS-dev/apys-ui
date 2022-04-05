@@ -18,10 +18,10 @@
       </div>
 
       <div v-if="$root.isLogged" class="vault-more__btns">
-        <template v-if="isInProcess">
+        <template v-if="isProcessing()">
           <button class="btn-border-progress">Processing...</button>
         </template>
-        <template v-if="$root.isLogged && !isInProcess">
+        <template v-if="$root.isLogged && !isProcessing()">
           <button :disabled="!canDeposit()" class="btn-bg" @click="showDepositFromVault">Desposit</button>
           <button :disabled="!canWithdraw()" class="btn-border" @click="showWithdrawFromVault">Withdraw</button>
         </template>
@@ -69,11 +69,6 @@ export default {
       type: [String],
       required: true,
     },
-    depositAction: {
-      type: Object,
-      required: false,
-      default: () => {},
-    },
     strategyBalance: {
       type: Object,
       required: false,
@@ -93,16 +88,7 @@ export default {
     ...mapGetters(['getShares', 'getVaultsBalances', 'getBalances']),
   },
 
-  mounted() {
-    const deposited = this.depositAction?.amount || this.strategyBalance?.amount;
-
-    if (deposited) {
-      this.strategyAmount = deposited;
-      this.isInProcess = true;
-    } else {
-      this.isInProcess = false;
-    }
-  },
+  mounted() {},
 
   methods: {
     showDepositFromVault() {
@@ -122,12 +108,16 @@ export default {
     },
 
     getDeposit() {
-      return new Big(this.strategyAmount || 0).add(this.getVaultsBalances[this.contractId].deposit).toString();
+      return new Big(this.getVaultsBalances[this.contractId].deposit).toString();
     },
 
     getRewards() {
       // Get and return vault rewards amount
       return this.getVaultsBalances[this.contractId].rewards;
+    },
+
+    isProcessing() {
+      return this.getVaultsBalances[this.contractId].isProcessing;
     },
 
     canWithdraw() {

@@ -107,34 +107,59 @@ export default {
       if (window.accountId) {
         const fetchedBalances = await Promise.all(
           strategies.map(async ({ contractId, depositTokens, osc }) => {
-            const totalBalances = await view({
+            const strategyBalances = await view({
               args: { account_id: window.accountId },
               contractId,
               methodName: 'get_total_account_balances',
             });
 
+            // Get APYS balance for strategy
+            const apysBalances = await view({
+              args: { account_id: window.accountId, strategy_id: contractId },
+              contractId: window.apysContractId,
+              methodName: 'get_strategy_balances',
+            });
+
             // Summarize balances for each token
             const totalBalancesCost = depositTokens
-              .map(({ tokenContractId, decimals, price }) => {
-                const amount = Big(totalBalances.amounts[tokenContractId] ?? 0);
+              .map(({ contractId, decimals, price }) => {
+                // Strategy contract amounts
+                const strategyDepositAmount = Big(strategyBalances.deposit[contractId] ?? 0);
+                const strategyWithdrawAmount = Big(strategyBalances.withdraw[contractId] ?? 0);
+
+                // APYS contract amounts
+                const apysDepositAmount = Big(apysBalances.deposit[contractId] ?? 0);
+                const apysWithdrawAmount = Big(apysBalances.withdraw[contractId] ?? 0);
 
                 // Format and return balance
-                return amount.div(Big(10).pow(decimals)).mul(price).toNumber();
+                return Big(0)
+                  .plus(strategyDepositAmount)
+                  .plus(strategyWithdrawAmount)
+                  .plus(apysDepositAmount)
+                  .plus(apysWithdrawAmount)
+                  .div(Big(10).pow(decimals))
+                  .mul(price)
+                  .toNumber();
               })
               .reduce((a, b) => a + b, 0);
 
             // Calculate shares cost
-            const totalSharesCost = Big(totalBalances.shares).div(Big(10).pow(18)).mul(osc).toNumber();
-
-            console.log(totalBalancesCost, totalSharesCost);
+            const totalSharesCost = Big(strategyBalances.shares).div(Big(10).pow(18)).mul(osc).toNumber();
 
             // Calculate deposit amount
             const deposit = (totalBalancesCost + totalSharesCost).toFixed(2);
 
             // Calculate rewards amount
-            const rewards = Big(totalBalances.reward_shares).div(Big(10).pow(18)).mul(osc).toFixed(2);
+            const rewards = Big(strategyBalances.reward_shares).div(Big(10).pow(18)).mul(osc).toFixed(2);
 
-            return { deposit, rewards };
+            // Check stat strategy is processing
+            const isProcessing =
+              Object.values(strategyBalances.deposit).length > 0 ||
+              Object.values(strategyBalances.withdraw).length > 0 ||
+              Object.values(apysBalances.deposit).length > 0 ||
+              Object.values(apysBalances.withdraw).length > 0;
+
+            return { deposit, rewards, isProcessing };
           })
         );
 

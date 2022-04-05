@@ -16,7 +16,6 @@
         :key="vault.name"
         :apr="vault.apr"
         :contract-id="vault.contractId"
-        :deposit-action="depositAction[vault.contractId]"
         :deposit-tokens="vault.depositTokens"
         :dex="vault.dex"
         :dex-url="vault.dexUrl"
@@ -39,17 +38,15 @@ export default {
 
   data: () => ({
     vaults: {},
-    depositAction: {},
     strategyBalances: {},
     selectedTab: 'live',
   }),
 
   computed: {
-    ...mapGetters(['getVaults', 'getDepositAction', 'getStrategyBalances']),
+    ...mapGetters(['getVaults', 'getStrategyBalances']),
   },
 
   async mounted() {
-    this.depositAction = this.getDepositAction;
     this.strategyBalances = this.getStrategyBalances;
 
     // Sort vaults by status

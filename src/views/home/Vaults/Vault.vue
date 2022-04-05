@@ -51,7 +51,6 @@
 
     <vault-more
       :contract-id="contractId"
-      :deposit-action="depositAction"
       :deposit-tokens="depositTokens"
       :show="show"
       :strategy-balance="strategyBalance"
@@ -141,11 +140,6 @@ export default {
       default: () => [],
     },
 
-    depositAction: {
-      type: Object,
-      required: false,
-      default: () => {},
-    },
     strategyBalance: {
       type: Object,
       required: false,

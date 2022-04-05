@@ -63,9 +63,6 @@ export default {
     // Load vaults strategies
     await this.loadVaultsBalances(response.data.strategies);
 
-    // Load all user actions
-    await this.loadUserActions();
-
     // Load user strategy state
     await this.loadStrategyState();
 
@@ -77,7 +74,6 @@ export default {
       'loadBalances',
       'initVaults',
       'initTokens',
-      'loadUserActions',
       'loadStrategyState',
       'loadShares',
       'loadVaultsBalances',
