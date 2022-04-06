@@ -146,9 +146,13 @@ export async function startStrategy(strategyId, token, amount) {
 }
 
 export async function stopStrategy(strategyId, token) {
-  return await window.contract.stop({
+  const strategyContract = await new Contract(window.walletConnection.account(), strategyId, {
+    viewMethods: [],
+    changeMethods: ['stop'],
+  });
+
+  return await strategyContract.stop({
     args: {
-      strategy_id: strategyId,
       token_id: token.contractId,
     },
     gas: 300000000000000,

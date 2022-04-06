@@ -52,7 +52,6 @@ export default {
         // Recalculate app balance using processing balances from APYS contract
         const apysBalance = Big(apysBalances.balance[token.contractId] || 0);
         const depositAmount = Big(apysBalances.deposit[token.contractId] || 0);
-        const withdrawAmount = Big(apysBalances.withdraw[token.contractId] || 0);
 
         // Calculate and format app balance
         const appBalance = fromUnits(apysBalance, token.decimals);
@@ -63,7 +62,6 @@ export default {
         console.log('balance', walletBalance);
         console.log('apysBalance', appBalance);
         console.log('depositAmount', depositAmount.toFixed(4));
-        console.log('withdrawAmount', withdrawAmount.toFixed(4));
         console.log('--------');
         return {
           appBalance,
@@ -103,14 +101,12 @@ export default {
 
                 // APYS contract amounts
                 const apysDepositAmount = Big(apysBalances.deposit[contractId] ?? 0);
-                const apysWithdrawAmount = Big(apysBalances.withdraw[contractId] ?? 0);
 
                 // Format and return balance
                 return Big(0)
                   .plus(strategyDepositAmount)
                   .plus(strategyWithdrawAmount)
                   .plus(apysDepositAmount)
-                  .plus(apysWithdrawAmount)
                   .div(Big(10).pow(decimals))
                   .mul(price)
                   .toNumber();
@@ -130,8 +126,7 @@ export default {
             const isProcessing =
               Object.values(strategyBalances.deposit).length > 0 ||
               Object.values(strategyBalances.withdraw).length > 0 ||
-              Object.values(apysBalances.deposit).length > 0 ||
-              Object.values(apysBalances.withdraw).length > 0;
+              Object.values(apysBalances.deposit).length > 0;
 
             return { deposit, rewards, isProcessing };
           })
