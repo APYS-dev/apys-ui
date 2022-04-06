@@ -7,7 +7,7 @@ const DEFAULT_GAS = '50000000000000';
 const WITHDRAW_GAS = '100000000000000';
 const ONE_YOCTO_NEAR = '0.000000000000000000000001';
 
-const nearConfig = getConfig(process.env.NODE_ENV || 'development');
+const nearConfig = getConfig(process.env.VUE_APP_ENV || 'development');
 
 export async function initContract(apysContractId) {
   const near = await connect(

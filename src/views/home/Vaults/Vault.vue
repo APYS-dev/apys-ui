@@ -137,7 +137,7 @@ export default {
   },
 
   data: () => ({
-    show: false,
+    show: true,
   }),
 
   methods: {

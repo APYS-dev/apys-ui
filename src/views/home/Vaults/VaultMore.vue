@@ -22,7 +22,7 @@
           <button class="btn-border-progress">Processing...</button>
         </template>
         <template v-if="$root.isLogged && !isProcessing()">
-          <button :disabled="!canDeposit()" class="btn-bg" @click="showDepositFromVault">Desposit</button>
+          <button class="btn-bg" @click="showDepositFromVault">Desposit</button>
           <button :disabled="!canWithdraw()" class="btn-border" @click="showWithdrawFromVault">Withdraw</button>
         </template>
       </div>
