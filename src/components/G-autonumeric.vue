@@ -1,5 +1,12 @@
 <template>
-  <input :ref="$id('autoNumericElement')" :value="valueNumber" @input="setValueNumber" @keyup.enter="setValueNumber" />
+  <input
+    :ref="$id('autoNumericElement')"
+    :placeholder="placeholder"
+    :value="valueNumber"
+    class="amount-input"
+    @input="setValueNumber"
+    @keyup.enter="setValueNumber"
+  />
 </template>
 
 <script>
@@ -23,6 +30,13 @@ export default {
       required: true,
     },
 
+    placeholder: {
+      type: String,
+      default() {
+        return 'Enter value';
+      },
+    },
+
     options: {
       type: [Object, null],
       default() {
@@ -43,17 +57,14 @@ export default {
 
   watch: {
     modelValue(val) {
-      this.anElement.set(val || 0);
+      this.anElement.set(val);
       this.setValueNumber();
-      return;
     },
   },
 
   mounted() {
     this.manageOptionElement();
     this.anElement = new AutoNumeric(this.$refs[this.$id('autoNumericElement')], this.optionsInput);
-
-    this.anElement.set(this.modelValue?.toString() || 0);
   },
 
   methods: {
@@ -71,3 +82,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.amount-input::placeholder {
+  color: var(--color-main-90);
+}
+</style>

@@ -114,7 +114,11 @@ export default {
               .reduce((a, b) => a + b, 0);
 
             // Calculate shares cost
-            const totalSharesCost = Big(strategyBalances.shares).div(Big(10).pow(18)).mul(osc).toNumber();
+            const totalSharesCost = Big(strategyBalances.shares)
+              .plus(strategyBalances.staked_shares)
+              .div(Big(10).pow(18))
+              .mul(osc)
+              .toNumber();
 
             // Calculate deposit amount
             const deposit = (totalBalancesCost + totalSharesCost).toFixed(2);
@@ -126,7 +130,8 @@ export default {
             const isProcessing =
               Object.values(strategyBalances.deposit).length > 0 ||
               Object.values(strategyBalances.withdraw).length > 0 ||
-              Object.values(apysBalances.deposit).length > 0;
+              Object.values(apysBalances.deposit).length > 0 ||
+              Number(strategyBalances.shares) > 0;
 
             return { deposit, rewards, isProcessing };
           })
