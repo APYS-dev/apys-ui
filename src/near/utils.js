@@ -5,6 +5,7 @@ import { nearApi } from '@/near/NearApi';
 
 const DEFAULT_GAS = '50000000000000';
 const WITHDRAW_GAS = '100000000000000';
+const STOP_STRATEGY_GAS = '200000000000000';
 const ONE_YOCTO_NEAR = '0.000000000000000000000001';
 
 const nearConfig = getConfig(process.env.VUE_APP_ENV || 'development');
@@ -146,17 +147,22 @@ export async function startStrategy(strategyId, token, amount) {
 }
 
 export async function stopStrategy(strategyId, token) {
-  const strategyContract = await new Contract(window.walletConnection.account(), strategyId, {
-    viewMethods: [],
-    changeMethods: ['stop'],
-  });
+  const transactions = [];
 
-  return await strategyContract.stop({
+  // Create transfer transaction
+  const transferAction = {
     args: {
       token_id: token.contractId,
     },
-    gas: 300000000000000,
-  });
+    gas: STOP_STRATEGY_GAS,
+    amount: ONE_YOCTO_NEAR,
+    methodName: 'stop',
+  };
+  const transferTransaction = await nearApi().actionsToTransaction(strategyId, [transferAction]);
+  transactions.push(transferTransaction);
+
+  // Execute transactions
+  return await nearApi().executeMultipleTransactions(transactions);
 }
 
 export async function checkTransactionReady(txHash) {
