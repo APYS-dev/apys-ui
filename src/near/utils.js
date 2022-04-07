@@ -193,3 +193,7 @@ export function fromUnits(amount, decimals) {
 export function toUnits(amount, decimals) {
   return Big(amount).mul(new Big(10).pow(decimals)).toFixed(0);
 }
+
+export function aprToApy(apr, period) {
+  return new Big(apr).div(100).div(period).plus(1).pow(period).minus(1).mul(100).toNumber();
+}

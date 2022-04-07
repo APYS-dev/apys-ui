@@ -1,10 +1,10 @@
 <template>
   <g-modal
-    :name="name"
+    :classes="'modalCalc'"
     :click-to-close="true"
     :is-show-close-button="true"
     :max-width="580"
-    :classes="'modalCalc'"
+    :name="name"
     @close-modal="closeCalcModal"
   >
     <template #header>
@@ -36,13 +36,13 @@
         Recieve
         <div>
           <div class="modal__recieve-amount">
-            <span class="amount">{{ $formatPrice(calculateAmountWithApy()) }}</span>
+            <span class="amount">{{ $formatPrice(getReceiveAmount()) }}</span>
             <span class="currency no-select">USDT</span>
           </div>
 
           <div class="modal__recieve-apy">
             APY:
-            <span class="amount">{{ $formatAndCalculateApy(apr, currentDuration.days) }}</span>
+            <span class="amount">{{ getFormattedApy() }}</span>
           </div>
         </div>
       </div>
@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import { aprToApy } from '@/near/utils';
+
 export default {
   name: 'ModalCalc',
 
@@ -70,19 +72,22 @@ export default {
     },
   },
 
-  data: () => {
-    const durations = [
-      { 'label': '7 days', 'days': 7 },
-      { 'label': '30 days', 'days': 30 },
-      { 'label': '6 month', 'days': 180 },
-      { 'label': '1 year', 'days': 365 },
+  data: () => ({
+    apy: 0,
+    amountToStake: 0,
+    durations: [],
+    currentDuration: { 'label': '1 day', 'days': 1, 'apy': aprToApy(1, 1) },
+  }),
+
+  mounted() {
+    this.durations = [
+      { 'label': '7 days', 'days': 7, 'apy': aprToApy(this.apr, 7) },
+      { 'label': '30 days', 'days': 30, 'apy': aprToApy(this.apr, 30) },
+      { 'label': '6 month', 'days': 180, 'apy': aprToApy(this.apr, 180) },
+      { 'label': '1 year', 'days': 365, 'apy': aprToApy(this.apr, 365) },
     ];
 
-    return {
-      amountToStake: 0,
-      durations,
-      currentDuration: durations[0],
-    };
+    this.currentDuration = this.durations[0];
   },
 
   methods: {
@@ -92,9 +97,11 @@ export default {
     changeDuration(duration) {
       this.currentDuration = duration;
     },
-    calculateAmountWithApy() {
-      const apy = Math.pow(1 + (this.apr / 100) / this.currentDuration.days, this.currentDuration.days) - 1;
-      return ((this.amountToStake * apy) / 365 * this.currentDuration.days).toFixed(2);
+    getFormattedApy() {
+      return `${this.currentDuration.apy.toFixed(2)}%`;
+    },
+    getReceiveAmount() {
+      return (((this.amountToStake * this.currentDuration.apy) / 100 / 365) * this.currentDuration.days).toFixed(2);
     },
   },
 };

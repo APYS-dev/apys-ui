@@ -20,6 +20,7 @@
         :dex="vault.dex"
         :dex-url="vault.dexUrl"
         :name="vault.name"
+        :status="vault.status"
         :tvl="vault.tvl"
       ></vault>
     </main>
@@ -55,7 +56,6 @@ export default {
 
   methods: {
     changeTab(selectedTab) {
-      console.log(selectedTab);
       if (selectedTab !== this.selectedTab) {
         this.selectedTab = selectedTab;
       }

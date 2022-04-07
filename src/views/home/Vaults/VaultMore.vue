@@ -17,9 +17,16 @@
           <!--          <div class="amount__plus">(+$0.0001)</div>-->
           <div v-if="showCounter" class="amount__plus">
             <vue3-autocounter
-                ref="counter" :startAmount="startAmount" :endAmount="endAmount" :duration="counterDuration" prefix="+"
-                separator=","
-                decimalSeparator="." :decimals="counterDecimals" :autoinit="false" @finished="startCounter"
+              ref="counter"
+              :autoinit="false"
+              :decimals="counterDecimals"
+              :duration="counterDuration"
+              :end-amount="endAmount"
+              :start-amount="startAmount"
+              decimal-separator="."
+              prefix="+"
+              separator=","
+              @finished="startCounter"
             />
           </div>
         </div>
@@ -30,7 +37,7 @@
           <button class="btn-border-progress">Processing...</button>
         </template>
         <template v-if="$root.isLogged && !isProcessing()">
-          <button class="btn-bg" @click="showDepositFromVault">Desposit</button>
+          <button :disabled="!isLiveStatus()" class="btn-bg" @click="showDepositFromVault">Desposit</button>
           <button :disabled="!canWithdraw()" class="btn-border" @click="showWithdrawFromVault">Withdraw</button>
         </template>
       </div>
@@ -39,48 +46,56 @@
   </div>
 
   <modal-deposit-from-vault
-      :contract-id="contractId"
-      :deposit-tokens="depositTokens"
-      :name-modal="$id('DepositFromVault')"
+    :contract-id="contractId"
+    :deposit-tokens="depositTokens"
+    :name-modal="$id('DepositFromVault')"
   ></modal-deposit-from-vault>
 
   <modal-withdraw-from-vault
-      :contract-id="contractId"
-      :deposit-tokens="depositTokens"
-      :name-modal="$id('WithdrawFromVault')"
+    :contract-id="contractId"
+    :deposit-tokens="depositTokens"
+    :name-modal="$id('WithdrawFromVault')"
   ></modal-withdraw-from-vault>
 </template>
 
 <script>
 import ModalDepositFromVault from './ModalDepositFromVault.vue';
 import ModalWithdrawFromVault from './ModalWithdrawFromVault.vue';
-import {login, view} from '@/near/utils';
-import {mapGetters} from 'vuex';
+import { login, view } from '@/near/utils';
+import { mapGetters } from 'vuex';
 import Big from 'big.js';
 import Vue3autocounter from 'vue3-autocounter';
-import moment from "moment";
+import moment from 'moment';
 
 const SECONDS_IN_YEAR = 31536000;
 
 export default {
   name: 'VaultMore',
 
-  components: {ModalDepositFromVault, ModalWithdrawFromVault, 'vue3-autocounter': Vue3autocounter},
+  components: { ModalDepositFromVault, ModalWithdrawFromVault, 'vue3-autocounter': Vue3autocounter },
 
   props: {
     show: {
       type: Boolean,
       default: false,
     },
+
     depositTokens: {
       type: Array,
       required: true,
       default: () => [],
     },
+
     contractId: {
       type: [String],
       required: true,
     },
+
+    status: {
+      type: String,
+      required: true,
+    },
+
     apr: {
       type: [Number, String],
       required: true,
@@ -170,12 +185,17 @@ export default {
       return this.getVaultsBalances[this.contractId].isProcessing;
     },
 
+    isLiveStatus() {
+      return this.status === 'live';
+    },
+
     canWithdraw() {
       return Number(this.getDeposit()) + Number(this.getRewards()) > 0;
     },
 
     canDeposit() {
-      return this.getBalances.map((it) => Number(it.appBalance)).reduce((a, b) => a + b, 0) > 0;
+      const hasDepositBalance = this.getBalances.map((it) => Number(it.appBalance)).reduce((a, b) => a + b, 0) > 0;
+      return hasDepositBalance && this.isLiveStatus();
     },
   },
 };
