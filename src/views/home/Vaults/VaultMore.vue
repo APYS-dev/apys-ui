@@ -22,7 +22,7 @@
           <button class="btn-border-progress">Processing...</button>
         </template>
         <template v-if="$root.isLogged && !isProcessing()">
-          <button class="btn-bg" @click="showDepositFromVault">Desposit</button>
+          <button :disabled="!isLiveStatus()" class="btn-bg" @click="showDepositFromVault">Desposit</button>
           <button :disabled="!canWithdraw()" class="btn-border" @click="showWithdrawFromVault">Withdraw</button>
         </template>
       </div>
@@ -60,13 +60,20 @@ export default {
       type: Boolean,
       default: false,
     },
+
     depositTokens: {
       type: Array,
       required: true,
       default: () => [],
     },
+
     contractId: {
       type: [String],
+      required: true,
+    },
+
+    status: {
+      type: String,
       required: true,
     },
   },
@@ -115,12 +122,17 @@ export default {
       return this.getVaultsBalances[this.contractId].isProcessing;
     },
 
+    isLiveStatus() {
+      return this.status === 'live';
+    },
+
     canWithdraw() {
       return Number(this.getDeposit()) + Number(this.getRewards()) > 0;
     },
 
     canDeposit() {
-      return this.getBalances.map((it) => Number(it.appBalance)).reduce((a, b) => a + b, 0) > 0;
+      const hasDepositBalance = this.getBalances.map((it) => Number(it.appBalance)).reduce((a, b) => a + b, 0) > 0;
+      return hasDepositBalance && this.isLiveStatus();
     },
   },
 };

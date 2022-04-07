@@ -78,7 +78,13 @@ export default {
       // Get shares from contract
       if (window.accountId) {
         const fetchedBalances = await Promise.all(
-          strategies.map(async ({ contractId, depositTokens, osc }) => {
+          strategies.map(async ({ contractId, depositTokens, osc, status }) => {
+            // Skip fetching balances for [coming] status
+            if (status === 'coming') {
+              return { deposit: 0, rewards: 0, isProcessing: false };
+            }
+
+            // Get strategy balance
             const strategyBalances = await view({
               args: { account_id: window.accountId },
               contractId,
@@ -115,7 +121,7 @@ export default {
 
             // Calculate shares cost
             const totalSharesCost = Big(strategyBalances.shares)
-              .plus(strategyBalances.staked_shares)
+              .plus(strategyBalances.staked_shares || 0)
               .div(Big(10).pow(18))
               .mul(osc)
               .toNumber();

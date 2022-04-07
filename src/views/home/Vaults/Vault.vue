@@ -49,7 +49,7 @@
       </div>
     </div>
 
-    <vault-more :contract-id="contractId" :deposit-tokens="depositTokens" :show="show"></vault-more>
+    <vault-more :contract-id="contractId" :deposit-tokens="depositTokens" :show="show" :status="status"></vault-more>
   </div>
 
   <g-modal
@@ -122,6 +122,11 @@ export default {
       type: [Number, String],
       required: true,
       default: 'n/a',
+    },
+
+    status: {
+      type: String,
+      required: true,
     },
 
     contractId: {

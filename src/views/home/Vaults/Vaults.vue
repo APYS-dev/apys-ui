@@ -20,6 +20,7 @@
         :dex="vault.dex"
         :dex-url="vault.dexUrl"
         :name="vault.name"
+        :status="vault.status"
         :tvl="vault.tvl"
       ></vault>
     </main>
