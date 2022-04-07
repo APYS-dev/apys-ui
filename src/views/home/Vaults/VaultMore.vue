@@ -14,6 +14,21 @@
 
         <div class="vault-more__body">
           <div class="amount">{{ $root.isLogged ? $formatPrice(getRewards()) : '–' }}</div>
+          <!--          <div class="amount__plus">(+$0.0001)</div>-->
+          <div v-if="showCounter" class="amount__plus">
+            <vue3-autocounter
+              ref="counter"
+              :autoinit="false"
+              :decimals="counterDecimals"
+              :duration="counterDuration"
+              :end-amount="endAmount"
+              :start-amount="startAmount"
+              decimal-separator="."
+              prefix="+"
+              separator=","
+              @finished="startCounter"
+            />
+          </div>
         </div>
       </div>
 
@@ -46,14 +61,18 @@
 <script>
 import ModalDepositFromVault from './ModalDepositFromVault.vue';
 import ModalWithdrawFromVault from './ModalWithdrawFromVault.vue';
-import { login } from '@/near/utils';
+import { login, view } from '@/near/utils';
 import { mapGetters } from 'vuex';
 import Big from 'big.js';
+import Vue3autocounter from 'vue3-autocounter';
+import moment from 'moment';
+
+const SECONDS_IN_YEAR = 31536000;
 
 export default {
   name: 'VaultMore',
 
-  components: { ModalDepositFromVault, ModalWithdrawFromVault },
+  components: { ModalDepositFromVault, ModalWithdrawFromVault, 'vue3-autocounter': Vue3autocounter },
 
   props: {
     show: {
@@ -76,13 +95,25 @@ export default {
       type: String,
       required: true,
     },
+
+    apr: {
+      type: [Number, String],
+      required: true,
+      default: '0',
+    },
   },
 
   data() {
     return {
       strategyAmount: '0',
       isInProcess: true,
+      showCounter: false,
       login: () => login(),
+      counterDecimals: 6,
+      startAmount: 0,
+      endAmount: 0,
+      counterDuration: 5,
+      oneSecondProfit: 0,
     };
   },
 
@@ -90,9 +121,36 @@ export default {
     ...mapGetters(['getVaultsBalances', 'getBalances']),
   },
 
-  mounted() {},
+  async mounted() {
+    await this.startCounter();
+  },
 
   methods: {
+    async startCounter() {
+      this.showCounter = false;
+      const { last_reward_time } = await view({ contractId: this.contractId, methodName: 'get_metadata' });
+      if (last_reward_time === '0') {
+        return;
+      }
+      const depositPlusProfit = this.getDepositPlusProfit();
+      if (depositPlusProfit.eq(0)) {
+        return;
+      }
+
+      const secondsFromLastReward = moment.utc().diff(moment.utc(last_reward_time), 'seconds');
+      const oneYearProfit = depositPlusProfit.mul(this.apr).div(100);
+      const oneSecondProfit = oneYearProfit.div(SECONDS_IN_YEAR);
+      const profitFromLastReward = oneSecondProfit.mul(secondsFromLastReward);
+
+      this.oneSecondProfit = oneSecondProfit.toNumber();
+      this.counterDuration = 7200; // two hours
+      this.startAmount = profitFromLastReward.toNumber();
+      this.endAmount = profitFromLastReward.add(oneSecondProfit.mul(this.counterDuration)).toNumber();
+      this.showCounter = true;
+      setTimeout(() => {
+        this.$refs.counter.start();
+      }, 0);
+    },
     showDepositFromVault() {
       this.$vfm.show(this.$id('DepositFromVault'));
     },
@@ -116,6 +174,10 @@ export default {
     getRewards() {
       // Get and return vault rewards amount
       return this.getVaultsBalances[this.contractId].rewards;
+    },
+
+    getDepositPlusProfit() {
+      return new Big(this.getDeposit()).add(this.getRewards());
     },
 
     isProcessing() {
@@ -189,6 +251,15 @@ export default {
     font-size: 24px;
     font-weight: 500;
     color: var(--color-main);
+
+    &__plus {
+      flex-grow: 1;
+      margin: 0 8px 0 8px;
+      color: var(--color-main-90);
+      font-family: monospace;
+      font-size: 0.8rem;
+      align-self: end;
+    }
   }
 
   .price {

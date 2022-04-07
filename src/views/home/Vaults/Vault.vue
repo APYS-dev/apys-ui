@@ -49,7 +49,13 @@
       </div>
     </div>
 
-    <vault-more :contract-id="contractId" :deposit-tokens="depositTokens" :show="show" :status="status"></vault-more>
+    <vault-more
+      :apr="apr"
+      :contract-id="contractId"
+      :deposit-tokens="depositTokens"
+      :show="show"
+      :status="status"
+    ></vault-more>
   </div>
 
   <g-modal

@@ -14,7 +14,6 @@ import gAutonumeric from '@/components/G-autonumeric.vue';
 import './assets/styles/main.scss';
 
 const app = createApp(App);
-
 app
   .use(store)
   .use(router)

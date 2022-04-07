@@ -28,7 +28,7 @@ export default {
 
   async mounted() {
     // Preload general info about tokens and strategies
-    const response = await axios.get('http://localhost:3060/info');
+    const response = await axios.get(process.env.VUE_APP_INFO_SERVER_HOST || 'http://localhost:3060/info');
     if (!response.data) {
       throw 'Can not preload initial data';
     }
