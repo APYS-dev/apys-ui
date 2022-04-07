@@ -113,7 +113,7 @@ export default {
   methods: {
     async startCounter() {
       this.showCounter = false;
-      const { last_reward_time } = await view({ contractId: this.contractId, methodName: 'get_metadata' });
+      const {last_reward_time} = await view({contractId: this.contractId, methodName: 'get_metadata'});
       if (last_reward_time === '0') {
         return;
       }
@@ -122,7 +122,8 @@ export default {
         return;
       }
 
-      const secondsFromLastReward = moment.utc().diff(moment.utc(last_reward_time), 'seconds');
+      const secondsFromLastReward = moment.utc()
+        .diff(moment.utc(Number(last_reward_time.substr(0, 13))), 'seconds');
       const oneYearProfit = depositPlusProfit.mul(this.apr).div(100);
       const oneSecondProfit = oneYearProfit.div(SECONDS_IN_YEAR);
       const profitFromLastReward = oneSecondProfit.mul(secondsFromLastReward);
