@@ -56,7 +56,6 @@ export default {
 
   methods: {
     changeTab(selectedTab) {
-      console.log(selectedTab);
       if (selectedTab !== this.selectedTab) {
         this.selectedTab = selectedTab;
       }
