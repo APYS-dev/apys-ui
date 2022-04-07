@@ -36,10 +36,10 @@
           </template>
         </g-dropdown>
 
-        <g-autonumeric v-model="modalVaultAmount" />
+        <g-autonumeric v-model="modalVaultAmount" :placeholder="`Min amount is ${getMinAmount()}`" />
         <span @click="maxAmount">Max</span>
       </div>
-      <button :disabled="!canDeposit()" class="btn-bg" @click="deposit">Deposit</button>
+      <button :disabled="!canDeposit" class="btn-bg" @click="deposit">Deposit</button>
     </template>
   </g-modal>
 </template>
@@ -68,13 +68,22 @@ export default {
   },
 
   data: () => ({
-    modalVaultAmount: 0,
+    modalVaultAmount: null,
     activeCurrency: '',
     balancesByToken: {},
+    canDeposit: false,
   }),
 
   computed: {
     ...mapGetters(['getBalances']),
+  },
+
+  watch: {
+    modalVaultAmount(val) {
+      const hasDepositBalance = Number(this.balancesByToken[this.activeCurrency.symbol]) > 0;
+      const hasEnoughAmount = Number(val) >= Number(this.activeCurrency.minDepositAmount);
+      this.canDeposit = hasDepositBalance && hasEnoughAmount;
+    },
   },
 
   mounted() {
@@ -95,7 +104,7 @@ export default {
     },
     setActiveCurrency(currency) {
       if (currency) {
-        this.modalVaultAmount = 0;
+        this.modalVaultAmount = null;
         this.activeCurrency = currency;
       }
     },
@@ -122,8 +131,8 @@ export default {
       this.modalVaultAmount = this.$formatPrice(amount, true);
     },
 
-    canDeposit() {
-      return Number(this.balancesByToken[this.activeCurrency.symbol]) > 0;
+    getMinAmount() {
+      return Number(this.activeCurrency.minDepositAmount);
     },
   },
 };
