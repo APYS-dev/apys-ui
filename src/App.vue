@@ -45,6 +45,9 @@ export default {
     const transactionHashes = this.$route.query.transactionHashes;
     if (transactionHashes) {
       await waitForTransactionReady(transactionHashes).then(console.log, console.error);
+
+      // Clear hash from url
+      location.search = '';
     }
 
     // Set vaults
