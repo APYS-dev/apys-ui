@@ -6,9 +6,9 @@
       <balance
         v-for="balance in balances"
         :key="balance.token"
+        :app-balance="balance.appBalance"
         :token="balance.token"
         :wallet-balance="balance.walletBalance"
-        :app-balance="balance.appBalance"
       ></balance>
     </div>
   </div>
@@ -32,13 +32,13 @@ export default {
   },
 
   mounted() {
-    this.balances = this.getBalances;
+    this.balances = this.getBalances.filter((it) => it.token.available);
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .balances {
   padding: 16px 24px;
   background-color: var(--background-color);
