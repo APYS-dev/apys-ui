@@ -4,27 +4,27 @@
       <h2>Vaults</h2>
 
       <div class="vaults__tabs">
-        <button :class="selectedTab === 'live' ? 'active' : ''" @click="changeTab('live')">Live</button>
-        <button :class="selectedTab === 'upcoming' ? 'active' : ''" @click="changeTab('upcoming')">Upcoming</button>
-        <button :class="selectedTab === 'finished' ? 'active' : ''" @click="changeTab('finished')">Finished</button>
+        <button v-for="tab in tabs" :key="tab.status" :class="{ 'active': tab.isActive }" @click="selectTab(tab)">
+          {{ tab.title }}
+        </button>
       </div>
     </header>
 
     <main>
-      <template v-for="vault in vaults" :key="vault.name">
-        <div :style="{ visibility: selectedTab === vault.status ? 'visible' : 'hidden' }">
-          <vault
-            :apr="vault.apr"
-            :contract-id="vault.contractId"
-            :deposit-tokens="vault.depositTokens"
-            :dex="vault.dex"
-            :dex-url="vault.dexUrl"
-            :name="vault.name"
-            :status="vault.status"
-            :tvl="vault.tvl"
-          />
-        </div>
-      </template>
+      <div v-for="tab in tabs" v-show="tab.isActive" :key="tab.status">
+        <vault
+          v-for="vault in getVaultsByStatus(tab.status)"
+          :key="vault.name"
+          :apr="vault.apr"
+          :contract-id="vault.contractId"
+          :deposit-tokens="vault.depositTokens"
+          :dex="vault.dex"
+          :dex-url="vault.dexUrl"
+          :name="vault.name"
+          :status="vault.status"
+          :tvl="vault.tvl"
+        />
+      </div>
     </main>
   </div>
 </template>
@@ -39,24 +39,29 @@ export default {
   components: { Vault },
 
   data: () => ({
-    vaults: {},
-    selectedTab: 'live',
+    tabs: [
+      { title: 'Live', 'status': 'live', isActive: true },
+      { title: 'Upcoming', 'status': 'upcoming', isActive: false },
+      { title: 'Finished', 'status': 'finished', isActive: false },
+    ],
   }),
 
   computed: {
     ...mapGetters(['getVaults']),
   },
 
-  async mounted() {
-    // Sort vaults by status
-    this.vaults = this.getVaults;
-  },
+  async mounted() {},
 
   methods: {
-    changeTab(selectedTab) {
-      if (selectedTab !== this.selectedTab) {
-        this.selectedTab = selectedTab;
-      }
+    selectTab(selected) {
+      // loop over all the tabs
+      this.tabs.forEach((tab) => {
+        tab.isActive = tab.status === selected.status;
+      });
+    },
+
+    getVaultsByStatus(status) {
+      return this.getVaults.filter((it) => it.status === status);
     },
   },
 };
