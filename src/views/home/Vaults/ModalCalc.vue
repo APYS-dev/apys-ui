@@ -23,7 +23,9 @@
         <div class="modal__duration-btns">
           <template v-for="duration in durations" :key="duration.label">
             <button
-              :class="[duration === currentDuration ? 'btn-bg' : 'btn-bg-light']"
+              :class="[
+                duration === currentDuration ? 'btn-bg' : 'btn-bg-light',
+              ]"
               @click="changeDuration(duration)"
             >
               {{ duration.label }}
@@ -32,59 +34,64 @@
         </div>
       </div>
 
-      <div class="modal__recieve">
-        Recieve
+      <div class="modal__receive">
+        Receive
         <div>
-          <div class="modal__recieve-amount">
+          <div class="modal__receive-amount">
             <span class="amount">{{ $formatPrice(getReceiveAmount()) }}</span>
             <span class="currency no-select">USDT</span>
           </div>
 
-          <div class="modal__recieve-apy">
+          <div class="modal__receive-apy">
             APY:
-            <span class="amount">{{ getFormattedApy() }}</span>
+            <span class="amount">{{ apy }}</span>
           </div>
         </div>
       </div>
     </template>
 
     <template #footer>
-      Calculated based on current rates. Compounding once daily. Rates are estimates provided for your convenience.
+      Calculated based on current rates. Compounding once daily. Rates are
+      estimates provided for your convenience.
     </template>
   </g-modal>
 </template>
 
 <script>
-import { aprToApy } from '@/near/utils';
+import { aprToApy } from "@/near/utils";
 
 export default {
-  name: 'ModalCalc',
+  name: "ModalCalc",
 
   props: {
     name: {
       type: String,
-      default: 'calc',
+      default: "calc",
     },
     apr: {
       type: [Number, String],
       required: true,
-      default: 'n/a',
+      default: "n/a",
+    },
+    apy: {
+      type: [Number, String],
+      required: true,
+      default: "n/a",
     },
   },
 
   data: () => ({
-    apy: 0,
     amountToStake: 0,
     durations: [],
-    currentDuration: { 'label': '1 day', 'days': 1, 'apy': aprToApy(1, 1) },
+    currentDuration: { label: "1 day", days: 1, apy: aprToApy(1, 1) },
   }),
 
   mounted() {
     this.durations = [
-      { 'label': '7 days', 'days': 7, 'apy': aprToApy(this.apr, 7) },
-      { 'label': '30 days', 'days': 30, 'apy': aprToApy(this.apr, 30) },
-      { 'label': '6 month', 'days': 180, 'apy': aprToApy(this.apr, 180) },
-      { 'label': '1 year', 'days': 365, 'apy': aprToApy(this.apr, 365) },
+      { label: "7 days", days: 7, apy: aprToApy(this.apr, 7) },
+      { label: "30 days", days: 30, apy: aprToApy(this.apr, 30) },
+      { label: "6 month", days: 180, apy: aprToApy(this.apr, 180) },
+      { label: "1 year", days: 365, apy: aprToApy(this.apr, 365) },
     ];
 
     this.currentDuration = this.durations[0];
@@ -101,7 +108,7 @@ export default {
       return `${this.currentDuration.apy.toFixed(2)}%`;
     },
     getReceiveAmount() {
-      return (((this.amountToStake * this.currentDuration.apy) / 100 / 365) * this.currentDuration.days).toFixed(2);
+      return this.amountToStake * (Math.pow(Number(this.apy.substring(0, this.apy.length - 1)) / 100 + 1, this.currentDuration.days / 365) - 1);
     },
   },
 };
@@ -138,7 +145,7 @@ export default {
         margin-top: 8px;
         padding: 8px 50px 8px 12px;
         width: 100%;
-        font-family: 'WorkSans', sans-serif;
+        font-family: "WorkSans", sans-serif;
         background: transparent;
         border: 1px solid rgba(0, 0, 0, 0.06);
       }
@@ -172,7 +179,7 @@ export default {
       }
     }
 
-    &__recieve {
+    &__receive {
       margin-top: 24px;
 
       & > div {

@@ -15,7 +15,7 @@
         <div class="vault-more__body">
           <div class="amount">{{ $root.isLogged ? $formatPrice(getRewards()) : '–' }}</div>
           <!--          <div class="amount__plus">(+$0.0001)</div>-->
-          <div v-if="showCounter" class="amount__plus">
+          <div v-if="isShowCounter()" class="amount__plus">
             <vue3-autocounter
               ref="counter"
               :autoinit="false"
@@ -151,6 +151,9 @@ export default {
       setTimeout(() => {
         this.$refs.counter.start();
       }, 0);
+    },
+    isShowCounter() {
+      return !this.isProcessing() && this.showCounter;
     },
     showDepositFromVault() {
       this.$vfm.show(this.$id('DepositFromVault'));

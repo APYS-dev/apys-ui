@@ -90,7 +90,7 @@
     </template>
   </g-modal>
 
-  <modal-calc :apr="apr" :name="$id('calc')"></modal-calc>
+  <modal-calc :apr="apr" :apy="apy" :name="$id('calc')"></modal-calc>
 </template>
 
 <script>
