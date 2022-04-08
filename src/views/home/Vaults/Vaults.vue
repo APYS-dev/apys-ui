@@ -11,18 +11,20 @@
     </header>
 
     <main>
-      <vault
-        v-for="vault in vaults[selectedTab]"
-        :key="vault.name"
-        :apr="vault.apr"
-        :contract-id="vault.contractId"
-        :deposit-tokens="vault.depositTokens"
-        :dex="vault.dex"
-        :dex-url="vault.dexUrl"
-        :name="vault.name"
-        :status="vault.status"
-        :tvl="vault.tvl"
-      ></vault>
+      <template v-for="vault in vaults" :key="vault.name">
+        <div :style="{ visibility: selectedTab === vault.status ? 'visible' : 'hidden' }">
+          <vault
+            :apr="vault.apr"
+            :contract-id="vault.contractId"
+            :deposit-tokens="vault.depositTokens"
+            :dex="vault.dex"
+            :dex-url="vault.dexUrl"
+            :name="vault.name"
+            :status="vault.status"
+            :tvl="vault.tvl"
+          />
+        </div>
+      </template>
     </main>
   </div>
 </template>
@@ -47,11 +49,7 @@ export default {
 
   async mounted() {
     // Sort vaults by status
-    this.vaults = {
-      'live': this.getVaults.filter((it) => it.status === 'live'),
-      'upcoming': this.getVaults.filter((it) => it.status === 'upcoming'),
-      'finished': this.getVaults.filter((it) => it.status === 'finished'),
-    };
+    this.vaults = this.getVaults;
   },
 
   methods: {
