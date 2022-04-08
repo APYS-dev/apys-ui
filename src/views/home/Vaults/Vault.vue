@@ -37,7 +37,7 @@
         </div>
 
         <div class="amount">
-          {{ $formatAndCalculateApy(apr) }}
+          {{ apy }}
           <button class="calculator" @click.stop="showCalcModal">
             <img alt="Calc" src="@/assets/img/calculator.png" />
           </button>
@@ -96,6 +96,7 @@
 <script>
 import ModalCalc from './ModalCalc.vue';
 import VaultMore from './VaultMore.vue';
+import { aprToApy } from '@/near/utils';
 
 export default {
   name: 'Vault',
@@ -149,7 +150,12 @@ export default {
 
   data: () => ({
     show: true,
+    apy: 'n/a',
   }),
+
+  mounted() {
+    this.apy = `${aprToApy(this.apr, 365).toFixed(2)}%`;
+  },
 
   methods: {
     showCalcModal() {
