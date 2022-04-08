@@ -93,7 +93,7 @@ export default {
         // Recalculate receive amount
         const balances = this.getVaultsBalances[this.contractId];
         const tokenPrice = this.activeCurrency.price;
-        this.receiveAmount = Big(balances.deposit).plus(balances.rewards).div(tokenPrice).toFixed(2);
+        this.receiveAmount = Big(balances.deposit).plus(balances.rewards).mul(tokenPrice).toFixed(2);
       }
     },
 
