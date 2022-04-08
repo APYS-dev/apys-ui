@@ -108,6 +108,7 @@ export default {
       return `${this.currentDuration.apy.toFixed(2)}%`;
     },
     getReceiveAmount() {
+      // https://en.wikipedia.org/wiki/Annual_percentage_yield
       return this.amountToStake * (Math.pow(Number(this.apy.substring(0, this.apy.length - 1)) / 100 + 1, this.currentDuration.days / 365) - 1);
     },
   },
