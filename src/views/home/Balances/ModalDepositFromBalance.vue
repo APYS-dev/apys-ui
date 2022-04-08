@@ -16,7 +16,7 @@
         <g-autonumeric v-model="modalBalanceAmount" />
         <span @click="maxAmount">Max</span>
       </div>
-      <button class="btn-bg" @click="deposit">Deposit</button>
+      <button :disabled="!canDeposit" class="btn-bg" @click="deposit">Deposit</button>
     </template>
   </g-modal>
 </template>
@@ -45,18 +45,38 @@ export default {
   },
 
   data: () => ({
-    modalBalanceAmount: 0,
+    modalBalanceAmount: null,
+    canDeposit: false,
   }),
+
+  watch: {
+    modalBalanceAmount(val) {
+      const hasDepositBalance = Number(this.amount) > 0;
+      const hasEnoughAmount = Number(val) > 0 && Number(val) <= this.amount;
+      this.canDeposit = hasDepositBalance && hasEnoughAmount;
+    },
+  },
 
   methods: {
     async deposit() {
-      await depositFt(this.token, this.modalBalanceAmount);
+      let amount = 0;
+
+      // Check that amount in the input same as the max amount
+      const isPriceSame = this.$formatPrice(this.modalBalanceAmount, true) === this.$formatPrice(this.amount, true);
+      if (isPriceSame) {
+        amount = this.amount;
+      } else {
+        amount = this.modalBalanceAmount;
+      }
+
+      // Deposit tokens
+      await depositFt(this.token, amount);
     },
     closeModal() {
       this.$vfm.hide(this.nameModal);
     },
     maxAmount() {
-      this.modalBalanceAmount = this.amount;
+      this.modalBalanceAmount = this.$formatPrice(this.amount, true);
     },
   },
 };

@@ -109,7 +109,6 @@ export default {
       }
     },
     async deposit() {
-      console.log('deposit to strategy');
       let amount = 0;
 
       // Check that amount in the input same as the max amount

@@ -16,7 +16,7 @@
         <g-autonumeric v-model="modalBalanceAmount" />
         <span @click="maxAmount">Max</span>
       </div>
-      <button class="btn-bg" @click="withdraw">Withdraw</button>
+      <button :disabled="!canWithdraw" class="btn-bg" @click="withdraw">Withdraw</button>
     </template>
   </g-modal>
 </template>
@@ -45,18 +45,38 @@ export default {
   },
 
   data: () => ({
-    modalBalanceAmount: 0,
+    modalBalanceAmount: null,
+    canWithdraw: false,
   }),
+
+  watch: {
+    modalBalanceAmount(val) {
+      const hasWithdrawBalance = Number(this.amount) > 0;
+      const hasEnoughAmount = Number(val) > 0 && Number(val) <= this.amount;
+      this.canWithdraw = hasWithdrawBalance && hasEnoughAmount;
+    },
+  },
 
   methods: {
     async withdraw() {
-      await withdrawFt(this.token, this.modalBalanceAmount);
+      let amount = 0;
+
+      // Check that amount in the input same as the max amount
+      const isPriceSame = this.$formatPrice(this.modalBalanceAmount, true) === this.$formatPrice(this.amount, true);
+      if (isPriceSame) {
+        amount = this.amount;
+      } else {
+        amount = this.modalBalanceAmount;
+      }
+
+      // Withdraw tokens
+      await withdrawFt(this.token, amount);
     },
     closeModal() {
       this.$vfm.hide(this.nameModal);
     },
     maxAmount() {
-      this.modalBalanceAmount = this.amount;
+      this.modalBalanceAmount = this.$formatPrice(this.amount, true);
     },
   },
 };
