@@ -75,7 +75,7 @@ export async function depositFt(token, amount) {
   const needStorageDeposit = await checkNeedStorageDeposit(window.apysContractId);
   if (needStorageDeposit) {
     const action = {
-      amount: '0.01',
+      amount: '0.01488',
       args: {},
       gas: DEFAULT_GAS,
       methodName: 'storage_deposit',
