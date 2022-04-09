@@ -5,7 +5,7 @@
         <h3 class="vault-more__header">Deposited</h3>
 
         <div class="vault-more__body">
-          <div class="amount">{{ $root.isLogged ? $formatPrice(getDeposit()) : '–' }}</div>
+          <div class="amount">{{ isShowBalance() ? $formatPrice(getDeposit()) : '–' }}</div>
         </div>
       </div>
 
@@ -20,11 +20,11 @@
             <template v-for="token in rewardTokens" :key="token">
               <div class="token-balance">
                 <img :alt="token" :src="`/static/images/tokens/${token}.svg`" />
-                <div class="token-amount">{{ `0` }}</div>
+                <div class="token-amount">{{ '–' }}</div>
               </div>
             </template>
           </div>
-          <button :disabled="true" class="btn-small">Claim</button>
+          <button v-if="$root.isLogged" :disabled="true" class="btn-small btn-border">Claim</button>
         </div>
       </div>
 
@@ -32,7 +32,7 @@
         <h3 class="vault-more__header">Rewards</h3>
 
         <div class="vault-more__body">
-          <div class="amount">{{ $root.isLogged ? $formatPrice(getRewards()) : '–' }}</div>
+          <div class="amount">{{ isShowBalance() ? $formatPrice(getRewards()) : '–' }}</div>
           <!--          <div class="amount__plus">(+$0.0001)</div>-->
           <div v-if="isShowCounter()" class="amount__plus">
             <vue3-autocounter
@@ -209,11 +209,18 @@ export default {
     },
 
     isProcessing() {
-      return this.getVaultsBalances[this.contractId].isProcessing;
+      if (window.accountId) {
+        return this.getVaultsBalances[this.contractId].isProcessing;
+      }
+      return false;
     },
 
     isLiveStatus() {
       return this.status === 'live';
+    },
+
+    isShowBalance() {
+      return this.$root.isLogged && this.status !== 'upcoming';
     },
 
     canWithdraw() {

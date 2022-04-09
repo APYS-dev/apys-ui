@@ -3,17 +3,17 @@
     <header>
       <h2>Vaults</h2>
 
-      <div class="vaults__tabs">
-        <button v-for="tab in tabs" :key="tab.status" :class="{ 'active': tab.isActive }" @click="selectTab(tab)">
-          {{ tab.title }}
-        </button>
-      </div>
+      <!--      <div class="vaults__tabs">-->
+      <!--        <button v-for="tab in tabs" :key="tab.status" :class="{ 'active': tab.isActive }" @click="selectTab(tab)">-->
+      <!--          {{ tab.title }}-->
+      <!--        </button>-->
+      <!--      </div>-->
     </header>
 
     <main>
       <div v-for="tab in tabs" v-show="tab.isActive" :key="tab.status">
         <vault
-          v-for="vault in getVaultsByStatus(tab.status)"
+          v-for="vault in getVaults"
           :key="vault.name"
           :apr="vault.apr"
           :contract-id="vault.contractId"

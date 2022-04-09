@@ -80,7 +80,7 @@ export default {
         const fetchedBalances = await Promise.all(
           strategies.map(async ({ contractId, depositTokens, osc, status }) => {
             // Skip fetching balances for [coming] status
-            if (status === 'coming') {
+            if (status === 'upcoming') {
               return { deposit: 0, rewards: 0, isProcessing: false };
             }
 

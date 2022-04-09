@@ -1,6 +1,7 @@
 <template>
   <div class="vault-wrap">
-    <div class="vault" @click="show = !show">
+    <!--    <div class="vault" @click="show = !show">-->
+    <div class="vault">
       <div class="vault__name-wrap">
         <div class="vault__logo">
           <img
@@ -56,9 +57,12 @@
         </div>
       </div>
 
-      <div :class="{ active: show }" class="vault__arrow">
-        <img alt="↓" src="@/assets/img/arrow-down.png" />
+      <div class="vault__status">
+        <div v-if="status === 'upcoming'" class="line line-position">coming</div>
       </div>
+      <!--      <div :class="{ active: show }" class="vault__arrow">-->
+      <!--        <img alt="↓" src="@/assets/img/arrow-down.png" />-->
+      <!--      </div>-->
     </div>
 
     <vault-more
@@ -219,7 +223,8 @@ export default {
   gap: 16px;
   background-color: var(--background-color);
   border-radius: 4px;
-  cursor: pointer;
+  //cursor: pointer;
+  position: relative;
 
   &__name-wrap {
     display: flex;
@@ -282,6 +287,30 @@ export default {
       width: 11px;
       height: 11px;
       font-size: 8px;
+    }
+  }
+
+  &__status {
+    display: flex;
+    min-height: 34px;
+    min-width: 40px;
+
+    .line {
+      color: var(--color-text);
+      font-weight: 700;
+      background: #f7c945;
+      font-size: 16px;
+      line-height: 24px;
+    }
+
+    .line-position {
+      position: absolute;
+      right: 0;
+      top: 0;
+      padding: 0 2em;
+      transform-origin: left bottom;
+      transform: translate(29.29%, -100%) rotate(45deg);
+      text-indent: 0;
     }
   }
 
