@@ -1,0 +1,145 @@
+*,
+*:before,
+*:after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+}
+
+main,
+nav,
+section,
+footer,
+header,
+aside,
+article,
+dialog,
+figcaption,
+figure,
+hgroup {
+  display: block;
+}
+
+ol,
+ul,
+dl {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  border: 0;
+  vertical-align: top;
+  user-select: none;
+}
+
+b,
+strong {
+  font-weight: 600;
+}
+
+a,
+input,
+textarea,
+select,
+button {
+  text-decoration: none;
+  font-weight: 400;
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+:focus {
+  outline: none;
+}
+
+input,
+textarea {
+  &:focus {
+    &::-webkit-input-placeholder {
+      color: transparent;
+    }
+  }
+}
+
+input {
+  &[type='radio'],
+  &[type='checkbox'] {
+    vertical-align: top;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+
+  &[type='submit'] {
+    border: 0;
+    cursor: pointer;
+
+    &::-moz-focus-inner {
+      padding: 0;
+      border: 0;
+    }
+  }
+
+  &[type='number'] {
+    -moz-appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    &:hover,
+    &:focus {
+      -moz-appearance: number-input;
+    }
+  }
+}
+
+input[type='submit'],
+input[type='text'],
+input[type='email'],
+input[type='search'],
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+option {
+  padding: 0 8px;
+}
+
+button {
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+*[class*='btn'] {
+  user-select: none;
+}
