@@ -10,6 +10,25 @@
       </div>
 
       <div>
+        <h3 class="vault-more__header">
+          Bonus
+          <span class="light-text">(coming soon)</span>
+        </h3>
+
+        <div class="vault-more__bonus-body">
+          <div>
+            <template v-for="token in rewardTokens" :key="token">
+              <div class="token-balance">
+                <img :alt="token" :src="`/static/images/tokens/${token}.svg`" />
+                <div class="token-amount">{{ `0` }}</div>
+              </div>
+            </template>
+          </div>
+          <button :disabled="true" class="btn-small">Claim</button>
+        </div>
+      </div>
+
+      <div>
         <h3 class="vault-more__header">Rewards</h3>
 
         <div class="vault-more__body">
@@ -101,6 +120,12 @@ export default {
       required: true,
       default: '0',
     },
+
+    rewardTokens: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
   },
 
   data() {
@@ -128,7 +153,7 @@ export default {
   methods: {
     async startCounter() {
       this.showCounter = false;
-      const {last_reward_time} = await view({contractId: this.contractId, methodName: 'get_metadata'});
+      const { last_reward_time } = await view({ contractId: this.contractId, methodName: 'get_metadata' });
       if (last_reward_time === '0') {
         return;
       }
@@ -137,8 +162,7 @@ export default {
         return;
       }
 
-      const secondsFromLastReward = moment.utc()
-        .diff(moment.utc(Number(last_reward_time.substr(0, 13))), 'seconds');
+      const secondsFromLastReward = moment.utc().diff(moment.utc(Number(last_reward_time.substr(0, 13))), 'seconds');
       const oneYearProfit = depositPlusProfit.mul(this.apr).div(100);
       const oneSecondProfit = oneYearProfit.div(SECONDS_IN_YEAR);
       const profitFromLastReward = oneSecondProfit.mul(secondsFromLastReward);
@@ -237,17 +261,52 @@ export default {
       margin-right: 24px;
       border-right: 1px solid rgba(13, 13, 13, 0.1);
     }
+
+    &:nth-child(2) {
+      margin-right: 24px;
+      border-right: 1px solid rgba(13, 13, 13, 0.1);
+    }
   }
 
   &__header {
     font-size: 11px;
     color: rgba(13, 13, 13, 0.4);
+
+    .light-text {
+      font-size: 11px;
+      color: rgba(0, 0, 0, 0.3);
+    }
   }
 
   &__body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    min-height: 46px;
+  }
+
+  &__bonus-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 24px;
+    min-height: 46px;
+
+    .token-balance {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+
+      img {
+        width: 19.2px;
+      }
+
+      .token-amount {
+        font-size: 16px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.3);
+      }
+    }
   }
 
   .amount {

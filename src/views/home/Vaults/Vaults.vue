@@ -21,6 +21,7 @@
           :dex="vault.dex"
           :dex-url="vault.dexUrl"
           :name="vault.name"
+          :reward-tokens="vault.rewardTokens"
           :status="vault.status"
           :tvl="vault.tvl"
         />

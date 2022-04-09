@@ -25,6 +25,18 @@
         </a>
       </div>
 
+      <div class="vault__bonus">
+        <div class="light-text">
+          bonus
+          <button class="icon-info" @click.stop="showApyModal"></button>
+        </div>
+        <div class="tokens">
+          <template v-for="token in rewardTokens" :key="token">
+            <img :alt="token" :src="`/static/images/tokens/${token}.svg`" />
+          </template>
+        </div>
+      </div>
+
       <div class="vault__tvl">
         <span class="light-text">tvl</span>
         <div class="amount">{{ $formatPrice(tvl) }}</div>
@@ -53,6 +65,7 @@
       :apr="apr"
       :contract-id="contractId"
       :deposit-tokens="depositTokens"
+      :reward-tokens="rewardTokens"
       :show="show"
       :status="status"
     ></vault-more>
@@ -146,6 +159,12 @@ export default {
       required: true,
       default: () => [],
     },
+
+    rewardTokens: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
   },
 
   data: () => ({
@@ -229,10 +248,12 @@ export default {
 
   &__dex,
   &__tvl,
+  &__bonus,
   &__apy {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
+    min-height: 34px;
     gap: 4px;
 
     .amount {
@@ -242,13 +263,19 @@ export default {
       font-size: 14px;
     }
 
+    .tokens {
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
+    }
+
     .calculator img {
       width: 8px;
       height: 10px;
     }
 
     img {
-      width: 17px;
+      width: 19.2px;
     }
 
     button {
@@ -274,6 +301,7 @@ export default {
     font-size: 11px;
     color: rgba(0, 0, 0, 0.3);
     text-transform: uppercase;
+    height: 14px;
   }
 }
 
