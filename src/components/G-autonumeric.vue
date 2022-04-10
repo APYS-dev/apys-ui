@@ -20,6 +20,7 @@ const DEFAULT_OPTIONS = {
   showWarnings: true,
   selectOnFocus: false,
   minimumValue: 0,
+  emptyInputBehavior: 'null',
 };
 
 export default {
