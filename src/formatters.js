@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import Big from "big.js";
+import Big from 'big.js';
 
 export default {
   install: (app) => {
@@ -27,7 +27,7 @@ export default {
       const currencyFormat = new Intl.NumberFormat('en-US', {
         useGrouping: true,
         minimumFractionDigits: 0,
-        maximumFractionDigits: 4,
+        maximumFractionDigits: 2,
         notation: 'standard',
       });
 
@@ -90,10 +90,7 @@ export default {
         return defaultValue;
       }
 
-      const apy = new Big(apr).div(100).div(period).add(1)
-        .pow(period)
-        .minus(1)
-        .mul(100);
+      const apy = new Big(apr).div(100).div(period).add(1).pow(period).minus(1).mul(100);
 
       return `${apy.toFixed(2)}%`;
     };

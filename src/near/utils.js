@@ -187,7 +187,7 @@ export async function waitForTransactionReady(txHash) {
 }
 
 export function fromUnits(amount, decimals) {
-  return Big(amount).div(new Big(10).pow(decimals)).toFixed(2);
+  return Big(amount).div(new Big(10).pow(decimals));
 }
 
 export function toUnits(amount, decimals) {

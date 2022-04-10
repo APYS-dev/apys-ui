@@ -39,7 +39,7 @@ export default {
     },
 
     amount: {
-      type: [String],
+      type: String,
       default: '0',
     },
   },
@@ -47,35 +47,41 @@ export default {
   data: () => ({
     modalBalanceAmount: null,
     canDeposit: false,
+    useMaxAmount: true,
   }),
 
   watch: {
     modalBalanceAmount(val) {
+      // Check amount is enough for deposit or not
       const hasDepositBalance = Number(this.amount) > 0;
       const hasEnoughAmount = Number(val) > 0 && Number(val) <= this.amount;
       this.canDeposit = hasDepositBalance && hasEnoughAmount;
+
+      // Check that inputted amount the same as max
+      this.useMaxAmount = Number(this.amount).toFixed(2) === Number(val).toFixed(2);
     },
   },
 
   methods: {
     async deposit() {
-      let amount = 0;
-
-      // Check that amount in the input same as the max amount
-      const isPriceSame = this.$formatPrice(this.modalBalanceAmount, true) === this.$formatPrice(this.amount, true);
-      if (isPriceSame) {
-        amount = this.amount;
-      } else {
-        amount = this.modalBalanceAmount;
-      }
+      const depositAmount = this.useMaxAmount ? this.amount : this.modalBalanceAmount;
 
       // Deposit tokens
-      await depositFt(this.token, amount);
+      await depositFt(this.token, depositAmount);
     },
     closeModal() {
       this.$vfm.hide(this.nameModal);
     },
     maxAmount() {
+      // Set max amount flat to true
+      this.useMaxAmount = true;
+
+      // Skip if amount is zero
+      if (Number(this.amount) === 0) {
+        return;
+      }
+
+      // Set amount to max
       this.modalBalanceAmount = this.$formatPrice(this.amount, true);
     },
   },

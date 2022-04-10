@@ -54,9 +54,9 @@ export default {
         const depositAmount = Big(apysBalances.deposit[token.contractId] || 0);
 
         // Calculate and format app balance
-        const appBalance = fromUnits(apysBalance, token.decimals);
+        const appBalance = fromUnits(apysBalance, token.decimals).toString();
 
-        const walletBalance = fromUnits(wallet_balance, token.decimals);
+        const walletBalance = fromUnits(wallet_balance, token.decimals).toString();
         console.log('--------');
         console.log('token', token.symbol);
         console.log('balance', walletBalance);

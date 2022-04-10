@@ -12,7 +12,10 @@
     </template>
 
     <template #content>
-      <div class="modalBalanceAmount">You have {{ $formatPrice(balancesByToken[activeCurrency.symbol], true) }} {{activeCurrency.symbol}}</div>
+      <div class="modalBalanceAmount">
+        You have {{ $formatPrice(balance, true) }}
+        {{ activeCurrency.symbol }}
+      </div>
       <div class="modalBalanceInput">
         <g-dropdown :ref="$id('token')" position="bottom">
           <div :key="$id(activeCurrency.symbol)" class="btn btn-bg-light dropdown-icon">
@@ -70,8 +73,10 @@ export default {
   data: () => ({
     modalVaultAmount: null,
     activeCurrency: '',
-    balancesByToken: {},
     canDeposit: false,
+    balance: 0,
+    balancesByToken: {},
+    useMaxAmount: true,
   }),
 
   computed: {
@@ -80,18 +85,25 @@ export default {
 
   watch: {
     modalVaultAmount(val) {
-      const hasDepositBalance = Number(this.balancesByToken[this.activeCurrency.symbol]) > 0;
+      // Check amount is enough for deposit or not
+      const hasDepositBalance = Number(this.balance) > 0;
       const hasEnoughAmount = Number(val) >= Number(this.activeCurrency.minDepositAmount);
       this.canDeposit = hasDepositBalance && hasEnoughAmount;
+
+      // Check that inputted amount the same as max
+      this.useMaxAmount = Number(this.balance).toFixed(2) === Number(val).toFixed(2);
     },
   },
 
   mounted() {
-    this.activeCurrency = this.depositTokens[0];
+    // Create balances by tokens
     this.balancesByToken = this.getBalances.reduce((acc, next) => {
       acc[next.token.symbol] = next.appBalance;
       return acc;
     }, {});
+
+    // Set active currency
+    this.setActiveCurrency(this.depositTokens[0]);
   },
 
   methods: {
@@ -103,31 +115,28 @@ export default {
       this.$refs[this.$id('token')].closeDropdown();
     },
     setActiveCurrency(currency) {
-      if (currency) {
-        this.modalVaultAmount = null;
-        this.activeCurrency = currency;
-      }
+      this.modalVaultAmount = null;
+      this.activeCurrency = currency;
+      this.useMaxAmount = false;
+
+      // Change current balance
+      this.balance = this.balancesByToken[currency.symbol];
     },
     async deposit() {
-      let amount = 0;
-
-      // Check that amount in the input same as the max amount
-      const isPriceSame =
-        this.$formatPrice(this.modalVaultAmount, true) ===
-        this.$formatPrice(this.balancesByToken[this.activeCurrency.symbol], true);
-      if (isPriceSame) {
-        amount = this.balancesByToken[this.activeCurrency.symbol];
-      } else {
-        amount = this.modalVaultAmount;
-      }
+      const amount = this.useMaxAmount ? this.balance : this.modalBalanceAmount;
 
       // Start strategy
       await startStrategy(this.contractId, this.activeCurrency, amount);
     },
 
     maxAmount() {
-      const amount = this.balancesByToken[this.activeCurrency.symbol];
-      this.modalVaultAmount = this.$formatPrice(amount, true);
+      // Skip if amount is zero
+      if (Number(this.balance) === 0) {
+        return;
+      }
+
+      // Set amount to max
+      this.modalVaultAmount = this.$formatPrice(this.balance, true);
     },
 
     getMinAmount() {

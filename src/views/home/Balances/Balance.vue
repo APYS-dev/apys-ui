@@ -46,13 +46,13 @@ export default {
     },
 
     walletBalance: {
-      type: [String],
-      default: '–',
+      type: String,
+      default: '0',
     },
 
     appBalance: {
-      type: [String],
-      default: '–',
+      type: String,
+      default: '0',
     },
   },
 
