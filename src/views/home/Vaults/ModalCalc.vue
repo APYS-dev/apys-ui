@@ -15,7 +15,7 @@
       <div class="modal__input">
         <p>Stake</p>
         <g-autonumeric v-model="amountToStake" />
-        <span>USDT</span>
+        <span>USD</span>
       </div>
 
       <div class="modal__duration">
@@ -39,7 +39,6 @@
         <div>
           <div class="modal__receive-amount">
             <span class="amount">{{ $formatPrice(getReceiveAmount()) }}</span>
-            <span class="currency no-select">USDT</span>
           </div>
 
           <div class="modal__receive-apy">
@@ -81,7 +80,7 @@ export default {
   },
 
   data: () => ({
-    amountToStake: 0,
+    amountToStake: null,
     durations: [],
     currentDuration: { label: "1 day", days: 1, apy: aprToApy(1, 1) },
   }),
@@ -193,6 +192,8 @@ export default {
       }
 
       &-amount {
+        width: 100%;
+
         .amount {
           margin-right: 12px;
           font-size: 31px;

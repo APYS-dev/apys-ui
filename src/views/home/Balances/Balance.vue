@@ -11,7 +11,7 @@
       <button :disabled="!canWithdraw()" class="btn-small" @click="$vfm.show($id('withdrawFromBalance'))">
         Withdraw
       </button>
-      <button :disabled="!canDeposit()" class="btn-small btn-bg-light" @click="$vfm.show($id('depositFromBalance'))">
+      <button :disabled="!canDeposit()" class="btn-small btn-bg-accent" @click="$vfm.show($id('depositFromBalance'))">
         Deposit
       </button>
     </div>

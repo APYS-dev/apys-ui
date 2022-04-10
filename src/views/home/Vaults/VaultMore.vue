@@ -11,7 +11,7 @@
 
       <div>
         <h3 class="vault-more__header">
-          Bonus
+          +Rewards
           <span class="light-text">(coming soon)</span>
         </h3>
 
@@ -56,7 +56,7 @@
           <button class="btn-border-progress">Processing...</button>
         </template>
         <template v-if="$root.isLogged && !isProcessing()">
-          <button :disabled="!isLiveStatus()" class="btn-bg" @click="showDepositFromVault">Desposit</button>
+          <button :disabled="!isLiveStatus() || !canDeposit()" class="btn-bg" @click="showDepositFromVault">Desposit</button>
           <button :disabled="!canWithdraw()" class="btn-border" @click="showWithdrawFromVault">Withdraw</button>
         </template>
       </div>
@@ -166,7 +166,9 @@ export default {
     this.vaultBalance = this.getVaultsBalances[this.uuid];
 
     // Start counter
-    await this.startCounter();
+    if (!this.isProcessing()) {
+      await this.startCounter();
+    }
   },
 
   methods: {
@@ -193,7 +195,7 @@ export default {
       this.showCounter = true;
       setTimeout(() => {
         this.$refs.counter.start();
-      }, 0);
+      }, 500);
     },
     isShowCounter() {
       return !this.isProcessing() && this.showCounter;
@@ -244,6 +246,9 @@ export default {
     },
 
     canDeposit() {
+      if (Object.keys(this.balances).length === 0) {
+        return false;
+      }
       const hasDepositBalance = this.balances.map((it) => Number(it.appBalance)).reduce((a, b) => a + b, 0) > 0;
       return hasDepositBalance && this.isLiveStatus();
     },

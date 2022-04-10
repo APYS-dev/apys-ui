@@ -28,7 +28,7 @@
 
       <div class="vault__bonus">
         <div class="light-text">
-          bonus
+          +rewards
           <button class="icon-info" @click.stop="showApyModal"></button>
         </div>
         <div class="tokens">

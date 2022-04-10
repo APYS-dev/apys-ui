@@ -12,7 +12,7 @@
     </template>
 
     <template #content>
-      <div class="modalBalanceAmount">You have {{ $formatPrice(balancesByToken[activeCurrency.symbol], true) }}</div>
+      <div class="modalBalanceAmount">You have {{ $formatPrice(balancesByToken[activeCurrency.symbol], true) }} {{activeCurrency.symbol}}</div>
       <div class="modalBalanceInput">
         <g-dropdown :ref="$id('token')" position="bottom">
           <div :key="$id(activeCurrency.symbol)" class="btn btn-bg-light dropdown-icon">
