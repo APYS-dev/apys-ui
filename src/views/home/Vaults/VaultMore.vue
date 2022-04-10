@@ -74,6 +74,7 @@
     :contract-id="contractId"
     :deposit-tokens="depositTokens"
     :name-modal="$id('WithdrawFromVault')"
+    :uuid="uuid"
   ></modal-withdraw-from-vault>
 </template>
 
@@ -97,6 +98,11 @@ export default {
     show: {
       type: Boolean,
       default: false,
+    },
+
+    uuid: {
+      type: String,
+      required: true,
     },
 
     depositTokens: {
@@ -139,6 +145,12 @@ export default {
       endAmount: 0,
       counterDuration: 5,
       oneSecondProfit: 0,
+      vaultBalance: {
+        deposit: 0,
+        rewards: 0,
+        isProcessing: false,
+      },
+      balances: {},
     };
   },
 
@@ -147,6 +159,13 @@ export default {
   },
 
   async mounted() {
+    // Load app balances
+    this.balances = this.getBalances;
+
+    // Load vault balance
+    this.vaultBalance = this.getVaultsBalances[this.uuid];
+
+    // Start counter
     await this.startCounter();
   },
 
@@ -196,12 +215,12 @@ export default {
     },
 
     getDeposit() {
-      return new Big(this.getVaultsBalances[this.contractId].deposit).toString();
+      return new Big(this.vaultBalance.deposit).toString();
     },
 
     getRewards() {
       // Get and return vault rewards amount
-      return this.getVaultsBalances[this.contractId].rewards;
+      return this.vaultBalance.rewards;
     },
 
     getDepositPlusProfit() {
@@ -209,10 +228,7 @@ export default {
     },
 
     isProcessing() {
-      if (window.accountId) {
-        return this.getVaultsBalances[this.contractId].isProcessing;
-      }
-      return false;
+      return this.vaultBalance.isProcessing;
     },
 
     isLiveStatus() {
@@ -228,7 +244,7 @@ export default {
     },
 
     canDeposit() {
-      const hasDepositBalance = this.getBalances.map((it) => Number(it.appBalance)).reduce((a, b) => a + b, 0) > 0;
+      const hasDepositBalance = this.balances.map((it) => Number(it.appBalance)).reduce((a, b) => a + b, 0) > 0;
       return hasDepositBalance && this.isLiveStatus();
     },
   },

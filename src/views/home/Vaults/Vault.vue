@@ -72,6 +72,7 @@
       :reward-tokens="rewardTokens"
       :show="show"
       :status="status"
+      :uuid="uuid"
     ></vault-more>
   </div>
 
@@ -122,6 +123,11 @@ export default {
 
   props: {
     name: {
+      type: String,
+      required: true,
+    },
+
+    uuid: {
       type: String,
       required: true,
     },
@@ -230,6 +236,7 @@ export default {
     display: flex;
     align-items: center;
     gap: 12px;
+    min-width: 232px;
   }
 
   &__logo {

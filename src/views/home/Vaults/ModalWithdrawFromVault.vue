@@ -57,11 +57,18 @@ export default {
       type: String,
       required: true,
     },
+
+    uuid: {
+      type: String,
+      required: true,
+    },
+
     depositTokens: {
       type: Array,
       required: true,
       default: () => [],
     },
+
     contractId: {
       type: [String],
       required: true,
@@ -71,6 +78,11 @@ export default {
   data: () => ({
     activeCurrency: '',
     receiveAmount: '0',
+    vaultBalance: {
+      deposit: 0,
+      rewards: 0,
+      isProcessing: false,
+    },
   }),
 
   computed: {
@@ -78,6 +90,10 @@ export default {
   },
 
   mounted() {
+    // Load vault balance
+    this.vaultBalance = this.getVaultsBalances[this.uuid];
+
+    // Set default active currency
     this.setActiveCurrency(this.depositTokens[0]);
   },
 
@@ -91,9 +107,8 @@ export default {
 
       if (this.$root.isLogged) {
         // Recalculate receive amount
-        const balances = this.getVaultsBalances[this.contractId];
         const tokenPrice = this.activeCurrency.price;
-        this.receiveAmount = Big(balances.deposit).plus(balances.rewards).mul(tokenPrice).toFixed(2);
+        this.receiveAmount = Big(this.vaultBalance.deposit).plus(this.vaultBalance.rewards).mul(tokenPrice).toFixed(2);
       }
     },
 

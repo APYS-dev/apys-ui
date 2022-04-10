@@ -11,21 +11,22 @@
     </header>
 
     <main>
-      <div v-for="tab in tabs" v-show="tab.isActive" :key="tab.status">
-        <vault
-          v-for="vault in getVaults"
-          :key="vault.name"
-          :apr="vault.apr"
-          :contract-id="vault.contractId"
-          :deposit-tokens="vault.depositTokens"
-          :dex="vault.dex"
-          :dex-url="vault.dexUrl"
-          :name="vault.name"
-          :reward-tokens="vault.rewardTokens"
-          :status="vault.status"
-          :tvl="vault.tvl"
-        />
-      </div>
+      <!--      <div v-for="tab in []" v-show="tab.isActive" :key="tab.status">-->
+      <vault
+        v-for="vault in getVaults"
+        :key="vault.name"
+        :apr="vault.apr"
+        :contract-id="vault.contractId"
+        :deposit-tokens="vault.depositTokens"
+        :dex="vault.dex"
+        :dex-url="vault.dexUrl"
+        :name="vault.name"
+        :reward-tokens="vault.rewardTokens"
+        :status="vault.status"
+        :tvl="vault.tvl"
+        :uuid="vault.uuid"
+      />
+      <!--      </div>-->
     </main>
   </div>
 </template>

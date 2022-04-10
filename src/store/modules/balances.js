@@ -73,7 +73,7 @@ export default {
       context.commit('updateBalances', res);
     },
     async loadVaultsBalances(context, strategies) {
-      const vaultsContractsIds = strategies.map((it) => it.contractId);
+      const vaultsUUIDs = strategies.map((it) => it.uuid);
 
       // Get shares from contract
       if (window.accountId) {
@@ -121,7 +121,7 @@ export default {
 
             // Calculate shares cost
             const totalSharesCost = Big(strategyBalances.shares)
-              .plus(strategyBalances.staked_shares || 0)
+              .plus(strategyBalances.staked_shares)
               .div(Big(10).pow(18))
               .mul(osc)
               .toNumber();
@@ -145,10 +145,8 @@ export default {
 
         const vaultsBalances = {};
         fetchedBalances.forEach((contractBalance, index) => {
-          vaultsBalances[vaultsContractsIds[index]] = contractBalance;
+          vaultsBalances[vaultsUUIDs[index]] = contractBalance;
         });
-
-        console.log('vaultsBalances', vaultsBalances);
 
         // Update vaults balances in state
         context.commit('updateVaultsBalances', vaultsBalances);
