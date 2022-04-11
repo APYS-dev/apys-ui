@@ -123,8 +123,8 @@ export default {
       this.balance = this.balancesByToken[currency.symbol];
     },
     async deposit() {
-      const amount = this.useMaxAmount ? this.balance : this.modalBalanceAmount;
-
+      const amount = this.useMaxAmount ? this.balance : this.modalVaultAmount;
+      console.log('amount is: ', this.modalBalanceAmount);
       // Start strategy
       await startStrategy(this.contractId, this.activeCurrency, amount);
     },
