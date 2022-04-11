@@ -126,7 +126,7 @@ export default {
       const res = (await Promise.all(balances)).filter((el) => !!el);
       context.commit('updateBalances', res);
     },
-    async loadVaultsBalances(context, strategies, transactionMeta) {
+    async loadVaultsBalances(context, { strategies, transactionMeta }) {
       const vaultsUUIDs = strategies.map((it) => it.uuid);
 
       // Get shares from contract

@@ -66,7 +66,6 @@ export default {
 
     // Decode transaction meta
     transactionMeta = transactionMeta !== null ? jwtDecode(transactionMeta) : {};
-
     // Set vaults
     this.initVaults(response.data.strategies);
 
@@ -77,7 +76,7 @@ export default {
     await this.loadBalances(transactionMeta);
 
     // Load vaults strategies
-    await this.loadVaultsBalances(response.data.strategies, transactionMeta);
+    await this.loadVaultsBalances({ strategies: response.data.strategies, transactionMeta });
 
     // Change state to loaded
     this.isLoading = false;
