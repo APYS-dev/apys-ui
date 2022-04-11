@@ -63,24 +63,36 @@ export default {
 
         // Check that balance is updated, if not, just update by transactionMeta
         if (Object.keys(transactionMeta).length > 0) {
-          console.warn('TRIGGERED', transactionMeta);
-
           // Check deposit transaction
           if (transactionMeta.deposit && transactionMeta.deposit[token.contractId]) {
+            console.warn(
+              'TRIGGERED DEPOSIT',
+              `wallet: ${walletBalance} appBalance: ${appBalance}\n transactionMeta: ${JSON.stringify(transactionMeta)}`
+            );
+
             // Get transaction amounts
             const amounts = transactionMeta.deposit[token.contractId];
-            if (walletBalance === amounts.oldBalance) {
+            if (walletBalance === amounts.oldWalletBalance) {
               walletBalance = Big(walletBalance).minus(amounts.amount).toString();
+            }
+            if (appBalance === amounts.oldAppBalance) {
               appBalance = Big(appBalance).plus(amounts.amount).toString();
             }
           }
 
           // Check withdraw transaction
           if (transactionMeta.withdraw && transactionMeta.withdraw[token.contractId]) {
+            console.warn(
+              'TRIGGERED WITHDRAW',
+              `wallet: ${walletBalance} appBalance: ${appBalance}\n transactionMeta: ${JSON.stringify(transactionMeta)}`
+            );
+
             // Get transaction amounts
             const amounts = transactionMeta.withdraw[token.contractId];
-            if (walletBalance === amounts.oldBalance) {
+            if (walletBalance === amounts.oldWalletBalance) {
               walletBalance = Big(walletBalance).plus(amounts.amount).toString();
+            }
+            if (appBalance === amounts.oldAppBalance) {
               appBalance = Big(appBalance).minus(amounts.amount).toString();
             }
           }

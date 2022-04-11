@@ -69,7 +69,7 @@ async function checkNeedStorageDeposit(contractId = window.contract.contractId, 
   return !balance || balance.total === '0';
 }
 
-export async function depositFt(token, amount, currentBalance) {
+export async function depositFt(token, amount, walletBalance, appBalance) {
   const transactions = [];
 
   // Check storage deposit and create transaction if necessary
@@ -104,7 +104,8 @@ export async function depositFt(token, amount, currentBalance) {
     {
       deposit: {
         [token.contractId]: {
-          oldBalance: currentBalance,
+          oldWalletBalance: walletBalance,
+          oldAppBalance: appBalance,
           amount,
         },
       },
@@ -116,7 +117,7 @@ export async function depositFt(token, amount, currentBalance) {
   return await nearApi().executeMultipleTransactions(transactions, meta);
 }
 
-export async function withdrawFt(token, amount, currentBalance) {
+export async function withdrawFt(token, amount, walletBalance, appBalance) {
   const transactions = [];
 
   // Check storage deposit and create transaction if necessary
@@ -150,7 +151,8 @@ export async function withdrawFt(token, amount, currentBalance) {
     {
       withdraw: {
         [token.contractId]: {
-          oldBalance: currentBalance,
+          oldWalletBalance: walletBalance,
+          oldAppBalance: appBalance,
           amount,
         },
       },

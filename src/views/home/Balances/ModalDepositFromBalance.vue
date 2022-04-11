@@ -11,7 +11,7 @@
     </template>
 
     <template #content>
-      <div class="modalBalanceAmount">You have {{ $formatPrice(amount, true) }} {{ token.symbol }}</div>
+      <div class="modalBalanceAmount">You have {{ $formatPrice(walletBalance, true) }} {{ token.symbol }}</div>
       <div class="modalBalanceInput">
         <g-autonumeric v-model="modalBalanceAmount" />
         <span @click="maxAmount">Max</span>
@@ -38,7 +38,7 @@ export default {
       required: true,
     },
 
-    amount: {
+    walletBalance: {
       type: String,
       default: '0',
     },
@@ -52,37 +52,37 @@ export default {
 
   watch: {
     modalBalanceAmount(val) {
-      // Check amount is enough for deposit or not
-      const hasDepositBalance = Number(this.amount) > 0;
-      const hasEnoughAmount = Number(val) > 0 && Number(val) <= this.amount;
+      // Check walletBalance is enough for deposit or not
+      const hasDepositBalance = Number(this.walletBalance) > 0;
+      const hasEnoughAmount = Number(val) > 0 && Number(val) <= this.walletBalance;
       this.canDeposit = hasDepositBalance && hasEnoughAmount;
 
-      // Check that inputted amount the same as max
-      this.useMaxAmount = Number(this.amount).toFixed(2) === Number(val).toFixed(2);
+      // Check that inputted walletBalance the same as max
+      this.useMaxAmount = Number(this.walletBalance).toFixed(2) === Number(val).toFixed(2);
     },
   },
 
   methods: {
     async deposit() {
-      const depositAmount = this.useMaxAmount ? this.amount : this.modalBalanceAmount;
+      const depositAmount = this.useMaxAmount ? this.walletBalance : this.modalBalanceAmount;
 
       // Deposit tokens
-      await depositFt(this.token, depositAmount, this.amount);
+      await depositFt(this.token, depositAmount, this.walletBalance, this.appBalance);
     },
     closeModal() {
       this.$vfm.hide(this.nameModal);
     },
     maxAmount() {
-      // Set max amount flat to true
+      // Set max walletBalance flat to true
       this.useMaxAmount = true;
 
-      // Skip if amount is zero
-      if (Number(this.amount) === 0) {
+      // Skip if walletBalance is zero
+      if (Number(this.walletBalance) === 0) {
         return;
       }
 
-      // Set amount to max
-      this.modalBalanceAmount = this.$formatPrice(this.amount, true);
+      // Set walletBalance to max
+      this.modalBalanceAmount = this.$formatPrice(this.walletBalance, true);
     },
   },
 };
