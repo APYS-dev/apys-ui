@@ -77,7 +77,7 @@ export default {
     await this.loadBalances(transactionMeta);
 
     // Load vaults strategies
-    await this.loadVaultsBalances(response.data.strategies);
+    await this.loadVaultsBalances(response.data.strategies, transactionMeta);
 
     // Change state to loaded
     this.isLoading = false;

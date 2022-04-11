@@ -164,15 +164,41 @@ export async function withdrawFt(token, amount, walletBalance, appBalance) {
   return await nearApi().executeMultipleTransactions(transactions, meta);
 }
 
-export async function startStrategy(strategyId, token, amount) {
-  return await window.contract.start({
+export async function startStrategy(strategyId, token, amount, appBalance, vaultBalance) {
+  const transactions = [];
+
+  // Create transfer transaction
+  const transferAction = {
     args: {
       strategy_id: strategyId,
       balance: toUnits(amount, token.decimals),
       token_id: token.contractId,
     },
     gas: 300000000000000,
-  });
+    methodName: 'start',
+  };
+  const transferTransaction = await nearApi().actionsToTransaction(window.apysContractId, [transferAction]);
+  transactions.push(transferTransaction);
+
+  // Create meta with a new temporary balance
+  const meta = jwtEncode(
+    {
+      vaultDeposit: {
+        [token.contractId]: {
+          strategyId,
+          oldAppBalance: appBalance,
+          oldVaultBalance: vaultBalance,
+          amount,
+        },
+      },
+    },
+    ''
+  );
+
+  console.log('transactions', transactions);
+
+  // Execute transactions
+  return await nearApi().executeMultipleTransactions(transactions, meta);
 }
 
 export async function stopStrategy(strategyId, token) {
@@ -196,7 +222,6 @@ export async function stopStrategy(strategyId, token) {
 
 export async function checkTransactionReady(txHash) {
   try {
-
     const result = await window.near.connection.provider.txStatus(txHash, window.accountId);
     console.log('result', JSON.stringify(result));
     const status = result.status;

@@ -60,7 +60,7 @@ export default {
         let walletBalance = fromUnits(wallet_balance, token.decimals).toString();
 
         // Check that balance is updated, if not, just update by transactionMeta
-        if (Object.keys(transactionMeta).length > 0) {
+        if (transactionMeta && Object.keys(transactionMeta).length > 0) {
           // Check deposit transaction
           if (transactionMeta.deposit && transactionMeta.deposit[token.contractId]) {
             console.warn(
@@ -94,6 +94,20 @@ export default {
               appBalance = Big(appBalance).minus(amounts.amount).toString();
             }
           }
+
+          // Check vault transaction
+          if (transactionMeta.vaultDeposit && transactionMeta.vaultDeposit[token.contractId]) {
+            console.warn(
+              'TRIGGERED VAULT DEPOSIT',
+              `wallet: ${walletBalance} appBalance: ${appBalance}\n transactionMeta: ${JSON.stringify(transactionMeta)}`
+            );
+
+            // Get transaction amounts
+            const amounts = transactionMeta.vaultDeposit[token.contractId];
+            if (appBalance === amounts.oldAppBalance) {
+              appBalance = Big(appBalance).minus(amounts.amount).toString();
+            }
+          }
         }
 
         // Print debug data
@@ -112,7 +126,7 @@ export default {
       const res = (await Promise.all(balances)).filter((el) => !!el);
       context.commit('updateBalances', res);
     },
-    async loadVaultsBalances(context, strategies) {
+    async loadVaultsBalances(context, strategies, transactionMeta) {
       const vaultsUUIDs = strategies.map((it) => it.uuid);
 
       // Get shares from contract
@@ -166,8 +180,33 @@ export default {
               .mul(osc)
               .toNumber();
 
+            // Check transaction meta
+            let depositAmountDiff = 0;
+            if (transactionMeta && Object.keys(transactionMeta).length > 0) {
+              // Skip if the strategy not same
+              if (Object.values(transactionMeta.vaultDeposit)[0].strategyId !== contractId) {
+                return;
+              }
+
+              console.warn(
+                'TRIGGERED VAULT DEPOSIT UPDATE',
+                `deposit: ${(totalBalancesCost + totalSharesCost).toFixed(2)}\n transactionMeta: ${JSON.stringify(
+                  transactionMeta
+                )}`
+              );
+
+              // Calculate current deposit
+              const deposit = (totalBalancesCost + totalSharesCost).toFixed(2);
+
+              // Get transaction amounts
+              const amounts = Object.values(transactionMeta.vaultDeposit)[0];
+              if (deposit === amounts.oldVaultBalance) {
+                depositAmountDiff = amounts.amount;
+              }
+            }
+
             // Calculate deposit amount
-            const deposit = (totalBalancesCost + totalSharesCost).toFixed(2);
+            const deposit = (totalBalancesCost + totalSharesCost + depositAmountDiff).toFixed(2);
 
             // Calculate rewards amount
             const rewards = Big(strategyBalances.reward_shares).div(Big(10).pow(18)).mul(osc).toFixed(2);

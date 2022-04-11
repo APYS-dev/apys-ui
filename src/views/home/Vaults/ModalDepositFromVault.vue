@@ -13,7 +13,7 @@
 
     <template #content>
       <div class="modalBalanceAmount">
-        You have {{ $formatPrice(balance, true) }}
+        You have {{ $formatPrice(appBalance, true) }}
         {{ activeCurrency.symbol }}
       </div>
       <div class="modalBalanceInput">
@@ -59,14 +59,21 @@ export default {
       type: String,
       required: true,
     },
+
     depositTokens: {
       type: Array,
       required: true,
       default: () => [],
     },
+
     contractId: {
       type: [String],
       required: true,
+    },
+
+    vaultBalance: {
+      type: [String, Number],
+      default: 0,
     },
   },
 
@@ -74,7 +81,7 @@ export default {
     modalVaultAmount: null,
     activeCurrency: '',
     canDeposit: false,
-    balance: 0,
+    appBalance: 0,
     balancesByToken: {},
     useMaxAmount: true,
   }),
@@ -86,12 +93,12 @@ export default {
   watch: {
     modalVaultAmount(val) {
       // Check amount is enough for deposit or not
-      const hasDepositBalance = Number(this.balance) > 0;
+      const hasDepositBalance = Number(this.appBalance) > 0;
       const hasEnoughAmount = Number(val) >= Number(this.activeCurrency.minDepositAmount);
       this.canDeposit = hasDepositBalance && hasEnoughAmount;
 
       // Check that inputted amount the same as max
-      this.useMaxAmount = Number(this.balance).toFixed(2) === Number(val).toFixed(2);
+      this.useMaxAmount = Number(this.appBalance).toFixed(2) === Number(val).toFixed(2);
     },
   },
 
@@ -119,24 +126,24 @@ export default {
       this.activeCurrency = currency;
       this.useMaxAmount = false;
 
-      // Change current balance
-      this.balance = this.balancesByToken[currency.symbol];
+      // Change current appBalance
+      this.appBalance = this.balancesByToken[currency.symbol];
     },
     async deposit() {
-      const amount = this.useMaxAmount ? this.balance : this.modalVaultAmount;
+      const amount = this.useMaxAmount ? this.appBalance : this.modalVaultAmount;
       console.log('amount is: ', this.modalBalanceAmount);
       // Start strategy
-      await startStrategy(this.contractId, this.activeCurrency, amount);
+      await startStrategy(this.contractId, this.activeCurrency, amount, this.appBalance, this.vaultBalance.toString());
     },
 
     maxAmount() {
       // Skip if amount is zero
-      if (Number(this.balance) === 0) {
+      if (Number(this.appBalance) === 0) {
         return;
       }
 
       // Set amount to max
-      this.modalVaultAmount = this.$formatPrice(this.balance, true);
+      this.modalVaultAmount = this.$formatPrice(this.appBalance, true);
     },
 
     getMinAmount() {
