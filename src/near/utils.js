@@ -195,10 +195,16 @@ export async function stopStrategy(strategyId, token) {
 }
 
 export async function checkTransactionReady(txHash) {
-  const result = await window.near.connection.provider.txStatus(txHash, window.accountId);
-  console.log('result', JSON.stringify(result));
-  const status = result.status;
-  return status['Failure'] !== undefined || status['SuccessValue'] !== undefined;
+  try {
+
+    const result = await window.near.connection.provider.txStatus(txHash, window.accountId);
+    console.log('result', JSON.stringify(result));
+    const status = result.status;
+    return status['Failure'] !== undefined || status['SuccessValue'] !== undefined;
+  } catch (err) {
+    console.log('err:', err);
+    return false;
+  }
 }
 
 const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

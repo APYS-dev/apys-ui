@@ -49,6 +49,7 @@ export default {
 
       // Check prev transaction meta
       const transactionMeta = this.$route.query.signMeta;
+      console.log('transactionMeta', transactionMeta);
       if (transactionMeta) {
         // Save to local storage
         localStorage.setItem('transactionMeta', transactionMeta);

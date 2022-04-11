@@ -25,8 +25,6 @@ export default {
       context.commit('updateTokens', tokens);
     },
     async loadBalances(context, transactionMeta) {
-      console.log('transactionMeta', transactionMeta);
-
       // Get account balances
       let apysBalances = {
         balance: {},

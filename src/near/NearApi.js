@@ -27,7 +27,7 @@ class NearApi {
       .then((value) => JSON.parse(Buffer.from(value.result).toString()));
   }
 
-  executeMultipleTransactions(transactions, meta = {}) {
+  executeMultipleTransactions(transactions, meta = null) {
     return this.wallet.requestSignTransactions({ transactions, meta });
   }
 
