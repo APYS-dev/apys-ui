@@ -18,15 +18,17 @@
   </div>
 
   <modal-withdraw-from-balance
-    :amount="appBalance"
+    :app-balance="appBalance"
     :name-modal="$id('withdrawFromBalance')"
     :token="token"
+    :wallet-balance="walletBalance"
   ></modal-withdraw-from-balance>
 
   <modal-deposit-from-balance
-    :amount="walletBalance"
+    :app-balance="appBalance"
     :name-modal="$id('depositFromBalance')"
     :token="token"
+    :wallet-balance="walletBalance"
   ></modal-deposit-from-balance>
 </template>
 

@@ -11,7 +11,7 @@
     </template>
 
     <template #content>
-      <div class="modalBalanceAmount">You have {{ $formatPrice(amount, true) }} {{ token.symbol }}</div>
+      <div class="modalBalanceAmount">You have {{ $formatPrice(appBalance, true) }} {{ token.symbol }}</div>
       <div class="modalBalanceInput">
         <g-autonumeric v-model="modalBalanceAmount" />
         <span @click="maxAmount">Max</span>
@@ -38,7 +38,12 @@ export default {
       required: true,
     },
 
-    amount: {
+    appBalance: {
+      type: String,
+      default: '0',
+    },
+
+    walletBalance: {
       type: String,
       default: '0',
     },
@@ -52,35 +57,35 @@ export default {
 
   watch: {
     modalBalanceAmount(val) {
-      // Check amount is enough for deposit or not
-      const hasWithdrawBalance = Number(this.amount) > 0;
-      const hasEnoughAmount = Number(val) > 0 && Number(val) <= this.amount;
+      // Check appBalance is enough for deposit or not
+      const hasWithdrawBalance = Number(this.appBalance) > 0;
+      const hasEnoughAmount = Number(val) > 0 && Number(val) <= this.appBalance;
       this.canWithdraw = hasWithdrawBalance && hasEnoughAmount;
 
-      // Check that inputted amount the same as max
-      this.useMaxAmount = Number(this.amount).toFixed(2) === Number(val).toFixed(2);
+      // Check that inputted appBalance the same as max
+      this.useMaxAmount = Number(this.appBalance).toFixed(2) === Number(val).toFixed(2);
     },
   },
 
   methods: {
     async withdraw() {
-      const withdrawAmount = this.useMaxAmount ? this.amount : this.modalBalanceAmount;
+      const withdrawAmount = this.useMaxAmount ? this.appBalance : this.modalBalanceAmount;
 
       // Withdraw tokens
-      await withdrawFt(this.token, withdrawAmount, this.amount);
+      await withdrawFt(this.token, withdrawAmount, this.walletBalance, this.appBalance);
     },
     closeModal() {
       this.$vfm.hide(this.nameModal);
     },
     maxAmount() {
-      const amount = Number(this.amount);
+      const amount = Number(this.appBalance);
 
-      // Skip if amount is zero
+      // Skip if appBalance is zero
       if (amount === 0) {
         return;
       }
 
-      // Set amount to max
+      // Set appBalance to max
       this.modalBalanceAmount = this.$formatPrice(amount, true);
     },
   },
