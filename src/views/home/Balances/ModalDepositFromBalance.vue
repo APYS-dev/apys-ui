@@ -67,7 +67,7 @@ export default {
       const depositAmount = this.useMaxAmount ? this.amount : this.modalBalanceAmount;
 
       // Deposit tokens
-      await depositFt(this.token, depositAmount);
+      await depositFt(this.token, depositAmount, this.amount);
     },
     closeModal() {
       this.$vfm.hide(this.nameModal);

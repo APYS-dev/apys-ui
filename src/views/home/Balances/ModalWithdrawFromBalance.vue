@@ -67,7 +67,7 @@ export default {
       const withdrawAmount = this.useMaxAmount ? this.amount : this.modalBalanceAmount;
 
       // Withdraw tokens
-      await withdrawFt(this.token, withdrawAmount);
+      await withdrawFt(this.token, withdrawAmount, this.amount);
     },
     closeModal() {
       this.$vfm.hide(this.nameModal);

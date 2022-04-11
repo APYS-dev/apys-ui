@@ -2,6 +2,7 @@ import { connect, Contract, keyStores, WalletConnection } from 'near-api-js';
 import getConfig from './config';
 import Big from 'big.js';
 import { nearApi } from '@/near/NearApi';
+import jwtEncode from 'jwt-encode';
 
 const DEFAULT_GAS = '50000000000000';
 const WITHDRAW_GAS = '100000000000000';
@@ -68,7 +69,7 @@ async function checkNeedStorageDeposit(contractId = window.contract.contractId, 
   return !balance || balance.total === '0';
 }
 
-export async function depositFt(token, amount) {
+export async function depositFt(token, amount, currentBalance) {
   const transactions = [];
 
   // Check storage deposit and create transaction if necessary
@@ -98,11 +99,24 @@ export async function depositFt(token, amount) {
   const transferTransaction = await nearApi().actionsToTransaction(token.contractId, [transferAction]);
   transactions.push(transferTransaction);
 
+  // Create meta with a new temporary balance
+  const meta = jwtEncode(
+    {
+      deposit: {
+        [token.contractId]: {
+          oldBalance: currentBalance,
+          amount,
+        },
+      },
+    },
+    ''
+  );
+
   // Execute transactions
-  return await nearApi().executeMultipleTransactions(transactions);
+  return await nearApi().executeMultipleTransactions(transactions, meta);
 }
 
-export async function withdrawFt(token, amount) {
+export async function withdrawFt(token, amount, currentBalance) {
   const transactions = [];
 
   // Check storage deposit and create transaction if necessary
@@ -131,8 +145,21 @@ export async function withdrawFt(token, amount) {
   const transferTransaction = await nearApi().actionsToTransaction(window.apysContractId, [transferAction]);
   transactions.push(transferTransaction);
 
+  // Create meta with a new temporary balance
+  const meta = jwtEncode(
+    {
+      withdraw: {
+        [token.contractId]: {
+          oldBalance: currentBalance,
+          amount,
+        },
+      },
+    },
+    ''
+  );
+
   // Execute transactions
-  return await nearApi().executeMultipleTransactions(transactions);
+  return await nearApi().executeMultipleTransactions(transactions, meta);
 }
 
 export async function startStrategy(strategyId, token, amount) {
@@ -177,8 +204,6 @@ const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 export async function waitForTransactionReady(txHash) {
   const isReady = await checkTransactionReady(txHash);
   if (isReady) {
-    console.log('READY');
-    await timeout(350);
     return 0;
   }
 

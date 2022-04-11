@@ -24,7 +24,9 @@ export default {
     initTokens(context, tokens) {
       context.commit('updateTokens', tokens);
     },
-    async loadBalances(context) {
+    async loadBalances(context, transactionMeta) {
+      console.log('transactionMeta', transactionMeta);
+
       // Get account balances
       let apysBalances = {
         balance: {},
@@ -54,9 +56,37 @@ export default {
         const depositAmount = Big(apysBalances.deposit[token.contractId] || 0);
 
         // Calculate and format app balance
-        const appBalance = fromUnits(apysBalance, token.decimals).toString();
+        let appBalance = fromUnits(apysBalance, token.decimals).toString();
 
-        const walletBalance = fromUnits(wallet_balance, token.decimals).toString();
+        // Get wallet balance
+        let walletBalance = fromUnits(wallet_balance, token.decimals).toString();
+
+        // Check that balance is updated, if not, just update by transactionMeta
+        if (Object.keys(transactionMeta).length > 0) {
+          console.warn('TRIGGERED', transactionMeta);
+
+          // Check deposit transaction
+          if (transactionMeta.deposit && transactionMeta.deposit[token.contractId]) {
+            // Get transaction amounts
+            const amounts = transactionMeta.deposit[token.contractId];
+            if (walletBalance === amounts.oldBalance) {
+              walletBalance = Big(walletBalance).minus(amounts.amount).toString();
+              appBalance = Big(appBalance).plus(amounts.amount).toString();
+            }
+          }
+
+          // Check withdraw transaction
+          if (transactionMeta.withdraw && transactionMeta.withdraw[token.contractId]) {
+            // Get transaction amounts
+            const amounts = transactionMeta.withdraw[token.contractId];
+            if (walletBalance === amounts.oldBalance) {
+              walletBalance = Big(walletBalance).plus(amounts.amount).toString();
+              appBalance = Big(appBalance).minus(amounts.amount).toString();
+            }
+          }
+        }
+
+        // Print debug data
         console.log('--------');
         console.log('token', token.symbol);
         console.log('balance', walletBalance);
