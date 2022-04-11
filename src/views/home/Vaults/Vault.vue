@@ -125,9 +125,16 @@
 
     <template #content>
       <div class="modal__inp-group">
-          The platform offers APYS rewards to certain selected pools. If a project is looking to attract additional liquidity they have the option of utilizing our vaults. By purchasing APYS they could incentivize the preferred vaults and contribute to the protocol’s liquidity.
+        <p class="modal__inp-group__paragraph">
+          The platform offers APYS rewards to certain selected pools. If a project is looking to attract additional
+          liquidity they have the option of utilizing our vaults. By purchasing APYS they could incentivize the
+          preferred vaults and contribute to the protocol’s liquidity.
+        </p>
 
-          Additional APYS rewards will be available in this case. We will prioritize adding the pools which were incentivized by the projects.
+        <p class="modal__inp-group__paragraph">
+          Additional APYS rewards will be available in this case. We will prioritize adding the pools which were
+          incentivized by the projects.
+        </p>
       </div>
     </template>
   </g-modal>
@@ -400,7 +407,7 @@ export default {
 .modal {
   &__inp-group {
     &__paragraph {
-
+      margin-bottom: 5px;
     }
 
     &__topic {
