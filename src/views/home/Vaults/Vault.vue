@@ -16,7 +16,7 @@
           {{ name }}
         </div>
 
-        <button class="icon-info" @click.stop="showVaultModal"></button>
+        <button v-if="uuid === 'ref-usdc-usdt-dai'" class="icon-info" @click.stop="showVaultModal"></button>
       </div>
 
       <div class="vault__dex">
@@ -29,7 +29,7 @@
       <div class="vault__bonus">
         <div class="light-text">
           +rewards
-          <button class="icon-info" @click.stop="showApyModal"></button>
+          <button class="icon-info" @click.stop="showRewardsModal"></button>
         </div>
         <div class="tokens">
           <template v-for="token in rewardTokens" :key="token">
@@ -80,15 +80,55 @@
     :click-to-close="true"
     :is-show-close-button="true"
     :max-width="580"
-    :name="$id('vault-info')"
+    :name="$id(`${uuid}-vault-info`)"
     @close-modal="closeVaultModal"
   >
     <template #header>
-      <h3 class="m-b-36">vault-info</h3>
+      <h3 class="m-b-36">Vault info</h3>
     </template>
 
     <template #content>
-      <div class="modal__inp-group"></div>
+      <div v-if="uuid === 'ref-usdc-usdt-dai'" class="modal__inp-group">
+        <p class="modal__inp-group__paragraph">
+          This vault is designed around stablecoin LP farming. The contract provides a simple solution for the users to interact with the DEX contract and provide liquidity in a couple of clicks. By depositing the funds via APYS UI, the user transfers the funds directly to Ref Finance.
+
+          The funds are then deposited by the DEX contract to add liquidity. The shares are then sent to the farming contract, while the APYS users enjoy the benefits of a convenient farming solution.
+        </p>
+
+        <div class="modal__inp-group__topic">Fee clarification:</div>
+
+        <p class="modal__inp-group__paragraph">
+          We would like to point out that Ref Finance has certain internal fees. Whenever funds are deposited into the vault or withdrawn from it, the pool takes a fee of <b>0.05%</b> and also offers a slippage tolerance of <b>0.2%</b>.
+
+          As the TVL of the vault grows, it is becoming cheaper to interact with the DEX contract. Over time the fees will reduce for all of the participants from the growth of TVL. In addition, auto-compound fees are divided among all of the users, making it cheaper to interact with the platform. They may, however, take some time to auto-compound if the TVL is low.
+
+        </p>
+
+      </div>
+
+      <div v-if="uuid === 'ref-abr-usdc'" class="modal__inp-group">
+
+      </div>
+    </template>
+  </g-modal>
+
+  <g-modal
+      :click-to-close="true"
+      :is-show-close-button="true"
+      :max-width="580"
+      :name="$id('rewards-info')"
+      @close-modal="closeRewardsModal"
+  >
+    <template #header>
+      <h3 class="m-b-36">Rewards info</h3>
+    </template>
+
+    <template #content>
+      <div class="modal__inp-group">
+          The platform offers APYS rewards to certain selected pools. If a project is looking to attract additional liquidity they have the option of utilizing our vaults. By purchasing APYS they could incentivize the preferred vaults and contribute to the protocol’s liquidity.
+
+          Additional APYS rewards will be available in this case. We will prioritize adding the pools which were incentivized by the projects.
+      </div>
     </template>
   </g-modal>
 
@@ -104,7 +144,10 @@
     </template>
 
     <template #content>
-      <div class="modal__inp-group"></div>
+      <div class="modal__inp-group">
+        If you are curious to learn more about the APY details, you may consult the following
+        <a target="_blank" href="https://en.wikipedia.org/wiki/Annual_percentage_yield">link</a>
+      </div>
     </template>
   </g-modal>
 
@@ -192,11 +235,11 @@ export default {
     },
 
     showVaultModal() {
-      this.$vfm.show(this.$id('vault-info'));
+      this.$vfm.show(this.$id(`${this.uuid}-vault-info`));
     },
 
     closeVaultModal() {
-      this.$vfm.hide(this.$id('vault-info'));
+      this.$vfm.hide(this.$id(`${this.uuid}-vault-info`));
     },
 
     showApyModal() {
@@ -205,6 +248,14 @@ export default {
 
     closeApyModal() {
       this.$vfm.hide(this.$id('apy-info'));
+    },
+
+    showRewardsModal() {
+      this.$vfm.show(this.$id('rewards-info'));
+    },
+
+    closeRewardsModal() {
+      this.$vfm.hide(this.$id('rewards-info'));
     },
   },
 };
@@ -344,5 +395,19 @@ export default {
 .icon-info {
   display: inline-flex;
   cursor: pointer;
+}
+
+.modal {
+  &__inp-group {
+    &__paragraph {
+
+    }
+
+    &__topic {
+      margin-top: 8px;
+      font-size: larger;
+      font-weight: bolder;
+    }
+  }
 }
 </style>

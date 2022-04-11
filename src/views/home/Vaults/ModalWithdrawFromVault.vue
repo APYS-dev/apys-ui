@@ -36,7 +36,12 @@
         <span>
           You will receive
           <b>~{{ receiveAmount }}</b>
-          amount of {{ activeCurrency.symbol }}
+          amount of {{ activeCurrency.symbol }},
+
+          <div class="rewards">
+            including <b>~{{ receiveRewards}}</b> {{ activeCurrency.symbol }} as rewards
+          </div>
+
         </span>
       </div>
       <button :disabled="!canWithdraw()" class="btn-bg" @click="withdraw()">Withdraw</button>
@@ -78,6 +83,8 @@ export default {
   data: () => ({
     activeCurrency: '',
     receiveAmount: '0',
+    receiveDeposit: '0',
+    receiveRewards: '0',
     vaultBalance: {
       deposit: 0,
       rewards: 0,
@@ -108,7 +115,12 @@ export default {
       if (this.$root.isLogged) {
         // Recalculate receive amount
         const tokenPrice = this.activeCurrency.price;
-        this.receiveAmount = Big(this.vaultBalance.deposit).plus(this.vaultBalance.rewards).mul(tokenPrice).toFixed(2);
+
+        const receiveDeposit = Big(this.vaultBalance.deposit).mul(tokenPrice);
+        const receiveRewards = Big(this.vaultBalance.rewards).mul(tokenPrice);
+        this.receiveRewards = receiveRewards.toFixed(4);
+        this.receiveDeposit = receiveDeposit.toFixed(4);
+        this.receiveAmount = receiveDeposit.plus(receiveRewards).toFixed(2);
       }
     },
 
@@ -128,6 +140,14 @@ export default {
 
 <style lang="scss" scoped>
 .modalBalanceInput {
+  .rewards {
+    text-align: end;
+  }
+
+  span {
+    padding: 0px 16px;
+  }
+
   display: flex;
   gap: 8px;
 
