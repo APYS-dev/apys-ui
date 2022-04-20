@@ -222,7 +222,8 @@ export async function stopStrategy(strategyId, token) {
 
 export async function checkTransactionReady(txHash) {
   try {
-    const result = await window.near.connection.provider.txStatus(txHash, window.accountId);
+    const hashes = txHash.split(',');
+    const result = await window.near.connection.provider.txStatus(hashes[hashes.length - 1], window.accountId);
     console.log('result', JSON.stringify(result));
     const status = result.status;
     return status['Failure'] !== undefined || status['SuccessValue'] !== undefined;
