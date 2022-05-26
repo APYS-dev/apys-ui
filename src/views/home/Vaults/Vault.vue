@@ -50,7 +50,7 @@
         </div>
 
         <div class="amount">
-          {{ apy }}
+          {{ getApy }}
           <button class="calculator" @click.stop="showCalcModal">
             <img alt="Calc" src="@/assets/img/calculator.png" />
           </button>
@@ -158,7 +158,7 @@
     </template>
   </g-modal>
 
-  <modal-calc :apr="apr" :apy="apy" :name="$id('calc')"></modal-calc>
+  <modal-calc :apr="apr" :apy="getApy" :name="$id('calc')"></modal-calc>
 </template>
 
 <script>
@@ -199,9 +199,8 @@ export default {
     },
 
     apr: {
-      type: [Number, String],
+      type: String,
       required: true,
-      default: 'n/a',
     },
 
     status: {
@@ -229,11 +228,12 @@ export default {
 
   data: () => ({
     show: true,
-    apy: 'n/a',
   }),
 
-  mounted() {
-    this.apy = `${aprToApy(this.apr, 365).toFixed(2)}%`;
+  computed: {
+    getApy() {
+      return `${aprToApy(this.apr, 365).toFixed(2)}%`;
+    },
   },
 
   methods: {
