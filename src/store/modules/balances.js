@@ -60,9 +60,13 @@ export default {
         let walletBalance = fromUnits(wallet_balance, token.decimals).toString();
 
         // Check that balance is updated, if not, just update by transactionMeta
-        if (transactionMeta && Object.keys(transactionMeta).length > 0) {
+        if (transactionMeta !== undefined && Object.keys(transactionMeta).length > 0) {
           // Check deposit transaction
-          if (transactionMeta.deposit && transactionMeta.deposit[token.contractId]) {
+          if (transactionMeta.deposit) {
+            if (transactionMeta.deposit[token.contractId] === undefined) {
+              return;
+            }
+
             console.warn(
               'TRIGGERED DEPOSIT',
               `wallet: ${walletBalance} appBalance: ${appBalance}\n transactionMeta: ${JSON.stringify(transactionMeta)}`
@@ -79,7 +83,11 @@ export default {
           }
 
           // Check withdraw transaction
-          if (transactionMeta.withdraw && transactionMeta.withdraw[token.contractId]) {
+          if (transactionMeta.withdraw) {
+            if (transactionMeta.withdraw[token.contractId] === undefined) {
+              return;
+            }
+
             console.warn(
               'TRIGGERED WITHDRAW',
               `wallet: ${walletBalance} appBalance: ${appBalance}\n transactionMeta: ${JSON.stringify(transactionMeta)}`
@@ -96,7 +104,11 @@ export default {
           }
 
           // Check vault transaction
-          if (transactionMeta.vaultDeposit && transactionMeta.vaultDeposit[token.contractId]) {
+          if (transactionMeta.vaultDeposit) {
+            if (transactionMeta.vaultDeposit[token.contractId] === undefined) {
+              return;
+            }
+
             console.warn(
               'TRIGGERED VAULT DEPOSIT',
               `wallet: ${walletBalance} appBalance: ${appBalance}\n transactionMeta: ${JSON.stringify(transactionMeta)}`
@@ -182,7 +194,13 @@ export default {
 
             // Check transaction meta
             let depositAmountDiff = 0;
-            if (transactionMeta && Object.keys(transactionMeta).length > 0) {
+            if (
+              transactionMeta &&
+              transactionMeta.vaultDeposit &&
+              Object.keys(transactionMeta.vaultDeposit).length > 0
+            ) {
+              console.log('transactionMeta', transactionMeta);
+
               // Skip if the strategy not same
               if (Object.values(transactionMeta.vaultDeposit)[0].strategyId !== contractId) {
                 return;
@@ -222,7 +240,7 @@ export default {
           })
         );
 
-        const vaultsBalances = {};
+        const vaultsBalances = Object.create({});
         fetchedBalances.forEach((contractBalance, index) => {
           vaultsBalances[vaultsUUIDs[index]] = contractBalance;
         });
