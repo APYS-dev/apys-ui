@@ -162,12 +162,6 @@ export default {
   },
 
   async mounted() {
-    // Load app balances
-    this.balances = this.getBalances;
-
-    // Load vault balance
-    this.vaultBalance = this.getVaultsBalances[this.uuid];
-
     // Start counter
     if (!this.isProcessing()) {
       await this.startCounter();
@@ -175,6 +169,9 @@ export default {
   },
 
   methods: {
+    getVaultBalance() {
+      return this.getVaultsBalances[this.uuid] ?? new Error("Can't find vault balance for uuid: " + this.uuid);
+    },
     async startCounter() {
       this.showCounter = false;
       const { last_reward_time } = await view({ contractId: this.contractId, methodName: 'get_metadata' });
@@ -220,12 +217,13 @@ export default {
     },
 
     getDeposit() {
-      return new Big(this.vaultBalance.deposit).toString();
+      console.log('this.getVaultBalance()', this.getVaultBalance());
+      return new Big(this.getVaultBalance().deposit).toString();
     },
 
     getRewards() {
       // Get and return vault rewards amount
-      return this.vaultBalance.rewards;
+      return this.getVaultBalance().rewards;
     },
 
     getDepositPlusProfit() {
@@ -233,7 +231,7 @@ export default {
     },
 
     isProcessing() {
-      return this.vaultBalance.isProcessing;
+      return this.getVaultBalance().isProcessing;
     },
 
     isLiveStatus() {
@@ -249,10 +247,10 @@ export default {
     },
 
     canDeposit() {
-      if (Object.keys(this.balances).length === 0) {
+      if (Object.keys(this.getBalances).length === 0) {
         return false;
       }
-      const hasDepositBalance = this.balances.map((it) => Number(it.appBalance)).reduce((a, b) => a + b, 0) > 0;
+      const hasDepositBalance = this.getBalances.map((it) => Number(it.appBalance)).reduce((a, b) => a + b, 0) > 0;
       return hasDepositBalance && this.isLiveStatus();
     },
   },
