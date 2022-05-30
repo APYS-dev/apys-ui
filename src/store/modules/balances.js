@@ -27,7 +27,7 @@ export default {
     async loadBalances(context, transactionMeta) {
       // Return empty balances if no account
       if (!window.accountId) {
-        const balances = context.state.tokens.map(async (token) => ({
+        const balances = context.state.tokens.map((token) => ({
           token,
           appBalance: '0',
           walletBalance: '0',
@@ -251,7 +251,23 @@ export default {
 
         // Update vaults balances in state
         context.commit('updateVaultsBalances', vaultsBalances);
+        return;
       }
+
+      // Create balances for not authorised account
+      const vaultsBalances = Object.create({});
+      vaultsUUIDs.forEach((uuid) => {
+        vaultsBalances[uuid] = {
+          deposit: 0,
+          rewards: 0,
+          isProcessing: false,
+        };
+      });
+
+      console.log('vaultsBalances', vaultsBalances);
+
+      // Update vaults balances in state
+      context.commit('updateVaultsBalances', vaultsBalances);
     },
   },
 

@@ -66,6 +66,7 @@ export default {
 
     // Decode transaction meta
     transactionMeta = transactionMeta !== null ? jwtDecode(transactionMeta) : {};
+
     // Set vaults
     this.initVaults(response.data.strategies);
 
