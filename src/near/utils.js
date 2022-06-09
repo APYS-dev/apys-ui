@@ -164,14 +164,14 @@ export async function withdrawFt(token, amount, walletBalance, appBalance) {
   return await nearApi().executeMultipleTransactions(transactions, meta);
 }
 
-export async function startStrategy(strategyId, token, amount, appBalance, vaultBalance) {
+export async function startStrategy(strategyId, token, amountRaw, appBalance, vaultBalance) {
   const transactions = [];
 
   // Create transfer transaction
   const transferAction = {
     args: {
       strategy_id: strategyId,
-      balance: toUnits(amount, token.decimals),
+      balance: amountRaw,
       token_id: token.contractId,
     },
     gas: 300000000000000,
@@ -188,7 +188,7 @@ export async function startStrategy(strategyId, token, amount, appBalance, vault
           strategyId,
           oldAppBalance: appBalance,
           oldVaultBalance: vaultBalance,
-          amount,
+          amount: amountRaw,
         },
       },
     },
