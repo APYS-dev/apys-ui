@@ -2,6 +2,7 @@ import { connect, Contract, keyStores, WalletConnection } from 'near-api-js';
 import getConfig from './config';
 import Big from 'big.js';
 import { nearApi } from '@/near/NearApi';
+import jwtEncode from 'jwt-encode';
 
 const DEFAULT_GAS = '50000000000000';
 const WITHDRAW_GAS = '100000000000000';
@@ -65,17 +66,17 @@ async function checkNeedStorageDeposit(contractId = window.contract.contractId, 
     },
   });
 
-  return !balance || balance.total === '0';
+  return !balance || balance.total === '0' || balance.total === '14880000000000000000000';
 }
 
-export async function depositFt(token, amount) {
+export async function depositFt(token, amount, walletBalance, appBalance) {
   const transactions = [];
 
   // Check storage deposit and create transaction if necessary
   const needStorageDeposit = await checkNeedStorageDeposit(window.apysContractId);
   if (needStorageDeposit) {
     const action = {
-      amount: '0.01488',
+      amount: '0.1',
       args: {},
       gas: DEFAULT_GAS,
       methodName: 'storage_deposit',
@@ -98,11 +99,25 @@ export async function depositFt(token, amount) {
   const transferTransaction = await nearApi().actionsToTransaction(token.contractId, [transferAction]);
   transactions.push(transferTransaction);
 
+  // Create meta with a new temporary balance
+  const meta = jwtEncode(
+    {
+      deposit: {
+        [token.contractId]: {
+          oldWalletBalance: walletBalance,
+          oldAppBalance: appBalance,
+          amount,
+        },
+      },
+    },
+    ''
+  );
+
   // Execute transactions
-  return await nearApi().executeMultipleTransactions(transactions);
+  return await nearApi().executeMultipleTransactions(transactions, meta);
 }
 
-export async function withdrawFt(token, amount) {
+export async function withdrawFt(token, amount, walletBalance, appBalance) {
   const transactions = [];
 
   // Check storage deposit and create transaction if necessary
@@ -131,19 +146,59 @@ export async function withdrawFt(token, amount) {
   const transferTransaction = await nearApi().actionsToTransaction(window.apysContractId, [transferAction]);
   transactions.push(transferTransaction);
 
+  // Create meta with a new temporary balance
+  const meta = jwtEncode(
+    {
+      withdraw: {
+        [token.contractId]: {
+          oldWalletBalance: walletBalance,
+          oldAppBalance: appBalance,
+          amount,
+        },
+      },
+    },
+    ''
+  );
+
   // Execute transactions
-  return await nearApi().executeMultipleTransactions(transactions);
+  return await nearApi().executeMultipleTransactions(transactions, meta);
 }
 
-export async function startStrategy(strategyId, token, amount) {
-  return await window.contract.start({
+export async function startStrategy(strategyId, token, amount, appBalance, vaultBalance) {
+  const transactions = [];
+
+  // Create transfer transaction
+  const transferAction = {
     args: {
       strategy_id: strategyId,
       balance: toUnits(amount, token.decimals),
       token_id: token.contractId,
     },
     gas: 300000000000000,
-  });
+    methodName: 'start',
+  };
+  const transferTransaction = await nearApi().actionsToTransaction(window.apysContractId, [transferAction]);
+  transactions.push(transferTransaction);
+
+  // Create meta with a new temporary balance
+  const meta = jwtEncode(
+    {
+      vaultDeposit: {
+        [token.contractId]: {
+          strategyId,
+          oldAppBalance: appBalance,
+          oldVaultBalance: vaultBalance,
+          amount,
+        },
+      },
+    },
+    ''
+  );
+
+  console.log('transactions', transactions);
+
+  // Execute transactions
+  return await nearApi().executeMultipleTransactions(transactions, meta);
 }
 
 export async function stopStrategy(strategyId, token) {
@@ -166,10 +221,16 @@ export async function stopStrategy(strategyId, token) {
 }
 
 export async function checkTransactionReady(txHash) {
-  const result = await window.near.connection.provider.txStatus(txHash, window.accountId);
-  console.log('result', JSON.stringify(result));
-  const status = result.status;
-  return status['Failure'] !== undefined || status['SuccessValue'] !== undefined;
+  try {
+    const hashes = txHash.split(',');
+    const result = await window.near.connection.provider.txStatus(hashes[hashes.length - 1], window.accountId);
+    console.log('result', JSON.stringify(result));
+    const status = result.status;
+    return status['Failure'] !== undefined || status['SuccessValue'] !== undefined;
+  } catch (err) {
+    console.log('err:', err);
+    return false;
+  }
 }
 
 const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -177,8 +238,6 @@ const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 export async function waitForTransactionReady(txHash) {
   const isReady = await checkTransactionReady(txHash);
   if (isReady) {
-    console.log('READY');
-    await timeout(350);
     return 0;
   }
 
@@ -187,7 +246,7 @@ export async function waitForTransactionReady(txHash) {
 }
 
 export function fromUnits(amount, decimals) {
-  return Big(amount).div(new Big(10).pow(decimals)).toFixed(2);
+  return Big(amount).div(new Big(10).pow(decimals));
 }
 
 export function toUnits(amount, decimals) {

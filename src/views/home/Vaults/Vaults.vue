@@ -3,28 +3,30 @@
     <header>
       <h2>Vaults</h2>
 
-      <div class="vaults__tabs">
-        <button v-for="tab in tabs" :key="tab.status" :class="{ 'active': tab.isActive }" @click="selectTab(tab)">
-          {{ tab.title }}
-        </button>
-      </div>
+      <!--      <div class="vaults__tabs">-->
+      <!--        <button v-for="tab in tabs" :key="tab.status" :class="{ 'active': tab.isActive }" @click="selectTab(tab)">-->
+      <!--          {{ tab.title }}-->
+      <!--        </button>-->
+      <!--      </div>-->
     </header>
 
     <main>
-      <div v-for="tab in tabs" v-show="tab.isActive" :key="tab.status">
-        <vault
-          v-for="vault in getVaultsByStatus(tab.status)"
-          :key="vault.name"
-          :apr="vault.apr"
-          :contract-id="vault.contractId"
-          :deposit-tokens="vault.depositTokens"
-          :dex="vault.dex"
-          :dex-url="vault.dexUrl"
-          :name="vault.name"
-          :status="vault.status"
-          :tvl="vault.tvl"
-        />
-      </div>
+      <!--      <div v-for="tab in []" v-show="tab.isActive" :key="tab.status">-->
+      <vault
+        v-for="vault in getVaults"
+        :key="vault.name"
+        :apr="vault.apr"
+        :contract-id="vault.contractId"
+        :deposit-tokens="vault.depositTokens"
+        :dex="vault.dex"
+        :dex-url="vault.dexUrl"
+        :name="vault.name"
+        :reward-tokens="vault.rewardTokens"
+        :status="vault.status"
+        :tvl="vault.tvl"
+        :uuid="vault.uuid"
+      />
+      <!--      </div>-->
     </main>
   </div>
 </template>

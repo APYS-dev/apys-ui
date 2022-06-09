@@ -5,7 +5,26 @@
         <h3 class="vault-more__header">Deposited</h3>
 
         <div class="vault-more__body">
-          <div class="amount">{{ $root.isLogged ? $formatPrice(getDeposit()) : '–' }}</div>
+          <div class="amount">{{ isShowBalance() ? $formatPrice(getDeposit()) : '–' }}</div>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="vault-more__header">
+          +Rewards
+          <span class="light-text">(coming soon)</span>
+        </h3>
+
+        <div class="vault-more__bonus-body">
+          <div>
+            <template v-for="token in rewardTokens" :key="token">
+              <div class="token-balance">
+                <img :alt="token" :src="`/static/images/tokens/${token}.svg`" />
+                <div class="token-amount">{{ '–' }}</div>
+              </div>
+            </template>
+          </div>
+          <button v-if="$root.isLogged" :disabled="true" class="btn-small btn-border">Claim</button>
         </div>
       </div>
 
@@ -13,7 +32,7 @@
         <h3 class="vault-more__header">Rewards</h3>
 
         <div class="vault-more__body">
-          <div class="amount">{{ $root.isLogged ? $formatPrice(getRewards()) : '–' }}</div>
+          <div class="amount">{{ isShowBalance() ? $formatPrice(getRewards()) : '–' }}</div>
           <!--          <div class="amount__plus">(+$0.0001)</div>-->
           <div v-if="isShowCounter()" class="amount__plus">
             <vue3-autocounter
@@ -37,7 +56,9 @@
           <button class="btn-border-progress">Processing...</button>
         </template>
         <template v-if="$root.isLogged && !isProcessing()">
-          <button :disabled="!isLiveStatus()" class="btn-bg" @click="showDepositFromVault">Desposit</button>
+          <button :disabled="!isLiveStatus() || !canDeposit()" class="btn-bg" @click="showDepositFromVault">
+            Deposit
+          </button>
           <button :disabled="!canWithdraw()" class="btn-border" @click="showWithdrawFromVault">Withdraw</button>
         </template>
       </div>
@@ -49,12 +70,14 @@
     :contract-id="contractId"
     :deposit-tokens="depositTokens"
     :name-modal="$id('DepositFromVault')"
+    :vault-balance="vaultBalance.deposit"
   ></modal-deposit-from-vault>
 
   <modal-withdraw-from-vault
     :contract-id="contractId"
     :deposit-tokens="depositTokens"
     :name-modal="$id('WithdrawFromVault')"
+    :uuid="uuid"
   ></modal-withdraw-from-vault>
 </template>
 
@@ -80,6 +103,11 @@ export default {
       default: false,
     },
 
+    uuid: {
+      type: String,
+      required: true,
+    },
+
     depositTokens: {
       type: Array,
       required: true,
@@ -101,6 +129,12 @@ export default {
       required: true,
       default: '0',
     },
+
+    rewardTokens: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
   },
 
   data() {
@@ -114,6 +148,12 @@ export default {
       endAmount: 0,
       counterDuration: 5,
       oneSecondProfit: 0,
+      vaultBalance: {
+        deposit: 0,
+        rewards: 0,
+        isProcessing: false,
+      },
+      balances: {},
     };
   },
 
@@ -122,13 +162,19 @@ export default {
   },
 
   async mounted() {
-    await this.startCounter();
+    // Start counter
+    if (!this.isProcessing()) {
+      await this.startCounter();
+    }
   },
 
   methods: {
+    getVaultBalance() {
+      return this.getVaultsBalances[this.uuid] ?? new Error("Can't find vault balance for uuid: " + this.uuid);
+    },
     async startCounter() {
       this.showCounter = false;
-      const {last_reward_time} = await view({contractId: this.contractId, methodName: 'get_metadata'});
+      const { last_reward_time } = await view({ contractId: this.contractId, methodName: 'get_metadata' });
       if (last_reward_time === '0') {
         return;
       }
@@ -137,8 +183,7 @@ export default {
         return;
       }
 
-      const secondsFromLastReward = moment.utc()
-        .diff(moment.utc(Number(last_reward_time.substr(0, 13))), 'seconds');
+      const secondsFromLastReward = moment.utc().diff(moment.utc(Number(last_reward_time.substr(0, 13))), 'seconds');
       const oneYearProfit = depositPlusProfit.mul(this.apr).div(100);
       const oneSecondProfit = oneYearProfit.div(SECONDS_IN_YEAR);
       const profitFromLastReward = oneSecondProfit.mul(secondsFromLastReward);
@@ -150,7 +195,7 @@ export default {
       this.showCounter = true;
       setTimeout(() => {
         this.$refs.counter.start();
-      }, 0);
+      }, 500);
     },
     isShowCounter() {
       return !this.isProcessing() && this.showCounter;
@@ -172,12 +217,13 @@ export default {
     },
 
     getDeposit() {
-      return new Big(this.getVaultsBalances[this.contractId].deposit).toString();
+      console.log('this.getVaultBalance()', this.getVaultBalance());
+      return new Big(this.getVaultBalance().deposit).toString();
     },
 
     getRewards() {
       // Get and return vault rewards amount
-      return this.getVaultsBalances[this.contractId].rewards;
+      return this.getVaultBalance().rewards;
     },
 
     getDepositPlusProfit() {
@@ -185,11 +231,15 @@ export default {
     },
 
     isProcessing() {
-      return this.getVaultsBalances[this.contractId].isProcessing;
+      return this.getVaultBalance().isProcessing;
     },
 
     isLiveStatus() {
       return this.status === 'live';
+    },
+
+    isShowBalance() {
+      return this.$root.isLogged && this.status !== 'upcoming';
     },
 
     canWithdraw() {
@@ -197,6 +247,9 @@ export default {
     },
 
     canDeposit() {
+      if (Object.keys(this.getBalances).length === 0) {
+        return false;
+      }
       const hasDepositBalance = this.getBalances.map((it) => Number(it.appBalance)).reduce((a, b) => a + b, 0) > 0;
       return hasDepositBalance && this.isLiveStatus();
     },
@@ -237,17 +290,52 @@ export default {
       margin-right: 24px;
       border-right: 1px solid rgba(13, 13, 13, 0.1);
     }
+
+    &:nth-child(2) {
+      margin-right: 24px;
+      border-right: 1px solid rgba(13, 13, 13, 0.1);
+    }
   }
 
   &__header {
     font-size: 11px;
     color: rgba(13, 13, 13, 0.4);
+
+    .light-text {
+      font-size: 11px;
+      color: rgba(0, 0, 0, 0.3);
+    }
   }
 
   &__body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    min-height: 46px;
+  }
+
+  &__bonus-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 24px;
+    min-height: 46px;
+
+    .token-balance {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+
+      img {
+        width: 19.2px;
+      }
+
+      .token-amount {
+        font-size: 16px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.3);
+      }
+    }
   }
 
   .amount {

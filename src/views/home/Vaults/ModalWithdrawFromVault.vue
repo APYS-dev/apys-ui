@@ -36,7 +36,12 @@
         <span>
           You will receive
           <b>~{{ receiveAmount }}</b>
-          amount of {{ activeCurrency.symbol }}
+          amount of {{ activeCurrency.symbol }},
+
+          <div class="rewards">
+            including <b>~{{ receiveRewards}}</b> {{ activeCurrency.symbol }} as rewards
+          </div>
+
         </span>
       </div>
       <button :disabled="!canWithdraw()" class="btn-bg" @click="withdraw()">Withdraw</button>
@@ -57,11 +62,18 @@ export default {
       type: String,
       required: true,
     },
+
+    uuid: {
+      type: String,
+      required: true,
+    },
+
     depositTokens: {
       type: Array,
       required: true,
       default: () => [],
     },
+
     contractId: {
       type: [String],
       required: true,
@@ -71,6 +83,13 @@ export default {
   data: () => ({
     activeCurrency: '',
     receiveAmount: '0',
+    receiveDeposit: '0',
+    receiveRewards: '0',
+    vaultBalance: {
+      deposit: 0,
+      rewards: 0,
+      isProcessing: false,
+    },
   }),
 
   computed: {
@@ -78,6 +97,10 @@ export default {
   },
 
   mounted() {
+    // Load vault balance
+    this.vaultBalance = this.getVaultsBalances[this.uuid];
+
+    // Set default active currency
     this.setActiveCurrency(this.depositTokens[0]);
   },
 
@@ -91,9 +114,13 @@ export default {
 
       if (this.$root.isLogged) {
         // Recalculate receive amount
-        const balances = this.getVaultsBalances[this.contractId];
         const tokenPrice = this.activeCurrency.price;
-        this.receiveAmount = Big(balances.deposit).plus(balances.rewards).mul(tokenPrice).toFixed(2);
+
+        const receiveDeposit = Big(this.vaultBalance.deposit).mul(tokenPrice);
+        const receiveRewards = Big(this.vaultBalance.rewards).mul(tokenPrice);
+        this.receiveRewards = receiveRewards.toFixed(4);
+        this.receiveDeposit = receiveDeposit.toFixed(4);
+        this.receiveAmount = receiveDeposit.plus(receiveRewards).toFixed(2);
       }
     },
 
@@ -113,6 +140,14 @@ export default {
 
 <style lang="scss" scoped>
 .modalBalanceInput {
+  .rewards {
+    text-align: end;
+  }
+
+  span {
+    padding: 0px 16px;
+  }
+
   display: flex;
   gap: 8px;
 

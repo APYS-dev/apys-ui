@@ -13,6 +13,7 @@ import TheFooter from './views/TheFooter.vue';
 import { initContract, login, logout, waitForTransactionReady } from '@/near/utils';
 import { mapActions } from 'vuex';
 import axios from 'axios';
+import jwtDecode from 'jwt-decode';
 
 export default {
   name: 'App',
@@ -28,7 +29,7 @@ export default {
 
   async mounted() {
     // Preload general info about tokens and strategies
-    const response = await axios.get(process.env.VUE_APP_INFO_SERVER_HOST || 'http://localhost:3060/info');
+    const response = await axios.get(process.env.VUE_APP_INFO_SERVER_HOST || 'http://localhost:3070/info');
     if (!response.data) {
       throw 'Can not preload initial data';
     }
@@ -46,9 +47,25 @@ export default {
     if (transactionHashes) {
       await waitForTransactionReady(transactionHashes).then(console.log, console.error);
 
+      // Check prev transaction meta
+      const transactionMeta = this.$route.query.signMeta;
+      console.log('transactionMeta', transactionMeta);
+      if (transactionMeta) {
+        // Save to local storage
+        localStorage.setItem('transactionMeta', transactionMeta);
+      }
+
       // Clear hash from url
       location.search = '';
+      return;
     }
+
+    // Get and remove transaction meta
+    let transactionMeta = localStorage.getItem('transactionMeta');
+    localStorage.removeItem('transactionMeta');
+
+    // Decode transaction meta
+    transactionMeta = transactionMeta !== null ? jwtDecode(transactionMeta) : {};
 
     // Set vaults
     this.initVaults(response.data.strategies);
@@ -57,10 +74,10 @@ export default {
     this.initTokens(response.data.tokens);
 
     // Load balances
-    await this.loadBalances();
+    await this.loadBalances(transactionMeta);
 
     // Load vaults strategies
-    await this.loadVaultsBalances(response.data.strategies);
+    await this.loadVaultsBalances({ strategies: response.data.strategies, transactionMeta });
 
     // Change state to loaded
     this.isLoading = false;

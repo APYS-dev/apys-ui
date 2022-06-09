@@ -15,11 +15,12 @@ import AutoNumeric from 'autonumeric/dist/autoNumeric.min.js';
 const DEFAULT_OPTIONS = {
   allowDecimalPadding: true,
   caretPositionOnFocus: 'end',
-  decimalPlaces: 0,
+  decimalPlaces: 2,
   modifyValueOnWheel: false,
   showWarnings: true,
   selectOnFocus: false,
   minimumValue: 0,
+  emptyInputBehavior: 'null',
 };
 
 export default {

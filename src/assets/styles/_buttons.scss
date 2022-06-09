@@ -67,6 +67,11 @@
     background-color: var(--color-main-10);
   }
 
+  &-bg-accent {
+    @extend .btn;
+    background-color: var(--color-main-10);
+  }
+
   &-border {
     @extend .btn;
     background-color: transparent;
