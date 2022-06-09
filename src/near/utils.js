@@ -66,7 +66,7 @@ async function checkNeedStorageDeposit(contractId = window.contract.contractId, 
     },
   });
 
-  return !balance || balance.total === '0';
+  return !balance || balance.total === '0' || balance.total === '14880000000000000000000';
 }
 
 export async function depositFt(token, amount, walletBalance, appBalance) {
@@ -76,7 +76,7 @@ export async function depositFt(token, amount, walletBalance, appBalance) {
   const needStorageDeposit = await checkNeedStorageDeposit(window.apysContractId);
   if (needStorageDeposit) {
     const action = {
-      amount: '0.01488',
+      amount: '0.1',
       args: {},
       gas: DEFAULT_GAS,
       methodName: 'storage_deposit',
