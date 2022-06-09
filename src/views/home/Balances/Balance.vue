@@ -29,6 +29,7 @@
     :name-modal="$id('depositFromBalance')"
     :token="token"
     :wallet-balance="walletBalance"
+    :raw-balance="rawBalance"
   ></modal-deposit-from-balance>
 </template>
 
@@ -48,6 +49,11 @@ export default {
     },
 
     walletBalance: {
+      type: String,
+      default: '0',
+    },
+
+    rawBalance: {
       type: String,
       default: '0',
     },
