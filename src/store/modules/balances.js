@@ -62,6 +62,7 @@ export default {
 
           // Calculate and format app balance
           let appBalance = fromUnits(apysBalance, token.decimals).toString();
+          const appRawBalance = apysBalances.balance[token.contractId] || '0';
 
           // Get wallet balance
           let walletBalance = fromUnits(wallet_balance, token.decimals).toString();
@@ -129,10 +130,12 @@ export default {
           console.log('balance', walletBalance);
           console.log('raw balance', wallet_balance);
           console.log('apysBalance', appBalance);
+          console.log('appRawBalance', appRawBalance);
           console.log('depositAmount', depositAmount.toFixed(4));
           console.log('--------');
           return {
             appBalance,
+            appRawBalance,
             walletBalance,
             token,
             rawBalance: wallet_balance

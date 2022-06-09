@@ -49,7 +49,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { startStrategy } from '@/near/utils';
+import {startStrategy, toUnits} from '@/near/utils';
 
 export default {
   name: 'ModalDepositFromVault',
@@ -82,7 +82,9 @@ export default {
     activeCurrency: '',
     canDeposit: false,
     appBalance: 0,
+    appRawBalance: '0',
     balancesByToken: {},
+    rawBalancesByToken: {},
     useMaxAmount: true,
   }),
 
@@ -109,6 +111,11 @@ export default {
       return acc;
     }, {});
 
+    this.rawBalancesByToken = this.getBalances.reduce((acc, next) => {
+      acc[next.token.symbol] = next.appRawBalance;
+      return acc;
+    }, {});
+
     // Set active currency
     this.setActiveCurrency(this.depositTokens[0]);
   },
@@ -128,12 +135,13 @@ export default {
 
       // Change current appBalance
       this.appBalance = this.balancesByToken[currency.symbol];
+      this.appRawBalance = this.rawBalancesByToken[currency.symbol];
     },
     async deposit() {
-      const amount = this.useMaxAmount ? this.appBalance : this.modalVaultAmount;
+      const amount = this.useMaxAmount ? this.appRawBalance : toUnits(this.modalVaultAmount, this.activeCurrency.decimals);
       console.log('amount is: ', this.modalBalanceAmount);
       // Start strategy
-      await startStrategy(this.contractId, this.activeCurrency, amount, this.appBalance, this.vaultBalance.toString());
+      await startStrategy(this.contractId, this.activeCurrency, amount, this.appRawBalance, this.vaultBalance.toString());
     },
 
     maxAmount() {
@@ -143,7 +151,7 @@ export default {
       }
 
       // Set amount to max
-      this.modalVaultAmount = this.$formatPrice(this.appBalance, true);
+      this.modalVaultAmount = this.appBalance;
     },
 
     getMinAmount() {
