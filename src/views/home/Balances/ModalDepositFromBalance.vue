@@ -54,7 +54,7 @@ export default {
     modalBalanceAmount(val) {
       // Check walletBalance is enough for deposit or not
       const hasDepositBalance = Number(this.walletBalance) > 0;
-      const hasEnoughAmount = Number(val) > 0 && Number(val) <= this.walletBalance;
+      const hasEnoughAmount = Number(val) > 0 && Number(val).toFixed(2) <= Number(this.walletBalance).toFixed(2);
       this.canDeposit = hasDepositBalance && hasEnoughAmount;
 
       // Check that inputted walletBalance the same as max
