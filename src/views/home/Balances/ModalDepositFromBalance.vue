@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { depositFt } from '@/near/utils';
+import {depositFt, toUnits} from '@/near/utils';
 
 export default {
   name: 'ModalDepositFromBalance',
@@ -39,6 +39,10 @@ export default {
     },
 
     walletBalance: {
+      type: String,
+      default: '0',
+    },
+    rawBalance: {
       type: String,
       default: '0',
     },
@@ -64,10 +68,9 @@ export default {
 
   methods: {
     async deposit() {
-      const depositAmount = this.useMaxAmount ? this.walletBalance : this.modalBalanceAmount;
-
+      const depositAmount = this.useMaxAmount ? this.rawBalance : toUnits(this.modalBalanceAmount, this.token);
       // Deposit tokens
-      await depositFt(this.token, depositAmount, this.walletBalance, this.appBalance);
+      await depositFt(this.token, depositAmount, this.rawBalance, this.appBalance);
     },
     closeModal() {
       this.$vfm.hide(this.nameModal);
@@ -82,7 +85,7 @@ export default {
       }
 
       // Set walletBalance to max
-      this.modalBalanceAmount = this.$formatPrice(this.walletBalance, true);
+      this.modalBalanceAmount = this.walletBalance;
     },
   },
 };

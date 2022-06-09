@@ -9,6 +9,7 @@
         :app-balance="balance.appBalance"
         :token="balance.token"
         :wallet-balance="balance.walletBalance"
+        :raw-balance="balance.rawBalance"
       ></balance>
     </div>
   </div>

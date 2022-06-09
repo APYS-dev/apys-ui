@@ -127,6 +127,7 @@ export default {
           console.log('--------');
           console.log('token', token.symbol);
           console.log('balance', walletBalance);
+          console.log('raw balance', wallet_balance);
           console.log('apysBalance', appBalance);
           console.log('depositAmount', depositAmount.toFixed(4));
           console.log('--------');
@@ -134,6 +135,7 @@ export default {
             appBalance,
             walletBalance,
             token,
+            rawBalance: wallet_balance
           };
         })
       );
