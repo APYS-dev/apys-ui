@@ -22,7 +22,7 @@
       <div class="vault__dex">
         <span class="light-text">dex</span>
         <a :href="dexUrl" target="_blank">
-          <img :src="`/static/images/dexes/${dex}.png`" alt="ref finance" />
+          <img :src="`/static/images/dexes/${dex}.svg`" :alt="dex" />
         </a>
       </div>
 
