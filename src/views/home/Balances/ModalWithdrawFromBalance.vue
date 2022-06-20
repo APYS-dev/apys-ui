@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { withdrawFt } from '@/near/utils';
+import {toUnits, withdrawFt} from '@/near/utils';
 
 export default {
   name: 'ModalWithdrawFromBalance',
@@ -44,6 +44,11 @@ export default {
     },
 
     walletBalance: {
+      type: String,
+      default: '0',
+    },
+
+    appRawBalance: {
       type: String,
       default: '0',
     },
@@ -69,7 +74,7 @@ export default {
 
   methods: {
     async withdraw() {
-      const withdrawAmount = this.useMaxAmount ? this.appBalance : this.modalBalanceAmount;
+      const withdrawAmount = this.useMaxAmount ? this.appRawBalance : toUnits(this.modalBalanceAmount, this.token.decimals);
 
       // Withdraw tokens
       await withdrawFt(this.token, withdrawAmount, this.walletBalance, this.appBalance);

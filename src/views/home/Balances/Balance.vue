@@ -22,6 +22,8 @@
     :name-modal="$id('withdrawFromBalance')"
     :token="token"
     :wallet-balance="walletBalance"
+    :raw-balance="rawBalance"
+    :app-raw-balance="appRawBalance"
   ></modal-withdraw-from-balance>
 
   <modal-deposit-from-balance
@@ -59,6 +61,11 @@ export default {
     },
 
     appBalance: {
+      type: String,
+      default: '0',
+    },
+
+    appRawBalance: {
       type: String,
       default: '0',
     },

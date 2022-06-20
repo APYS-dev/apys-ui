@@ -68,7 +68,7 @@ export default {
 
   methods: {
     async deposit() {
-      const depositAmount = this.useMaxAmount ? this.rawBalance : toUnits(this.modalBalanceAmount, this.token);
+      const depositAmount = this.useMaxAmount ? this.rawBalance : toUnits(this.modalBalanceAmount, this.token.decimals);
       // Deposit tokens
       await depositFt(this.token, depositAmount, this.rawBalance, this.appBalance);
     },

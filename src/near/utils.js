@@ -136,8 +136,8 @@ export async function withdrawFt(token, amount, walletBalance, appBalance) {
   // Create transfer transaction
   const transferAction = {
     args: {
+      amount,
       token_id: token.contractId,
-      amount: toUnits(amount, token.decimals),
     },
     amount: ONE_YOCTO_NEAR,
     gas: WITHDRAW_GAS,
