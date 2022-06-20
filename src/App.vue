@@ -1,105 +1,119 @@
-<template>
-  <div v-if="isLoading" class="loader"></div>
-  <div v-else>
-    <the-header></the-header>
-    <router-view class="content" />
-    <the-footer></the-footer>
-  </div>
-</template>
-
-<script>
-import TheHeader from '@/views/TheHeader.vue';
-import TheFooter from './views/TheFooter.vue';
-import { initContract, login, logout, waitForTransactionReady } from '@/near/utils';
-import { mapActions } from 'vuex';
-import axios from 'axios';
-import jwtDecode from 'jwt-decode';
-
-export default {
-  name: 'App',
-
-  components: { TheHeader, TheFooter },
-  data: () => ({
-    accountId: 'n/a',
-    isLogged: false,
-    login: () => login(),
-    logout: () => logout(),
-    isLoading: true,
-  }),
-
-  async mounted() {
-    // Preload general info about tokens and strategies
-    const response = await axios.get(process.env.VUE_APP_INFO_SERVER_HOST || 'http://localhost:3070/info');
-    if (!response.data) {
-      throw 'Can not preload initial data';
-    }
-
-    const metadata = response.data.metadata;
-
-    const { accountId, walletConnection } = await initContract(metadata.apysContractId);
-    console.log('accountId', accountId);
-    this.accountId = accountId;
-    this.walletConnection = walletConnection;
-    this.isLogged = this.walletConnection.isSignedIn();
-
-    // Check transaction status
-    const transactionHashes = this.$route.query.transactionHashes;
-    if (transactionHashes) {
-      await waitForTransactionReady(transactionHashes).then(console.log, console.error);
-
-      // Check prev transaction meta
-      const transactionMeta = this.$route.query.signMeta;
-      console.log('transactionMeta', transactionMeta);
-      if (transactionMeta) {
-        // Save to local storage
-        localStorage.setItem('transactionMeta', transactionMeta);
-      }
-
-      // Clear hash from url
-      location.search = '';
-      return;
-    }
-
-    // Get and remove transaction meta
-    let transactionMeta = localStorage.getItem('transactionMeta');
-    localStorage.removeItem('transactionMeta');
-
-    // Decode transaction meta
-    transactionMeta = transactionMeta !== null ? jwtDecode(transactionMeta) : {};
-
-    // Set vaults
-    this.initVaults(response.data.strategies);
-
-    // Set balance tokens
-    this.initTokens(response.data.tokens);
-
-    // Load balances
-    await this.loadBalances(transactionMeta);
-
-    // Load vaults strategies
-    await this.loadVaultsBalances({ strategies: response.data.strategies, transactionMeta });
-
-    // Change state to loaded
-    this.isLoading = false;
-  },
-  methods: {
-    ...mapActions(['loadBalances', 'initVaults', 'initTokens', 'loadVaultsBalances']),
-  },
-};
+<script setup lang="ts">
+import { RouterLink, RouterView } from 'vue-router'
+import HelloWorld from '@/components/HelloWorld.vue'
 </script>
 
-<style lang="scss">
-.content {
-  height: 100%;
+<template>
+  <header>
+    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+
+    <div class="wrapper">
+      <HelloWorld msg="You did it!" />
+
+      <nav>
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/about">About</RouterLink>
+      </nav>
+    </div>
+  </header>
+
+  <RouterView />
+</template>
+
+<style>
+@import '@/assets/base.css';
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  font-weight: normal;
 }
 
-.loader {
-  position: fixed;
-  left: 0px;
-  top: 0px;
+header {
+  line-height: 1.5;
+  max-height: 100vh;
+}
+
+.logo {
+  display: block;
+  margin: 0 auto 2rem;
+}
+
+a,
+.green {
+  text-decoration: none;
+  color: hsla(160, 100%, 37%, 1);
+  transition: 0.4s;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2);
+  }
+}
+
+nav {
   width: 100%;
-  height: 100%;
-  z-index: 9999;
-  background: url('/static/images/loading_spinner.gif') 50% 50% no-repeat rgb(249, 249, 249);
+  font-size: 12px;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+nav a.router-link-exact-active {
+  color: var(--color-text);
+}
+
+nav a.router-link-exact-active:hover {
+  background-color: transparent;
+}
+
+nav a {
+  display: inline-block;
+  padding: 0 1rem;
+  border-left: 1px solid var(--color-border);
+}
+
+nav a:first-of-type {
+  border: 0;
+}
+
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+
+  #app {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 2rem;
+  }
+
+  header {
+    display: flex;
+    place-items: center;
+    padding-right: calc(var(--section-gap) / 2);
+  }
+
+  header .wrapper {
+    display: flex;
+    place-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    margin: 0 2rem 0 0;
+  }
+
+  nav {
+    text-align: left;
+    margin-left: -1rem;
+    font-size: 1rem;
+
+    padding: 1rem 0;
+    margin-top: 1rem;
+  }
 }
 </style>
