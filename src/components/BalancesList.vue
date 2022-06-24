@@ -13,7 +13,7 @@
 <script lang="ts">
 import { defineComponent, watch } from "vue";
 import { useAuthStore } from "@/stores/auth";
-import AccountBalance from "@/components/AccountBalance.vue";
+import AccountBalance from "@/components/BalanceCard.vue";
 import { useBalanceStore } from "@/stores/balance";
 import type { TokenBalance } from "@/stores/types";
 
