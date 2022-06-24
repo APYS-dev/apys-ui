@@ -30,5 +30,5 @@ export function formatAmount(
 ): string {
   return amount
     .div(new Big(10).pow(options.decimals))
-    .toFixed(options.fractionDigits);
+    .toFixed(options.fractionDigits, 0); // 0 is RoundingMode.ROUND_DOWN
 }

@@ -16,7 +16,7 @@
       </div>
       <div class="modalBalanceInput">
         <AmountInputField
-          v-model="currentAmount"
+          v-model="currentAmountRaw"
           :input-name="`${modalName}-input`"
         />
         <span @click="maxAmount">Max</span>
@@ -46,9 +46,9 @@ const props = defineProps<{
 }>();
 
 // Define data
-const currentAmount = ref<string | null>(null);
+const currentAmountRaw = ref<string | null>(null);
 
-// Format balance
+// Format data
 const readableBalance = computed(() => {
   return props.balance.div(new Big(10).pow(props.token.decimals));
 });
@@ -57,19 +57,24 @@ const formattedBalance = computed(() => {
   return formatAmount(props.balance, props.token);
 });
 
+const currentAmount = computed(() => {
+  return Big(currentAmountRaw.value ?? 0);
+});
+
 // Watch for currentAmount changes
 const canWithdraw = computed(() => {
   // Check that balance is enough for withdraw or not
   const hasWithdrawBalance = readableBalance.value.gt(0);
+
   const hasEnoughAmount =
-    currentAmount.value !== null &&
-    readableBalance.value.gte(Big(currentAmount.value));
+    currentAmount.value.gt(0) && readableBalance.value.gte(currentAmount.value);
+
   return hasWithdrawBalance && hasEnoughAmount;
 });
 
 // Buttons
 function maxAmount() {
-  currentAmount.value = formatAmount(props.balance, props.token);
+  currentAmountRaw.value = formattedBalance.value;
 }
 
 function closeModal() {
@@ -79,15 +84,8 @@ function closeModal() {
 async function withdraw() {
   const { withdraw } = useBalanceStore();
 
-  // Check that currentAmount is not null
-  if (currentAmount.value === null) {
-    return;
-  }
-
   // Check that currentAmount is max of balance
-  const isMaxAmount =
-    Big(currentAmount.value).toFixed(props.token.fractionDigits) ===
-    readableBalance.value.toFixed(props.token.fractionDigits);
+  const isMaxAmount = currentAmountRaw.value === formattedBalance.value;
 
   // Deposit tokens
   let depositAmount: Big;
