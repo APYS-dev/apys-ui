@@ -10,5 +10,8 @@
     {
       "path": "./tsconfig.vitest.json"
     }
-  ]
+  ],
+  "include": [
+    "./node_modules/vue-final-modal/**/*.vue"
+  ],
 }
