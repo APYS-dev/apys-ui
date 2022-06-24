@@ -2,13 +2,13 @@
   <div class="balance">
     <img
       v-if="!isShowLoader"
-      :alt="balance.token.symbol"
-      :src="`/static/icons/token/${balance.token.symbol}.svg`"
+      :alt="balance.meta.symbol"
+      :src="`/static/icons/token/${balance.meta.symbol}.svg`"
     />
 
     <div v-if="!isShowLoader" class="balance-amount">
       <p class="amount">{{ isSignedIn ? formattedAppBalance : "-" }}</p>
-      <p class="name">{{ balance.token.symbol }}</p>
+      <p class="name">{{ balance.meta.symbol }}</p>
     </div>
 
     <ContentLoader
@@ -54,14 +54,14 @@
   </div>
 
   <ModalWithdrawFromBalance
-    :modal-name="`withdrawFromBalance-${balance.token.contractId}`"
-    :token="balance.token"
+    :modal-name="`withdrawFromBalance-${balance.meta.contractId}`"
+    :token="balance.meta"
     :balance="balance.appBalance"
   />
 
   <ModalDepositFromBalance
-    :modal-name="`depositFromBalance-${balance.token.contractId}`"
-    :token="balance.token"
+    :modal-name="`depositFromBalance-${balance.meta.contractId}`"
+    :token="balance.meta"
     :balance="balance.walletBalance"
   />
 </template>
@@ -98,25 +98,25 @@ if (isSignedIn) {
   const { fetchWalletBalance, fetchAppBalance } = useBalanceStore();
 
   // Fetch app balance
-  fetchAppBalance(props.balance.token.contractId)
+  fetchAppBalance(props.balance.meta.contractId)
     .then((loaded) => {
       isAppBalanceLoaded.value = loaded;
     })
     .catch((reason) => {
       logger.error(
-        `Failed to fetch app balance for ${props.balance.token.contractId}`,
+        `Failed to fetch app balance for ${props.balance.meta.contractId}`,
         reason
       );
     });
 
   // Fetch wallet balance
-  fetchWalletBalance(props.balance.token.contractId)
+  fetchWalletBalance(props.balance.meta.contractId)
     .then((loaded) => {
       isWalletBalanceLoaded.value = loaded;
     })
     .catch((reason) => {
       logger.error(
-        `Failed to fetch wallet balance for ${props.balance.token.contractId}`,
+        `Failed to fetch wallet balance for ${props.balance.meta.contractId}`,
         reason
       );
     });
@@ -132,7 +132,7 @@ const isShowLoader = computed(() => {
 // Format app balance
 const formattedAppBalance = computed(() => {
   if (props.balance.appBalance) {
-    return formatAmount(props.balance.appBalance, props.balance.token);
+    return formatAmount(props.balance.appBalance, props.balance.meta);
   }
   return "-";
 });
@@ -149,11 +149,11 @@ const canWithdraw = computed(() => {
 
 // Buttons click handlers
 function showWithdrawModal() {
-  $vfm.show(`withdrawFromBalance-${props.balance.token.contractId}`);
+  $vfm.show(`withdrawFromBalance-${props.balance.meta.contractId}`);
 }
 
 function showDepositModal() {
-  $vfm.show(`depositFromBalance-${props.balance.token.contractId}`);
+  $vfm.show(`depositFromBalance-${props.balance.meta.contractId}`);
 }
 </script>
 

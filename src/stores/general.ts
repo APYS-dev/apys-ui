@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import type {
   TokenMeta,
   Metadata,
-  StrategyInfo,
+  StrategyMeta,
 } from "@/network/models/InfoServerModels";
 import { infoServerApi } from "@/network/api/InfoServerApi";
 import Big from "big.js";
@@ -10,7 +10,7 @@ import Big from "big.js";
 interface State {
   totalTvl: Big;
   metadata: Metadata;
-  strategies: StrategyInfo[];
+  strategies: StrategyMeta[];
   tokens: TokenMeta[];
 }
 

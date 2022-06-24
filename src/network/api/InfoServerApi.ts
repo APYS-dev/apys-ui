@@ -1,10 +1,6 @@
-import type { GetInfoResponse } from "@/network/dtos/InfoServerDtos";
+import type { GetInfoResponseDto } from "@/network/dtos/InfoServerDtos";
 import axios from "axios";
-import type {
-  TokenMeta,
-  Metadata,
-  StrategyInfo,
-} from "@/network/models/InfoServerModels";
+import type { GetInfoResponse } from "@/network/models/InfoServerModels";
 import Big from "big.js";
 
 class InfoServerApi {
@@ -12,17 +8,13 @@ class InfoServerApi {
     // TODO
   }
 
-  getInfo = async (): Promise<{
-    strategies: StrategyInfo[];
-    tokens: TokenMeta[];
-    metadata: Metadata;
-  }> =>
+  getInfo = async (): Promise<GetInfoResponse> =>
     await axios
-      .get<GetInfoResponse>(`${import.meta.env.VITE_INFO_SERVER_HOST}/info`)
+      .get<GetInfoResponseDto>(`${import.meta.env.VITE_INFO_SERVER_HOST}/info`)
       .then((response) => response.data)
       .then((data) => this.mapInfoResponse(data));
 
-  private mapInfoResponse(data: GetInfoResponse) {
+  private mapInfoResponse(data: GetInfoResponseDto): GetInfoResponse {
     return {
       metadata: data.metadata,
       strategies: data.strategies.map((strategy) => ({

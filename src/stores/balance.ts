@@ -17,13 +17,13 @@ export const useBalanceStore = defineStore({
   }),
   getters: {
     getBalanceByToken: (state: State) => (tokenId: string) => {
-      return state.balances.find((it) => it.token.contractId === tokenId);
+      return state.balances.find((it) => it.meta.contractId === tokenId);
     },
   },
   actions: {
-    initBalancesByTokens(tokens: TokenMeta[]) {
+    initBalancesByTokensMeta(tokens: TokenMeta[]) {
       this.balances = tokens.map((token) => ({
-        token: token,
+        meta: token,
         appBalance: Big(0),
         appBalanceLoaded: false,
         walletBalance: Big(0),
@@ -40,7 +40,7 @@ export const useBalanceStore = defineStore({
 
       // Update state
       const balanceIndex = this.balances.findIndex(
-        (it) => it.token.contractId === tokenId
+        (it) => it.meta.contractId === tokenId
       );
       if (balanceIndex !== -1) {
         this.balances[balanceIndex] = {
@@ -65,7 +65,7 @@ export const useBalanceStore = defineStore({
 
       // Update state
       const balanceIndex = this.balances.findIndex(
-        (it) => it.token.contractId === tokenId
+        (it) => it.meta.contractId === tokenId
       );
       if (balanceIndex !== -1) {
         this.balances[balanceIndex] = {

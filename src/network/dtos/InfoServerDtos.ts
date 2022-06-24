@@ -1,6 +1,6 @@
-export interface GetInfoResponse {
-  strategies: StrategyInfoDto[];
-  tokens: DepositTokenDto[];
+export interface GetInfoResponseDto {
+  strategies: StrategyMetaDto[];
+  tokens: TokenMetaDto[];
   metadata: MetadataDto;
 }
 
@@ -8,23 +8,25 @@ export interface MetadataDto {
   apysContractId: string;
 }
 
-export interface DepositTokenDto {
+export interface TokenMetaDto {
   symbol: string;
   contractId: string;
   decimals: number;
+  available: boolean;
+  fractionDigits: number;
 }
 
-export interface DepositTokenWithPriceDto extends DepositTokenDto {
+export interface TokenMetaWithPriceDto extends TokenMetaDto {
   price: number;
   minDepositAmount: number;
 }
 
-export interface StrategyInfoDto {
+export interface StrategyMetaDto {
   uuid: string;
   name: string;
   contractId: string;
   status: "live" | "upcoming" | "finished";
-  depositTokens: DepositTokenWithPriceDto[];
+  depositTokens: TokenMetaWithPriceDto[];
   dex: "REF" | "JUMBO";
   dexUrl: string;
   apr: string;

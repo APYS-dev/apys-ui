@@ -4,7 +4,7 @@
 
     <AccountBalance
       v-for="balance in balances"
-      :key="balance.token.contractId"
+      :key="balance.meta.contractId"
       :balance="balance"
     />
   </div>

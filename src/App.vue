@@ -65,8 +65,8 @@ export default defineComponent({
       const { tokens } = useGeneralStore();
 
       // Init balances
-      const { initBalancesByTokens } = useBalanceStore();
-      initBalancesByTokens(tokens);
+      const { initBalancesByTokensMeta } = useBalanceStore();
+      initBalancesByTokensMeta(tokens);
     },
   },
 });

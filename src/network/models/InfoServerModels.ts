@@ -1,5 +1,11 @@
 import type Big from "big.js";
 
+export interface GetInfoResponse {
+  strategies: StrategyMeta[];
+  tokens: TokenMeta[];
+  metadata: Metadata;
+}
+
 export interface Metadata {
   apysContractId: string;
 }
@@ -17,7 +23,7 @@ export interface TokenMetaWithPrice extends TokenMeta {
   minDepositAmount: number;
 }
 
-export interface StrategyInfo {
+export interface StrategyMeta {
   uuid: string;
   name: string;
   contractId: string;
