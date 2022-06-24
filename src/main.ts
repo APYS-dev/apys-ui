@@ -1,12 +1,30 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createApp } from "vue";
+import { createPinia } from "pinia";
+import VueLoading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/vue-loading.css";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { vfmPlugin } from "vue-final-modal";
+import { createLogger } from "vue-logger-plugin";
 
-import App from './App.vue'
-import router from './router'
+import "@/assets/styles/main.scss";
 
-const app = createApp(App)
+import App from "./App.vue";
+import router from "./router";
 
-app.use(createPinia())
-app.use(router)
+const app = createApp(App);
 
-app.mount('#app')
+app
+  .use(createPinia())
+  .use(router)
+  .use(VueLoading)
+  .use(createLogger({}))
+  .use(
+    vfmPlugin({
+      key: "$vfm",
+      componentName: "VueFinalModal",
+      dynamicContainerName: "ModalsContainer",
+    })
+  );
+
+app.mount("#app");

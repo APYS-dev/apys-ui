@@ -1,119 +1,79 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from '@/components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <TheHeader />
+  <RouterView class="content" />
+  <TheFooter />
+  <ModalsContainer></ModalsContainer>
+  <div id="endofbody"></div>
 </template>
 
-<style>
-@import '@/assets/base.css';
+<script lang="ts">
+import { RouterView } from "vue-router";
+import { defineComponent } from "vue";
+import TheHeader from "@/components/TheHeader.vue";
+import TheFooter from "@/components/TheFooter.vue";
+import { useGeneralStore } from "@/stores/general";
+import { useBalanceStore } from "@/stores/balance";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { ModalsContainer } from "vue-final-modal";
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+export default defineComponent({
+  name: "App",
+  components: {
+    TheFooter,
+    TheHeader,
+    RouterView,
+    ModalsContainer,
+  },
 
-  font-weight: normal;
-}
+  setup() {
+    return {
+      isLoading: true,
+    };
+  },
 
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
+  async mounted() {
+    // Show full loading screen
+    const loader = this.$loading.show({
+      // Optional parameters
+      container: undefined,
+      canCancel: false,
+      backgroundColor: "#FFF",
+      opacity: 1,
+      loader: "dots",
+      color: "#08AEEA",
+    });
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
+    try {
+      // Fetch general data from info server
+      const generalStore = useGeneralStore();
+      await generalStore.fetchInfo();
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-}
+      // Star app initialization
+      this.initApp();
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
+      // Hide full loading screen
+      this.isLoading = false;
+      loader.hide();
+    } catch (e) {
+      console.error("Error fetching data", e);
+    }
+  },
+  methods: {
+    initApp() {
+      // Get general store
+      const { tokens } = useGeneralStore();
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
+      // Init balances
+      const { initBalancesByTokens } = useBalanceStore();
+      initBalancesByTokens(tokens);
+    },
+  },
+});
+</script>
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+<style lang="scss">
+.content {
+  height: 100%;
 }
 </style>
