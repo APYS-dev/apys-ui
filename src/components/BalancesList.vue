@@ -35,8 +35,8 @@ export default defineComponent({
     this.accountId = accountId;
 
     // Listen for balance store changes
-    const generalStore = useBalanceStore();
-    watch(generalStore.$state, async (state) => {
+    const balanceStore = useBalanceStore();
+    watch(balanceStore.$state, async (state) => {
       if (this.balances !== state.balances) {
         this.balances = state.balances;
       }

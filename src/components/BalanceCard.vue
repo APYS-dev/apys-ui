@@ -1,29 +1,38 @@
 <template>
   <div class="balance">
     <img
-      v-if="!isShowLoader"
       :alt="balance.meta.symbol"
       :src="`/static/icons/token/${balance.meta.symbol}.svg`"
     />
 
-    <div v-if="!isShowLoader" class="balance-amount">
+    <ContentLoader
+      v-if="isShowLoader"
+      height="32"
+      viewBox="0 0 160 32"
+      :speed="2"
+      primaryColor="#f3f3f3"
+      secondaryColor="#ecebeb"
+    >
+      <rect x="0" y="0" rx="3" ry="3" width="80" height="14" />
+      <rect x="0" y="18" rx="3" ry="3" width="60" height="12" />
+    </ContentLoader>
+    <div v-else class="balance-amount">
       <p class="amount">{{ isSignedIn ? formattedAppBalance : "-" }}</p>
       <p class="name">{{ balance.meta.symbol }}</p>
     </div>
 
     <ContentLoader
       v-if="isShowLoader"
-      height="32"
-      viewBox="0 0 100 32"
+      height="28"
+      viewBox="0 0 148 28"
       :speed="2"
       primaryColor="#f3f3f3"
       secondaryColor="#ecebeb"
     >
-      <rect x="0" y="0" rx="3" ry="3" width="100" height="14" />
-      <rect x="0" y="18" rx="3" ry="3" width="64" height="12" />
+      <rect x="0" y="0" rx="0" ry="0" width="76" height="32" />
+      <rect x="80" y="0" rx="0" ry="0" width="68" height="32" />
     </ContentLoader>
-
-    <div v-if="!isShowLoader" class="balance-buttons">
+    <div v-else class="balance-buttons">
       <button
         :disabled="!canWithdraw"
         class="btn-small"
@@ -39,18 +48,6 @@
         Deposit
       </button>
     </div>
-
-    <ContentLoader
-      v-if="isShowLoader"
-      height="28"
-      viewBox="0 0 148 28"
-      :speed="2"
-      primaryColor="#f3f3f3"
-      secondaryColor="#ecebeb"
-    >
-      <rect x="0" y="0" rx="0" ry="0" width="76" height="32" />
-      <rect x="80" y="0" rx="0" ry="0" width="68" height="32" />
-    </ContentLoader>
   </div>
 
   <ModalWithdrawFromBalance
