@@ -119,11 +119,6 @@
     </div>
   </div>
 
-  <ModalDepositFromVault
-    :modal-name="`depositFromVault-${vault.meta.contractId}`"
-    :vault-meta="vault.meta"
-  />
-
   <ModalWithdrawFromVault
     :modal-name="`withdrawFromVault-${vault.meta.contractId}`"
     :vault-meta="vault.meta"
@@ -273,11 +268,33 @@ function connectWallet() {
 }
 
 function showDepositModal() {
-  $vfm.show(`depositFromVault-${props.vault.meta.contractId}`);
+  $vfm.show({
+    component: "ModalDepositFromVault",
+    bind: {
+      vaultMeta: props.vault.meta,
+    },
+    on: {
+      close() {
+        $vfm.hideAll();
+      },
+    },
+  });
 }
 
 function showWithdrawModal() {
-  $vfm.show(`withdrawFromVault-${props.vault.meta.contractId}`);
+  $vfm.show({
+    component: "ModalWithdrawFromVault",
+    bind: {
+      vaultMeta: props.vault.meta,
+      balanceInDollars: props.vault.balanceInDollars,
+      rewardInDollars: props.vault.rewardInDollars,
+    },
+    on: {
+      close() {
+        $vfm.hideAll();
+      },
+    },
+  });
 }
 </script>
 

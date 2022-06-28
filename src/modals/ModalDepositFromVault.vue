@@ -1,86 +1,89 @@
 <template>
-  <BasicModal
-    :click-to-close="true"
-    :is-show-close-button="true"
-    :min-width="500"
-    :name="modalName"
-    @close-modal="closeModal"
+  <VueFinalModal
+    v-bind="$attrs"
+    classes="vfm--modal"
     @before-close="tokenDropdownRef.closeDropdown()"
   >
-    <template #header>
-      <h3>Deposit</h3>
-    </template>
+    <div class="vfm--modal-container">
+      <button
+        type="button"
+        class="vfm--modal-close"
+        title="Close"
+        @click="$emit('close')"
+      ></button>
 
-    <template #content>
-      <div class="modalBalanceAmount">
-        You have {{ formattedBalance }} {{ currentToken.symbol }}
+      <div class="vfm--modal-header">
+        <h3>Deposit</h3>
       </div>
-      <div class="modalBalanceInput">
-        <DropDown
-          ref="tokenDropdownRef"
-          :name="`${vaultMeta.contractId}-dropdown`"
-          position="bottom"
-        >
-          <div
-            :key="currentToken.contractId"
-            class="btn btn-bg-light dropdown-icon"
+
+      <div class="vfm--modal-content modal">
+        <div class="modalBalanceAmount">
+          You have {{ formattedBalance }} {{ currentToken.symbol }}
+        </div>
+        <div class="modalBalanceInput">
+          <DropDown
+            ref="tokenDropdownRef"
+            :name="`${vaultMeta.contractId}-dropdown`"
+            position="bottom"
           >
-            <img
-              :alt="currentToken.symbol"
-              :src="`/static/icons/token/${currentToken.symbol}.svg`"
-            />
-            {{ currentToken.symbol }}
-          </div>
+            <div
+              :key="currentToken.contractId"
+              class="btn btn-bg-light dropdown-icon"
+            >
+              <img
+                :alt="currentToken.symbol"
+                :src="`/static/icons/token/${currentToken.symbol}.svg`"
+              />
+              {{ currentToken.symbol }}
+            </div>
 
-          <template #content>
-            <ul class="list-dropbox">
-              <template v-for="token in vaultMeta.depositTokens">
-                <li
-                  v-if="token.symbol !== currentToken.symbol"
-                  :key="token.contractId"
-                  @click="
-                    currentToken = token;
-                    tokenDropdownRef.closeDropdown();
-                  "
-                >
-                  <img
-                    :alt="token.symbol"
-                    :src="`/static/icons/token/${token.symbol}.svg`"
-                  />
-                  <span>{{ token.symbol }}</span>
-                </li>
-              </template>
-            </ul>
-          </template>
-        </DropDown>
+            <template #content>
+              <ul class="list-dropbox">
+                <template v-for="token in vaultMeta.depositTokens">
+                  <li
+                    v-if="token.symbol !== currentToken.symbol"
+                    :key="token.contractId"
+                    @click="
+                      currentToken = token;
+                      tokenDropdownRef.closeDropdown();
+                    "
+                  >
+                    <img
+                      :alt="token.symbol"
+                      :src="`/static/icons/token/${token.symbol}.svg`"
+                    />
+                    <span>{{ token.symbol }}</span>
+                  </li>
+                </template>
+              </ul>
+            </template>
+          </DropDown>
 
-        <AmountInputField
-          v-model="currentAmountRaw"
-          :input-name="`${modalName}-input`"
-          :placeholder="`Min amount is ${currentToken.minDepositAmount}`"
-        />
-        <span @click="maxAmount">Max</span>
+          <AmountInputField
+            v-model="currentAmountRaw"
+            input-name="depositFromVaultInput"
+            :placeholder="`Min amount is ${currentToken.minDepositAmount}`"
+          />
+          <span @click="maxAmount">Max</span>
+        </div>
+        <button :disabled="!canDeposit" class="btn-bg" @click="deposit">
+          Deposit
+        </button>
       </div>
-      <button :disabled="!canDeposit" class="btn-bg" @click="deposit">
-        Deposit
-      </button>
-    </template>
-  </BasicModal>
+    </div>
+  </VueFinalModal>
 </template>
 
 <script setup lang="ts">
-import BasicModal from "@/components/basic/BasicModal.vue";
 import type {
   TokenMetaWithPrice,
   VaultMeta,
 } from "@/network/models/InfoServerModels";
 import Big from "big.js";
-import { $vfm } from "vue-final-modal";
 import { computed, ref } from "vue";
 import AmountInputField from "@/components/input/AmountInputField.vue";
 import { formatAmount } from "@/utils/formatters";
 import { useBalanceStore } from "@/stores/balance";
-import DropDown from "@/components/DropDown.vue";
 import { useVaultStore } from "@/stores/vault";
 
 // Get balance store
@@ -88,7 +91,6 @@ const { getAppBalanceByToken } = useBalanceStore();
 
 // Define props
 const props = defineProps<{
-  modalName: string;
   vaultMeta: VaultMeta;
 }>();
 
@@ -137,10 +139,6 @@ function maxAmount() {
   currentAmountRaw.value = formattedBalance.value;
 }
 
-function closeModal() {
-  $vfm.hide(props.modalName);
-}
-
 async function deposit() {
   const { deposit } = useVaultStore();
 
@@ -167,6 +165,10 @@ async function deposit() {
 </script>
 
 <style lang="scss" scoped>
+.modal {
+  width: 420px;
+}
+
 .modalBalanceInput {
   display: flex;
   gap: 8px;

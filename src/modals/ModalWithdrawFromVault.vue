@@ -1,88 +1,91 @@
 <template>
-  <BasicModal
-    :click-to-close="true"
-    :is-show-close-button="true"
-    :min-width="500"
-    :name="modalName"
-    @close-modal="closeModal"
+  <VueFinalModal
+    v-bind="$attrs"
+    classes="vfm--modal"
     @before-close="tokenDropdownRef.closeDropdown()"
   >
-    <template #header>
-      <h3>Withdraw</h3>
-    </template>
+    <div class="vfm--modal-container">
+      <button
+        type="button"
+        class="vfm--modal-close"
+        title="Close"
+        @click="$emit('close')"
+      ></button>
 
-    <template #content>
-      <div class="modalBalanceInput">
-        <DropDown
-          ref="tokenDropdownRef"
-          :name="`${vaultMeta.contractId}-dropdown`"
-          position="bottom"
-        >
-          <div
-            :key="currentToken.contractId"
-            class="btn btn-bg-light dropdown-icon"
-          >
-            <img
-              :alt="currentToken.symbol"
-              :src="`/static/icons/token/${currentToken.symbol}.svg`"
-            />
-            {{ currentToken.symbol }}
-          </div>
-
-          <template #content>
-            <ul class="list-dropbox">
-              <template v-for="token in vaultMeta.depositTokens">
-                <li
-                  v-if="token.symbol !== currentToken.symbol"
-                  :key="token.contractId"
-                  @click="
-                    currentToken = token;
-                    tokenDropdownRef.closeDropdown();
-                  "
-                >
-                  <img
-                    :alt="token.symbol"
-                    :src="`/static/icons/token/${token.symbol}.svg`"
-                  />
-                  <span>{{ token.symbol }}</span>
-                </li>
-              </template>
-            </ul>
-          </template>
-        </DropDown>
-
-        <span>
-          You will receive <b>~{{ receiveAmount }}</b>
-          {{ currentToken.symbol }},
-
-          <div class="rewards">
-            including <b>~{{ receiveRewardAmount }}</b>
-            {{ currentToken.symbol }} as rewards
-          </div>
-        </span>
+      <div class="vfm--modal-header">
+        <h3>Withdraw</h3>
       </div>
-      <button :disabled="!canWithdraw" class="btn-bg" @click="withdraw">
-        Withdraw
-      </button>
-    </template>
-  </BasicModal>
+
+      <div class="vfm--modal-content modal">
+        <div class="modalBalanceInput">
+          <DropDown
+            ref="tokenDropdownRef"
+            :name="`${vaultMeta.contractId}-dropdown`"
+            position="bottom"
+          >
+            <div
+              :key="currentToken.contractId"
+              class="btn btn-bg-light dropdown-icon"
+            >
+              <img
+                :alt="currentToken.symbol"
+                :src="`/static/icons/token/${currentToken.symbol}.svg`"
+              />
+              {{ currentToken.symbol }}
+            </div>
+
+            <template #content>
+              <ul class="list-dropbox">
+                <template v-for="token in vaultMeta.depositTokens">
+                  <li
+                    v-if="token.symbol !== currentToken.symbol"
+                    :key="token.contractId"
+                    @click="
+                      currentToken = token;
+                      tokenDropdownRef.closeDropdown();
+                    "
+                  >
+                    <img
+                      :alt="token.symbol"
+                      :src="`/static/icons/token/${token.symbol}.svg`"
+                    />
+                    <span>{{ token.symbol }}</span>
+                  </li>
+                </template>
+              </ul>
+            </template>
+          </DropDown>
+
+          <span>
+            You will receive <b>~{{ receiveAmount }}</b>
+            {{ currentToken.symbol }},
+
+            <div class="rewards">
+              including <b>~{{ receiveRewardAmount }}</b>
+              {{ currentToken.symbol }} as rewards
+            </div>
+          </span>
+        </div>
+        <button :disabled="!canWithdraw" class="btn-bg" @click="withdraw">
+          Withdraw
+        </button>
+      </div>
+    </div>
+  </VueFinalModal>
 </template>
 
 <script setup lang="ts">
-import BasicModal from "@/components/basic/BasicModal.vue";
 import type {
   TokenMetaWithPrice,
   VaultMeta,
 } from "@/network/models/InfoServerModels";
 import type Big from "big.js";
-import { $vfm } from "vue-final-modal";
 import { computed, ref } from "vue";
 import DropDown from "@/components/DropDown.vue";
 import { useVaultStore } from "@/stores/vault";
 
 // Define props
 const props = defineProps<{
-  modalName: string;
   vaultMeta: VaultMeta;
   balanceInDollars: Big;
   rewardInDollars: Big;
@@ -107,11 +110,6 @@ const canWithdraw = computed(() => {
   return props.balanceInDollars.plus(props.rewardInDollars).gt(0);
 });
 
-// Buttons
-function closeModal() {
-  $vfm.hide(props.modalName);
-}
-
 async function withdraw() {
   const { withdraw } = useVaultStore();
 
@@ -120,6 +118,10 @@ async function withdraw() {
 </script>
 
 <style lang="scss" scoped>
+.modal {
+  width: 420px;
+}
+
 .modalBalanceInput {
   .rewards {
     text-align: end;

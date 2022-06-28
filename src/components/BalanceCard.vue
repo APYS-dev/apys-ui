@@ -49,18 +49,6 @@
       </button>
     </div>
   </div>
-
-  <ModalWithdrawFromBalance
-    :modal-name="`withdrawFromBalance-${balance.meta.contractId}`"
-    :token="balance.meta"
-    :balance="balance.appBalance"
-  />
-
-  <ModalDepositFromBalance
-    :modal-name="`depositFromBalance-${balance.meta.contractId}`"
-    :token="balance.meta"
-    :balance="balance.walletBalance"
-  />
 </template>
 
 <script setup lang="ts">
@@ -70,10 +58,8 @@ import type { TokenBalance } from "@/stores/types";
 import { computed, ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { formatAmount } from "@/utils/formatters";
-import ModalDepositFromBalance from "@/modals/ModalDepositFromBalance.vue";
 import { $vfm } from "vue-final-modal";
 import { useLogger } from "vue-logger-plugin";
-import ModalWithdrawFromBalance from "@/modals/ModalWithdrawFromBalance.vue";
 
 const logger = useLogger();
 
@@ -146,11 +132,33 @@ const canWithdraw = computed(() => {
 
 // Buttons click handlers
 function showWithdrawModal() {
-  $vfm.show(`withdrawFromBalance-${props.balance.meta.contractId}`);
+  $vfm.show({
+    component: "ModalWithdrawFromBalance",
+    bind: {
+      token: props.balance.meta,
+      balance: props.balance.appBalance,
+    },
+    on: {
+      close() {
+        $vfm.hideAll();
+      },
+    },
+  });
 }
 
 function showDepositModal() {
-  $vfm.show(`depositFromBalance-${props.balance.meta.contractId}`);
+  $vfm.show({
+    component: "ModalDepositFromBalance",
+    bind: {
+      token: props.balance.meta,
+      balance: props.balance.walletBalance,
+    },
+    on: {
+      close() {
+        $vfm.hideAll();
+      },
+    },
+  });
 }
 </script>
 

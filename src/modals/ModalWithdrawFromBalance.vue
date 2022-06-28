@@ -1,38 +1,39 @@
 <template>
-  <BasicModal
-    :click-to-close="true"
-    :is-show-close-button="true"
-    :min-width="363"
-    :name="modalName"
-    @close-modal="closeModal"
-  >
-    <template #header>
-      <h3>Withdraw {{ token.symbol }}</h3>
-    </template>
+  <VueFinalModal v-bind="$attrs" classes="vfm--modal">
+    <div class="vfm--modal-container">
+      <button
+        type="button"
+        class="vfm--modal-close"
+        title="Close"
+        @click="$emit('close')"
+      ></button>
 
-    <template #content>
-      <div class="modalBalanceAmount">
-        You have {{ formattedBalance }} {{ token.symbol }}
+      <div class="vfm--modal-header modal">
+        <h3>Withdraw {{ token.symbol }}</h3>
       </div>
-      <div class="modalBalanceInput">
-        <AmountInputField
-          v-model="currentAmountRaw"
-          :input-name="`${modalName}-input`"
-        />
-        <span @click="maxAmount">Max</span>
+
+      <div class="vfm--modal-content modal">
+        <div class="modalBalanceAmount">
+          You have {{ formattedBalance }} {{ token.symbol }}
+        </div>
+        <div class="modalBalanceInput">
+          <AmountInputField
+            v-model="currentAmountRaw"
+            input-name="withdrawFromBalanceInput"
+          />
+          <span @click="maxAmount">Max</span>
+        </div>
+        <button :disabled="!canWithdraw" class="btn-bg" @click="withdraw">
+          Withdraw
+        </button>
       </div>
-      <button :disabled="!canWithdraw" class="btn-bg" @click="withdraw">
-        Withdraw
-      </button>
-    </template>
-  </BasicModal>
+    </div>
+  </VueFinalModal>
 </template>
 
 <script setup lang="ts">
-import BasicModal from "@/components/basic/BasicModal.vue";
 import type { TokenMeta } from "@/network/models/InfoServerModels";
 import Big from "big.js";
-import { $vfm } from "vue-final-modal";
 import { computed, ref } from "vue";
 import AmountInputField from "@/components/input/AmountInputField.vue";
 import { formatAmount } from "@/utils/formatters";
@@ -40,7 +41,6 @@ import { useBalanceStore } from "@/stores/balance";
 
 // Define props
 const props = defineProps<{
-  modalName: string;
   token: TokenMeta;
   balance: Big;
 }>();
@@ -77,10 +77,6 @@ function maxAmount() {
   currentAmountRaw.value = formattedBalance.value;
 }
 
-function closeModal() {
-  $vfm.hide(props.modalName);
-}
-
 async function withdraw() {
   const { withdraw } = useBalanceStore();
 
@@ -101,3 +97,9 @@ async function withdraw() {
   await withdraw(props.token.contractId, depositAmount.toFixed());
 }
 </script>
+
+<style lang="scss" scoped>
+.modal {
+  width: 320px;
+}
+</style>
