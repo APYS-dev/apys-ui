@@ -5,7 +5,7 @@ export function formatPrice(
   skipCurrencySign = false,
   defaultValue = "n/a"
 ): string {
-  if (!price || price === 0) {
+  if (price === undefined || price === null) {
     return defaultValue;
   }
 
