@@ -118,13 +118,6 @@
       </div>
     </div>
   </div>
-
-  <ModalWithdrawFromVault
-    :modal-name="`withdrawFromVault-${vault.meta.contractId}`"
-    :vault-meta="vault.meta"
-    :balance-in-dollars="vault.balanceInDollars"
-    :reward-in-dollars="vault.rewardInDollars"
-  />
 </template>
 
 <script setup lang="ts">
@@ -137,9 +130,7 @@ import { useVaultStore } from "@/stores/vault";
 import { nearApi } from "@/network/api/NearApi";
 import { useBalanceStore } from "@/stores/balance";
 import Big from "big.js";
-import ModalDepositFromVault from "@/modals/ModalDepositFromVault.vue";
 import { $vfm } from "vue-final-modal";
-import ModalWithdrawFromVault from "@/modals/ModalWithdrawFromVault.vue";
 import { ContentLoader } from "vue-content-loader";
 
 const logger = useLogger();
@@ -197,7 +188,7 @@ const formattedRewardBalance = computed(() => {
 
 // Listen for balance store changes
 const balanceStore = useBalanceStore();
-watch(balanceStore.$state, async (state) => {
+watch(balanceStore.$state, async () => {
   // Check that balances are loaded for deposit tokens
   isAppBalanceLoaded.value = props.vault.meta.depositTokens
     .map((depositToken) =>
