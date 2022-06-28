@@ -3,7 +3,12 @@ import type { NearAction } from "@/network/api/NearApi";
 import Big from "big.js";
 import { unifiedContractApi } from "@/network/api/UnifiedContractApi";
 import { useAuthStore } from "@/stores/auth";
-import { DEFAULT_GAS, ONE_YOCTO_NEAR, WITHDRAW_GAS } from "@/utils/constants";
+import {
+  DEFAULT_GAS,
+  DEPOSIT_TO_STRATEGY_GAS,
+  ONE_YOCTO_NEAR,
+  WITHDRAW_GAS,
+} from "@/utils/constants";
 
 class ApysApi {
   constructor() {
@@ -28,6 +33,24 @@ class ApysApi {
         contractId: import.meta.env.VITE_APYS_CONTRACT_ID,
       })
       .then((response) => new Big(response));
+
+  getStrategyDepositBalance = async (
+    accountId: string,
+    vaultId: string
+  ): Promise<{ [tokenId: string]: Big }> =>
+    await nearApi
+      .viewFunction<{ [tokenId: string]: string }>({
+        args: { account_id: accountId, strategy_id: vaultId },
+        methodName: "get_strategy_balance",
+        contractId: import.meta.env.VITE_APYS_CONTRACT_ID,
+      })
+      .then((response) => {
+        const updatedResponse: { [tokenId: string]: Big } = {};
+        for (const [tokenId, balance] of Object.entries(response)) {
+          updatedResponse[tokenId] = new Big(balance);
+        }
+        return updatedResponse;
+      });
 
   checkNeedStorageDeposit = async (accountId: string): Promise<boolean> => {
     const storageBalance = await unifiedContractApi.getStorageBalanceOf(
@@ -77,6 +100,34 @@ class ApysApi {
     const transferTransaction = await nearApi.actionsToTransaction(tokenId, [
       transferAction,
     ]);
+    transactions.push(transferTransaction);
+
+    // Execute transactions
+    return await nearApi.executeMultipleTransactions(transactions);
+  };
+
+  depositToStrategy = async (
+    vaultId: string,
+    tokenId: string,
+    amount: string
+  ): Promise<void> => {
+    const transactions = [];
+
+    // Create transfer transaction
+    const transferAction: NearAction = {
+      args: {
+        strategy_id: vaultId,
+        token_id: tokenId,
+        amount,
+      },
+      gas: DEPOSIT_TO_STRATEGY_GAS,
+      deposit: ONE_YOCTO_NEAR,
+      methodName: "deposit_to_strategy",
+    };
+    const transferTransaction = await nearApi.actionsToTransaction(
+      import.meta.env.VITE_APYS_CONTRACT_ID,
+      [transferAction]
+    );
     transactions.push(transferTransaction);
 
     // Execute transactions

@@ -1,7 +1,7 @@
 import type Big from "big.js";
 
 export interface GetInfoResponse {
-  strategies: StrategyMeta[];
+  vaults: VaultMeta[];
   tokens: TokenMeta[];
   metadata: Metadata;
 }
@@ -23,7 +23,7 @@ export interface TokenMetaWithPrice extends TokenMeta {
   minDepositAmount: number;
 }
 
-export interface StrategyMeta {
+export interface VaultMeta {
   uuid: string;
   name: string;
   contractId: string;

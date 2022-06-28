@@ -1,5 +1,5 @@
 export interface GetInfoResponseDto {
-  strategies: StrategyMetaDto[];
+  strategies: VaultMetaDto[];
   tokens: TokenMetaDto[];
   metadata: MetadataDto;
 }
@@ -21,7 +21,7 @@ export interface TokenMetaWithPriceDto extends TokenMetaDto {
   minDepositAmount: number;
 }
 
-export interface StrategyMetaDto {
+export interface VaultMetaDto {
   uuid: string;
   name: string;
   contractId: string;

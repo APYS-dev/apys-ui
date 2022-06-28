@@ -1,6 +1,6 @@
 import { nearApi } from "@/network/api/NearApi";
 import Big from "big.js";
-import type { StorageBalanceResponse } from "@/network/models/UnifiedContract";
+import type { StorageBalanceResponse } from "@/network/models/UnifiedContractModels";
 import type { StorageBalanceResponseDto } from "@/network/dtos/UnifiedContractDtos";
 
 class UnifiedContractApi {
