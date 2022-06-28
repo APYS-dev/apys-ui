@@ -17,15 +17,15 @@ class InfoServerApi {
   private mapInfoResponse(data: GetInfoResponseDto): GetInfoResponse {
     return {
       metadata: data.metadata,
-      strategies: data.strategies.map((strategy) => ({
-        ...strategy,
-        depositTokens: strategy.depositTokens.map((token) => ({
+      vaults: data.strategies.map((vault) => ({
+        ...vault,
+        depositTokens: vault.depositTokens.map((token) => ({
           ...token,
           price: new Big(token.price),
         })),
-        apr: new Big(strategy.apr),
-        tvl: new Big(strategy.tvl),
-        osc: new Big(strategy.osc),
+        apr: new Big(vault.apr),
+        tvl: new Big(vault.tvl),
+        osc: new Big(vault.osc),
       })),
       tokens: data.tokens,
     };
