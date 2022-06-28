@@ -1,0 +1,233 @@
+<template>
+  <div class="vault">
+    <div class="vault__name-wrap">
+      <div class="vault__logo">
+        <img
+          v-for="token in meta.depositTokens"
+          :key="token"
+          :alt="token.symbol"
+          :src="`/static/icons/token/${token.symbol}.svg`"
+        />
+      </div>
+
+      <div class="vault__name">
+        {{ meta.name }}
+      </div>
+
+      <!--        <button-->
+      <!--          v-if="uuid === 'ref-usdc-usdt-dai'"-->
+      <!--          class="icon-info"-->
+      <!--          @click.stop="showVaultModal"-->
+      <!--        ></button>-->
+    </div>
+
+    <div class="vault__dex">
+      <span class="light-text">dex</span>
+      <a :href="meta.dexUrl" target="_blank">
+        <img :src="`/static/icons/dex/${meta.dex}.svg`" :alt="meta.dex" />
+      </a>
+    </div>
+
+    <div class="vault__bonus">
+      <div class="light-text">
+        +rewards
+        <!--          <button class="icon-info" @click.stop="showRewardsModal"></button>-->
+      </div>
+      <div class="tokens">
+        <template v-for="token in meta.rewardTokens" :key="token">
+          <img :alt="token" :src="`/static/icons/token/${token}.svg`" />
+        </template>
+      </div>
+    </div>
+
+    <div class="vault__tvl">
+      <span class="light-text">tvl</span>
+      <div class="amount">{{ formattedTVL }}</div>
+    </div>
+
+    <div class="vault__apy">
+      <div class="light-text">
+        apy
+        <!--          <button class="icon-info" @click.stop="showApyModal"></button>-->
+      </div>
+
+      <div class="amount">
+        {{ formattedAPY }}
+        <!--          <button class="calculator" @click.stop="showCalcModal">-->
+        <!--            <img alt="Calc" src="@/assets/img/calculator.png" />-->
+        <!--          </button>-->
+      </div>
+    </div>
+
+    <div class="vault__status">
+      <div v-if="meta.status === 'upcoming'" class="line line-position">
+        coming
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useLogger } from "vue-logger-plugin";
+import type { VaultMeta } from "@/network/models/InfoServerModels";
+import { computed } from "vue";
+import { formatPrice } from "@/utils/formatters";
+import { aprToApy } from "@/utils/math";
+
+const logger = useLogger();
+
+// Define props
+const props = defineProps<{
+  meta: VaultMeta;
+}>();
+
+// Format values
+const formattedTVL = computed(() => {
+  return formatPrice(props.meta.tvl.toNumber());
+});
+
+const formattedAPY = computed(() => {
+  return `${aprToApy(props.meta.apr, 365).toFixed(2)}%`;
+});
+</script>
+
+<style lang="scss" scoped>
+.vault {
+  padding: 16px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background-color: var(--background-color);
+  border-radius: 4px;
+  //cursor: pointer;
+  position: relative;
+
+  &__name-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 232px;
+  }
+
+  &__logo {
+    display: flex;
+
+    img {
+      &:not(:last-child) {
+        margin-right: -12px;
+      }
+
+      height: 31px;
+      border: 3px solid #ffffff;
+      border-radius: 20px;
+    }
+  }
+
+  &__name {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  &__dex,
+  &__tvl,
+  &__bonus,
+  &__apy {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 34px;
+    gap: 4px;
+
+    .amount {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+    }
+
+    .tokens {
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
+    }
+
+    .calculator img {
+      width: 8px;
+      height: 10px;
+    }
+
+    img {
+      width: 19.2px;
+    }
+
+    button {
+      width: 11px;
+      height: 11px;
+      font-size: 8px;
+    }
+  }
+
+  &__status {
+    display: flex;
+    min-height: 34px;
+    min-width: 40px;
+
+    .line {
+      color: var(--color-text);
+      font-weight: 700;
+      background: #f7c945;
+      font-size: 16px;
+      line-height: 24px;
+    }
+
+    .line-position {
+      position: absolute;
+      right: 0;
+      top: 0;
+      padding: 0 2em;
+      transform-origin: left bottom;
+      transform: translate(29.29%, -100%) rotate(45deg);
+      text-indent: 0;
+    }
+  }
+
+  &__arrow {
+    display: flex;
+    align-items: center;
+    width: 21px;
+    transition: all 0.3s;
+    cursor: pointer;
+
+    &.active {
+      transform: rotate(180deg);
+    }
+  }
+
+  .light-text {
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    height: 14px;
+  }
+}
+
+.icon-info {
+  display: inline-flex;
+  cursor: pointer;
+}
+
+.modal {
+  &__inp-group {
+    &__paragraph {
+      margin-bottom: 5px;
+    }
+
+    &__topic {
+      margin-top: 8px;
+      font-size: larger;
+      font-weight: bolder;
+    }
+  }
+}
+</style>

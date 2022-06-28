@@ -16,6 +16,7 @@ import { useBalanceStore } from "@/stores/balance";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { ModalsContainer } from "vue-final-modal";
+import { useVaultStore } from "@/stores/vault";
 
 export default defineComponent({
   name: "App",
@@ -61,12 +62,16 @@ export default defineComponent({
   },
   methods: {
     initApp() {
-      // Get general store
-      const { tokens } = useGeneralStore();
+      // Get stores
+      const { tokens, vaults } = useGeneralStore();
 
       // Init balances
       const { initBalancesByTokensMeta } = useBalanceStore();
       initBalancesByTokensMeta(tokens);
+
+      // Init vaults
+      const { initVaultsByVaultsMeta } = useVaultStore();
+      initVaultsByVaultsMeta(vaults);
     },
   },
 });

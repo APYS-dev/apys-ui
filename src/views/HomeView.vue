@@ -6,7 +6,7 @@
         <BalancesList />
       </div>
       <div class="col-8 col-md-12">
-        <!--        <vaults></vaults>-->
+        <VaultsList />
       </div>
     </main>
   </div>
@@ -16,6 +16,7 @@
 import { defineComponent } from "vue";
 import BalancesList from "@/components/BalancesList.vue";
 import TotalTVL from "@/components/TotalTVL.vue";
+import VaultsList from "@/components/vault/VaultsList.vue";
 
 defineComponent({
   data() {
@@ -25,3 +26,17 @@ defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+main {
+  margin-left: -8px;
+  margin-right: -8px;
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 12px;
+
+  & > div {
+    min-width: 320px;
+  }
+}
+</style>
