@@ -1,7 +1,4 @@
-import type {
-  StrategyMeta,
-  TokenMeta,
-} from "@/network/models/InfoServerModels";
+import type { VaultMeta, TokenMeta } from "@/network/models/InfoServerModels";
 import type Big from "big.js";
 
 export interface TokenBalance {
@@ -12,6 +9,10 @@ export interface TokenBalance {
   walletBalanceLoaded: boolean;
 }
 
-export interface Strategy {
-  meta: StrategyMeta;
+export interface Vault {
+  meta: VaultMeta;
+  balanceInDollars: Big;
+  rewardInDollars: Big;
+  isProcessing: boolean;
+  balancesLoaded: boolean;
 }

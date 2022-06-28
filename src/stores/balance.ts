@@ -19,6 +19,18 @@ export const useBalanceStore = defineStore({
     getBalanceByToken: (state: State) => (tokenId: string) => {
       return state.balances.find((it) => it.meta.contractId === tokenId);
     },
+    getAppBalanceByToken: (state: State) => (tokenId: string) => {
+      return (
+        state.balances.find((it) => it.meta.contractId === tokenId)
+          ?.appBalance ?? new Big(0)
+      );
+    },
+    checkAppBalanceLoadedForToken: (state: State) => (tokenId: string) => {
+      return (
+        state.balances.find((it) => it.meta.contractId === tokenId)
+          ?.appBalanceLoaded ?? false
+      );
+    },
   },
   actions: {
     initBalancesByTokensMeta(tokens: TokenMeta[]) {

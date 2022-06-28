@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import type {
   TokenMeta,
   Metadata,
-  StrategyMeta,
+  VaultMeta,
 } from "@/network/models/InfoServerModels";
 import { infoServerApi } from "@/network/api/InfoServerApi";
 import Big from "big.js";
@@ -10,7 +10,7 @@ import Big from "big.js";
 interface State {
   totalTvl: Big;
   metadata: Metadata;
-  strategies: StrategyMeta[];
+  vaults: VaultMeta[];
   tokens: TokenMeta[];
 }
 
@@ -21,7 +21,7 @@ export const useGeneralStore = defineStore({
     metadata: {
       apysContractId: "",
     },
-    strategies: [],
+    vaults: [],
     tokens: [],
   }),
   getters: {},
@@ -31,8 +31,8 @@ export const useGeneralStore = defineStore({
       const response = await infoServerApi.getInfo();
 
       // Calculate and set total TVL
-      this.totalTvl = response.strategies
-        .map((strategy) => strategy.tvl)
+      this.totalTvl = response.vaults
+        .map((vault) => vault.tvl)
         .reduce((a, b) => {
           return a.add(b);
         }, new Big(0));
@@ -40,7 +40,7 @@ export const useGeneralStore = defineStore({
       // Set other data
       this.tokens = response.tokens;
       this.metadata = response.metadata;
-      this.strategies = response.strategies;
+      this.vaults = response.vaults;
     },
   },
 });
