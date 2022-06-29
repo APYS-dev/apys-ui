@@ -5,9 +5,9 @@
         v-for="(task, index) in currentTasks"
         :key="index"
         class="stepper-item tooltip"
-        :class="{ completed: index < currentStep + 1 }"
+        :class="{ completed: index < currentStep }"
       >
-        <div v-if="index === currentStep + 1" class="progress-circle">
+        <div v-if="index === currentStep" class="progress-circle">
           <svg width="33" height="32" viewBox="0 0 32 32">
             <circle cx="16" cy="16" r="16" fill="#fff" />
             <circle
