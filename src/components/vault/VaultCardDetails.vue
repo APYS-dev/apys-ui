@@ -6,7 +6,7 @@
 
         <div class="vault-more__body">
           <ContentLoader
-            v-if="isShowLoader"
+            v-if="isShowBalanceLoader"
             height="29"
             viewBox="0 0 100 29"
             :speed="2"
@@ -51,7 +51,7 @@
 
         <div class="vault-more__body">
           <ContentLoader
-            v-if="isShowLoader"
+            v-if="isShowBalanceLoader"
             height="29"
             viewBox="0 0 100 29"
             :speed="2"
@@ -81,11 +81,14 @@
         </div>
       </div>
 
-      <button v-if="!isSignedIn" class="btn-bg" @click="connectWallet">
+      <template v-if="vault.isProcessing">
+        <StepsProgressBar :progress="vault.progress" />
+      </template>
+      <button v-else-if="!isSignedIn" class="btn-bg" @click="connectWallet">
         Connect wallet
       </button>
       <ContentLoader
-        v-else-if="isShowLoader"
+        v-else-if="isShowControlLoader"
         height="73"
         viewBox="0 0 138 73"
         :speed="2"
@@ -96,25 +99,20 @@
         <rect x="0" y="41" rx="0" ry="0" width="138" height="32" />
       </ContentLoader>
       <div v-else class="vault-more__btns">
-        <template v-if="vault.isProcessing">
-          <button class="btn-border-progress">Processing...</button>
-        </template>
-        <template v-else>
-          <button
-            :disabled="!isDepositAvailable"
-            class="btn-bg"
-            @click="showDepositModal"
-          >
-            Deposit
-          </button>
-          <button
-            :disabled="!isWithdrawAvailable"
-            class="btn-border"
-            @click="showWithdrawModal"
-          >
-            Withdraw
-          </button>
-        </template>
+        <button
+          :disabled="!isDepositAvailable"
+          class="btn-bg"
+          @click="showDepositModal"
+        >
+          Deposit
+        </button>
+        <button
+          :disabled="!isWithdrawAvailable"
+          class="btn-border"
+          @click="showWithdrawModal"
+        >
+          Withdraw
+        </button>
       </div>
     </div>
   </div>
@@ -132,22 +130,27 @@ import { useBalanceStore } from "@/stores/balance";
 import Big from "big.js";
 import { $vfm } from "vue-final-modal";
 import { ContentLoader } from "vue-content-loader";
+import StepsProgressBar from "@/components/vault/VueCardProgress.vue";
 
 const logger = useLogger();
 
 // Stores
 const { isSignedIn } = useAuthStore();
-const { fetchVaultBalance } = useVaultStore();
+const { fetchVaultBalance, fetchVaultProgress, checkVaultProcessing } =
+  useVaultStore();
 
 // Define props
 const props = defineProps<{
   vault: Vault;
 }>();
 
-// Define data
+// Define states
 const isAppBalanceLoaded = ref(false);
 const isVaultBalanceLoaded = ref(false);
+const isProgressLoaded = ref(false);
 const isDepositAvailable = ref(false);
+
+// Define computed data
 const isWithdrawAvailable = computed(() => {
   return props.vault.balanceInDollars.gt(0);
 });
@@ -159,22 +162,37 @@ const isShowBalance = computed(() => {
 if (isSignedIn) {
   // Fetch vault balance
   fetchVaultBalance(props.vault.meta.contractId)
-    .then(({ loaded }) => {
-      isVaultBalanceLoaded.value = loaded;
+    .then(() => {
+      isVaultBalanceLoaded.value = true;
     })
     .catch((reason) => {
+      isVaultBalanceLoaded.value = false;
       logger.error(
         `Failed to fetch vault balance for ${props.vault.meta.contractId}`,
+        reason
+      );
+    });
+
+  // Fetch vault progress
+  fetchVaultProgress(props.vault.meta.contractId)
+    .then(() => {
+      isProgressLoaded.value = true;
+    })
+    .catch((reason) => {
+      isProgressLoaded.value = false;
+      logger.error(
+        `Failed to fetch vault progress for ${props.vault.meta.contractId}`,
         reason
       );
     });
 }
 
 // Check show loader or not
-const isShowLoader = computed(() => {
-  return (
-    (!isVaultBalanceLoaded.value || !isAppBalanceLoaded.value) && isSignedIn
-  );
+const isShowBalanceLoader = computed(() => {
+  return !isVaultBalanceLoaded.value && isSignedIn;
+});
+const isShowControlLoader = computed(() => {
+  return !isAppBalanceLoaded.value && !isProgressLoaded.value && isSignedIn;
 });
 
 // Format balances
@@ -216,10 +234,11 @@ watch(balanceStore.$state, async () => {
 
 // Start fetching data until processing is finished
 const isDataUpdating = ref(false);
+const isDataFetched = ref(false);
 watch(
   () => props.vault.isProcessing,
   async (isProcessing) => {
-    if (isProcessing && !isDataUpdating.value) {
+    if (isProcessing && !isDataUpdating.value && !isDataFetched.value) {
       isDataUpdating.value = true;
 
       // Timeout to prevent multiple requests
@@ -228,21 +247,24 @@ watch(
 
       // Wait for processing to finish
       const waitForProcessing = async (): Promise<void> => {
-        const { processing } = await fetchVaultBalance(
-          props.vault.meta.contractId
-        );
-        if (!processing) {
-          isDataUpdating.value = false;
-          return Promise.resolve();
+        // Fetch current progress states
+        await fetchVaultProgress(props.vault.meta.contractId);
+
+        // Check if processing is finished
+        const isProcessing = checkVaultProcessing(props.vault.meta.contractId);
+
+        // if not processing, then fetch updated balance
+        if (!isProcessing) {
+          return await fetchVaultBalance(props.vault.meta.contractId);
         }
 
-        console.log(`Fetching vault data for ${props.vault.meta.name}`);
-        await timeout(1000);
+        await timeout(750);
         return waitForProcessing();
       };
 
       await waitForProcessing()
         .then(() => {
+          isDataFetched.value = true;
           isDataUpdating.value = false;
           console.log(
             `Finished fetching vault data for ${props.vault.meta.name}`
@@ -290,6 +312,12 @@ function showWithdrawModal() {
 </script>
 
 <style lang="scss" scoped>
+.progress {
+  display: flex;
+  align-items: center;
+  height: 73px;
+}
+
 .vault-more-wrap {
   overflow: hidden;
   max-height: 0;

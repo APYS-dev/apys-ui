@@ -8,7 +8,7 @@ import { useAuthStore } from "@/stores/auth";
 import { vaultApi } from "@/network/api/VaultApi";
 import { apysApi } from "@/network/api/ApysApi";
 import Big from "big.js";
-import type { AccountTotalBalance } from "@/network/models/VaultModels";
+import type { AccountProgress } from "@/network/models/VaultModels";
 
 interface State {
   vaults: Vault[];
@@ -23,6 +23,21 @@ export const useVaultStore = defineStore({
     getVaultById: (state: State) => (vaultId: string) => {
       return state.vaults.find((it) => it.meta.contractId === vaultId);
     },
+    checkProgressLoadedForVault: (state: State) => (vaultId: string) => {
+      return (
+        state.vaults.find((it) => it.meta.contractId === vaultId)
+          ?.progressLoaded ?? false
+      );
+    },
+    checkVaultProcessing: (state: State) => (vaultId: string) => {
+      const progress = state.vaults.find((it) => it.meta.contractId === vaultId)
+        ?.progress ?? {
+        deposit_tasks: [],
+        withdraw_tasks: [],
+        other_tasks: [],
+      };
+      return checkVaultProcessing(progress);
+    },
   },
   actions: {
     initVaultsByVaultsMeta(vaults: VaultMeta[]) {
@@ -32,19 +47,23 @@ export const useVaultStore = defineStore({
         rewardInDollars: Big(0),
         isProcessing: false,
         balancesLoaded: false,
+        progress: {
+          deposit_tasks: [],
+          withdraw_tasks: [],
+          other_tasks: [],
+        },
+        progressLoaded: false,
       }));
     },
 
-    async fetchVaultBalance(
-      vaultId: string
-    ): Promise<{ loaded: boolean; processing: boolean }> {
+    async fetchVaultBalance(vaultId: string): Promise<void> {
       // Get stores
       const { accountId } = useAuthStore();
 
       // Get current vault meta
       const vault = this.getVaultById(vaultId);
       if (!vault) {
-        return { loaded: false, processing: false };
+        throw new Error(`Vault ${vaultId} not found`);
       }
 
       // Fetch total vault account balances
@@ -71,9 +90,6 @@ export const useVaultStore = defineStore({
         .div(Big(10).pow(18))
         .mul(vault.meta.osc);
 
-      // Check if vault is processing
-      const isProcessing = checkVaultProcessing(totalVaultBalance);
-
       // Update state
       const vaultIndex = this.vaults.findIndex(
         (it) => it.meta.contractId === vaultId
@@ -83,15 +99,36 @@ export const useVaultStore = defineStore({
           ...this.vaults[vaultIndex],
           balanceInDollars: totalBalanceCost,
           rewardInDollars: rewardSharesCost,
-          isProcessing,
           balancesLoaded: true,
         };
-
-        // Return true if balance fetched
-        return { loaded: true, processing: isProcessing };
+      } else {
+        throw new Error(`Vault ${vaultId} not found`);
       }
-      // Otherwise, return false
-      return { loaded: false, processing: false };
+    },
+
+    async fetchVaultProgress(vaultId: string): Promise<void> {
+      // Get stores
+      const { accountId } = useAuthStore();
+
+      // Fetch vault progress
+      const progress = await vaultApi.getAccountProgress(accountId, vaultId);
+
+      // Check if vault is processing
+      const isProcessing = checkVaultProcessing(progress);
+
+      // Update state
+      const vaultIndex = this.vaults.findIndex(
+        (it) => it.meta.contractId === vaultId
+      );
+      if (vaultIndex !== -1) {
+        this.vaults[vaultIndex] = {
+          ...this.vaults[vaultIndex],
+          isProcessing,
+          progress,
+        };
+      } else {
+        throw new Error(`Vault ${vaultId} not found`);
+      }
     },
 
     async deposit(vaultId: string, tokenId: string, amount: string) {
@@ -138,11 +175,27 @@ const calculateTokenBalancesCost = (
     .reduce((acc, curr) => acc.plus(curr), new Big(0));
 };
 
-const checkVaultProcessing = (totalVaultBalance: AccountTotalBalance) => {
-  // Has vault deposit/withdraw balances
-  const hasVaultDeposit = Object.values(totalVaultBalance.deposit).length > 0;
-  const hasVaultDepositShares = totalVaultBalance.shares.gt(0);
-  const hasVaultWithdraw = Object.values(totalVaultBalance.withdraw).length > 0;
+const checkVaultProcessing = (progress: AccountProgress) => {
+  // Check deposit tasks
+  for (const task of progress.deposit_tasks) {
+    if (!task.ready) {
+      return true;
+    }
+  }
 
-  return hasVaultDeposit || hasVaultDepositShares || hasVaultWithdraw;
+  // Check withdraw tasks
+  for (const task of progress.withdraw_tasks) {
+    if (!task.ready) {
+      return true;
+    }
+  }
+
+  // Check other tasks
+  for (const task of progress.other_tasks) {
+    if (!task.ready) {
+      return true;
+    }
+  }
+
+  return false;
 };

@@ -2,13 +2,26 @@ import { nearApi } from "@/network/api/NearApi";
 import type { NearAction } from "@/network/api/NearApi";
 import Big from "big.js";
 import type { AccountTotalBalanceDto } from "@/network/dtos/VaultDtos";
-import type { AccountTotalBalance } from "@/network/models/VaultModels";
+import type {
+  AccountProgress,
+  AccountTotalBalance,
+} from "@/network/models/VaultModels";
 import { ONE_YOCTO_NEAR, STOP_STRATEGY_GAS } from "@/utils/constants";
 
 class VaultApi {
   constructor() {
     // TODO
   }
+
+  getAccountProgress = async (
+    accountId: string,
+    vaultId: string
+  ): Promise<AccountProgress> =>
+    await nearApi.viewFunction({
+      args: { account_id: accountId },
+      methodName: "get_account_progress",
+      contractId: vaultId,
+    });
 
   getTotalAccountBalance = async (
     accountId: string,

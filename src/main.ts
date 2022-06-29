@@ -6,6 +6,9 @@ import "vue-loading-overlay/dist/vue-loading.css";
 // @ts-ignore
 import { vfmPlugin } from "vue-final-modal";
 import { createLogger } from "vue-logger-plugin";
+import { createVuetify } from "vuetify";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
 import ModalDepositFromBalance from "@/modals/ModalDepositFromBalance.vue";
 import ModalWithdrawFromBalance from "@/modals/ModalWithdrawFromBalance.vue";
 import ModalDepositFromVault from "@/modals/ModalDepositFromVault.vue";
@@ -24,6 +27,12 @@ app
   .use(router)
   .use(VueLoading)
   .use(createLogger({}))
+  .use(
+    createVuetify({
+      components,
+      directives,
+    })
+  )
   .use(
     vfmPlugin({
       key: "$vfm",
