@@ -35,7 +35,6 @@
 import type { TokenMeta } from "@/network/models/InfoServerModels";
 import Big from "big.js";
 import { computed, ref } from "vue";
-import AmountInputField from "@/components/input/AmountInputField.vue";
 import { formatAmount } from "@/utils/formatters";
 import { useBalanceStore } from "@/stores/balance";
 

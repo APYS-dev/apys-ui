@@ -13,6 +13,8 @@ import ModalDepositToBalance from "@/modals/ModalDepositToBalance.vue";
 import ModalWithdrawFromBalance from "@/modals/ModalWithdrawFromBalance.vue";
 import ModalDepositToVault from "@/modals/ModalDepositToVault.vue";
 import ModalWithdrawFromVault from "@/modals/ModalWithdrawFromVault.vue";
+import ModalApyCalculator from "@/modals/ModalApyCalculator.vue";
+import AmountInputField from "@/components/input/AmountInputField.vue";
 import DropDown from "@/components/DropDown.vue";
 import Vue3Autocounter from "vue3-autocounter";
 
@@ -47,9 +49,11 @@ app.component("ModalDepositToBalance", ModalDepositToBalance);
 app.component("ModalWithdrawFromBalance", ModalWithdrawFromBalance);
 app.component("ModalDepositToVault", ModalDepositToVault);
 app.component("ModalWithdrawFromVault", ModalWithdrawFromVault);
+app.component("ModalApyCalculator", ModalApyCalculator);
 
 // Register global components
 app.component("DropDown", DropDown);
 app.component("Vue3Autocounter", Vue3Autocounter);
+app.component("AmountInputField", AmountInputField);
 
 app.mount("#app");

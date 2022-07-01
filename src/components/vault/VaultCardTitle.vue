@@ -53,9 +53,9 @@
 
       <div class="amount">
         {{ formattedAPY }}
-        <!--          <button class="calculator" @click.stop="showCalcModal">-->
-        <!--            <img alt="Calc" src="@/assets/img/calculator.png" />-->
-        <!--          </button>-->
+        <button class="calculator" @click.stop="showApyCalculator">
+          <img alt="Calc" src="/static/icons/other/calculator.png" />
+        </button>
       </div>
     </div>
 
@@ -73,8 +73,7 @@ import type { VaultMeta } from "@/network/models/InfoServerModels";
 import { computed } from "vue";
 import { formatPrice } from "@/utils/formatters";
 import { aprToApy } from "@/utils/math";
-
-const logger = useLogger();
+import { $vfm } from "vue-final-modal";
 
 // Define props
 const props = defineProps<{
@@ -89,6 +88,21 @@ const formattedTVL = computed(() => {
 const formattedAPY = computed(() => {
   return `${aprToApy(props.meta.apr, 365).toFixed(2)}%`;
 });
+
+// Buttons
+function showApyCalculator() {
+  $vfm.show({
+    component: "ModalApyCalculator",
+    bind: {
+      apr: props.meta.apr,
+    },
+    on: {
+      close() {
+        $vfm.hideAll();
+      },
+    },
+  });
+}
 </script>
 
 <style lang="scss" scoped>
