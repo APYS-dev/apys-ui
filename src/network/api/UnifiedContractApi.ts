@@ -13,14 +13,14 @@ class UnifiedContractApi {
     accountId: string
   ): Promise<StorageBalanceResponse> =>
     await nearApi
-      .viewFunction<StorageBalanceResponseDto>({
+      .viewFunction<StorageBalanceResponseDto | null>({
         args: { account_id: accountId },
         methodName: "storage_balance_of",
         contractId: contractId,
       })
       .then((response) => ({
-        total: Big(response.total),
-        available: Big(response.available),
+        total: Big(response ? response.total : 0),
+        available: Big(response ? response.available : 0),
       }));
 }
 
