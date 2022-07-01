@@ -48,12 +48,12 @@
     <div class="vault__apy">
       <div class="light-text">
         apy
-        <!--          <button class="icon-info" @click.stop="showApyModal"></button>-->
+        <button class="icon-info" @click.stop="showApyInfoModal"></button>
       </div>
 
       <div class="amount">
         {{ formattedAPY }}
-        <button class="calculator" @click.stop="showApyCalculator">
+        <button class="calculator" @click.stop="showApyCalculatorModal">
           <img alt="Calc" src="/static/icons/other/calculator.png" />
         </button>
       </div>
@@ -68,7 +68,6 @@
 </template>
 
 <script setup lang="ts">
-import { useLogger } from "vue-logger-plugin";
 import type { VaultMeta } from "@/network/models/InfoServerModels";
 import { computed } from "vue";
 import { formatPrice } from "@/utils/formatters";
@@ -90,7 +89,19 @@ const formattedAPY = computed(() => {
 });
 
 // Buttons
-function showApyCalculator() {
+function showApyInfoModal() {
+  $vfm.show({
+    component: "ModalApyInfo",
+    bind: {},
+    on: {
+      close() {
+        $vfm.hideAll();
+      },
+    },
+  });
+}
+
+function showApyCalculatorModal() {
   $vfm.show({
     component: "ModalApyCalculator",
     bind: {

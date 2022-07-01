@@ -8,7 +8,7 @@
         @click="$emit('close')"
       ></button>
 
-      <div class="vfm--modal-header modal">
+      <div class="vfm--modal-header">
         <h3>Calculating rewards</h3>
       </div>
 
@@ -28,7 +28,9 @@
             <template v-for="duration in STAKE_DURATIONS" :key="duration.label">
               <button
                 :class="[
-                  duration === currentDuration ? 'btn-bg' : 'btn-bg-light',
+                  duration.label === currentDuration.label
+                    ? 'btn-bg'
+                    : 'btn-bg-light',
                 ]"
                 @click="currentDuration = duration"
               >
@@ -108,6 +110,10 @@ const formattedReceivedAmount = computed(() => {
 </script>
 
 <style lang="scss" scoped>
+.modal {
+  width: 580px;
+}
+
 .modalCalc {
   display: flex;
   align-items: center;
