@@ -1,7 +1,9 @@
 <template>
-  <TheHeader />
-  <RouterView class="content" />
-  <TheFooter />
+  <div>
+    <TheHeader />
+    <RouterView class="content" />
+    <TheFooter />
+  </div>
   <ModalsContainer></ModalsContainer>
   <div id="endofbody"></div>
 </template>
