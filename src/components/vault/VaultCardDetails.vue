@@ -302,7 +302,7 @@ function connectWallet() {
 
 function showDepositModal() {
   $vfm.show({
-    component: "ModalDepositFromVault",
+    component: "ModalDepositToVault",
     bind: {
       vaultMeta: props.vault.meta,
     },

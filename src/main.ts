@@ -9,9 +9,9 @@ import { createLogger } from "vue-logger-plugin";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
-import ModalDepositFromBalance from "@/modals/ModalDepositFromBalance.vue";
+import ModalDepositToBalance from "@/modals/ModalDepositToBalance.vue";
 import ModalWithdrawFromBalance from "@/modals/ModalWithdrawFromBalance.vue";
-import ModalDepositFromVault from "@/modals/ModalDepositFromVault.vue";
+import ModalDepositToVault from "@/modals/ModalDepositToVault.vue";
 import ModalWithdrawFromVault from "@/modals/ModalWithdrawFromVault.vue";
 import DropDown from "@/components/DropDown.vue";
 import Vue3Autocounter from "vue3-autocounter";
@@ -43,9 +43,9 @@ app
   );
 
 // Register modals
-app.component("ModalDepositFromBalance", ModalDepositFromBalance);
+app.component("ModalDepositToBalance", ModalDepositToBalance);
 app.component("ModalWithdrawFromBalance", ModalWithdrawFromBalance);
-app.component("ModalDepositFromVault", ModalDepositFromVault);
+app.component("ModalDepositToVault", ModalDepositToVault);
 app.component("ModalWithdrawFromVault", ModalWithdrawFromVault);
 
 // Register global components

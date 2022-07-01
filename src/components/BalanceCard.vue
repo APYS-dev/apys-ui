@@ -148,7 +148,7 @@ function showWithdrawModal() {
 
 function showDepositModal() {
   $vfm.show({
-    component: "ModalDepositFromBalance",
+    component: "ModalDepositToBalance",
     bind: {
       token: props.balance.meta,
       balance: props.balance.walletBalance,
