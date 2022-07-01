@@ -1,6 +1,9 @@
 import type { VaultMeta, TokenMeta } from "@/network/models/InfoServerModels";
 import type Big from "big.js";
-import type { AccountProgress } from "@/network/models/VaultModels";
+import type {
+  AccountProgress,
+  VaultContractMetadata,
+} from "@/network/models/VaultModels";
 
 export interface TokenBalance {
   meta: TokenMeta;
@@ -12,10 +15,12 @@ export interface TokenBalance {
 
 export interface Vault {
   meta: VaultMeta;
+  contractMeta: VaultContractMetadata;
+  progress: AccountProgress;
   balanceInDollars: Big;
   rewardInDollars: Big;
   isProcessing: boolean;
   balancesLoaded: boolean;
-  progress: AccountProgress;
   progressLoaded: boolean;
+  contractMetaLoaded: boolean;
 }

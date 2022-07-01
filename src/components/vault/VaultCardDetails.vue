@@ -63,21 +63,13 @@
           <div v-else class="amount">
             {{ isShowBalance ? formattedRewardBalance : "–" }}
           </div>
-          <!--          <div class="amount__plus">(+$0.0001)</div>-->
-          <!--          <div v-if="isShowCounter()" class="amount__plus">-->
-          <!--            <vue3-autocounter-->
-          <!--              ref="counter"-->
-          <!--              :autoinit="false"-->
-          <!--              :decimals="counterDecimals"-->
-          <!--              :duration="counterDuration"-->
-          <!--              :end-amount="endAmount"-->
-          <!--              :start-amount="startAmount"-->
-          <!--              decimal-separator="."-->
-          <!--              prefix="+"-->
-          <!--              separator=","-->
-          <!--              @finished="startCounter"-->
-          <!--            />-->
-          <!--          </div>-->
+          <VueCardRewardCounter
+            v-if="isShowRewardCounter"
+            :last-reward-time="vault.contractMeta.last_reward_time"
+            :balance-in-dollars="vault.balanceInDollars"
+            :reward-in-dollars="vault.rewardInDollars"
+            :apr="vault.meta.apr"
+          />
         </div>
       </div>
 
@@ -131,13 +123,18 @@ import Big from "big.js";
 import { $vfm } from "vue-final-modal";
 import { ContentLoader } from "vue-content-loader";
 import StepsProgressBar from "@/components/vault/VueCardProgress.vue";
+import VueCardRewardCounter from "@/components/vault/VueCardRewardCounter.vue";
 
 const logger = useLogger();
 
 // Stores
 const { isSignedIn } = useAuthStore();
-const { fetchVaultBalance, fetchVaultProgress, checkVaultProcessing } =
-  useVaultStore();
+const {
+  fetchVaultContractMeta,
+  fetchVaultBalance,
+  fetchVaultProgress,
+  checkVaultProcessing,
+} = useVaultStore();
 
 // Define props
 const props = defineProps<{
@@ -145,6 +142,7 @@ const props = defineProps<{
 }>();
 
 // Define states
+const isVaultContractMetaLoaded = ref(false);
 const isAppBalanceLoaded = ref(false);
 const isVaultBalanceLoaded = ref(false);
 const isProgressLoaded = ref(false);
@@ -157,9 +155,31 @@ const isWithdrawAvailable = computed(() => {
 const isShowBalance = computed(() => {
   return isSignedIn && props.vault.meta.status !== "upcoming";
 });
+const isShowRewardCounter = computed(() => {
+  return (
+    isSignedIn &&
+    !props.vault.isProcessing &&
+    props.vault.meta.status === "live" &&
+    props.vault.contractMeta.last_reward_time.gt(0) &&
+    props.vault.balanceInDollars.plus(props.vault.rewardInDollars).gt(0)
+  );
+});
 
 // Start fetching balance
 if (isSignedIn) {
+  // Fetch vault contract metadata
+  fetchVaultContractMeta(props.vault.meta.contractId)
+    .then(() => {
+      isVaultContractMetaLoaded.value = true;
+    })
+    .catch((reason) => {
+      isVaultContractMetaLoaded.value = false;
+      logger.error(
+        `Failed to fetch vault contract meta for ${props.vault.meta.contractId}`,
+        reason
+      );
+    });
+
   // Fetch vault balance
   fetchVaultBalance(props.vault.meta.contractId)
     .then(() => {
@@ -402,15 +422,6 @@ function showWithdrawModal() {
     font-size: 24px;
     font-weight: 500;
     color: var(--color-main);
-
-    &__plus {
-      flex-grow: 1;
-      margin: 0 8px 0 8px;
-      color: var(--color-main-90);
-      font-family: monospace;
-      font-size: 0.8rem;
-      align-self: end;
-    }
   }
 
   .price {

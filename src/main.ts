@@ -14,6 +14,7 @@ import ModalWithdrawFromBalance from "@/modals/ModalWithdrawFromBalance.vue";
 import ModalDepositFromVault from "@/modals/ModalDepositFromVault.vue";
 import ModalWithdrawFromVault from "@/modals/ModalWithdrawFromVault.vue";
 import DropDown from "@/components/DropDown.vue";
+import Vue3Autocounter from "vue3-autocounter";
 
 import "@/assets/styles/main.scss";
 
@@ -49,5 +50,6 @@ app.component("ModalWithdrawFromVault", ModalWithdrawFromVault);
 
 // Register global components
 app.component("DropDown", DropDown);
+app.component("Vue3Autocounter", Vue3Autocounter);
 
 app.mount("#app");

@@ -43,17 +43,40 @@ export const useVaultStore = defineStore({
     initVaultsByVaultsMeta(vaults: VaultMeta[]) {
       this.vaults = vaults.map((token) => ({
         meta: token,
-        balanceInDollars: Big(0),
-        rewardInDollars: Big(0),
-        isProcessing: false,
-        balancesLoaded: false,
         progress: {
           deposit_tasks: [],
           withdraw_tasks: [],
           other_tasks: [],
         },
+        contractMeta: {
+          last_reward_time: Big(0),
+          staked_shares_count: Big(0),
+        },
+        balanceInDollars: Big(0),
+        rewardInDollars: Big(0),
+        isProcessing: false,
+        balancesLoaded: false,
         progressLoaded: false,
+        contractMetaLoaded: true,
       }));
+    },
+
+    async fetchVaultContractMeta(vaultId: string): Promise<void> {
+      const metadata = await vaultApi.getMetadata(vaultId);
+
+      // Update state
+      const vaultIndex = this.vaults.findIndex(
+        (it) => it.meta.contractId === vaultId
+      );
+      if (vaultIndex !== -1) {
+        this.vaults[vaultIndex] = {
+          ...this.vaults[vaultIndex],
+          contractMeta: metadata,
+          contractMetaLoaded: true,
+        };
+      } else {
+        throw new Error(`Vault ${vaultId} not found`);
+      }
     },
 
     async fetchVaultBalance(vaultId: string): Promise<void> {

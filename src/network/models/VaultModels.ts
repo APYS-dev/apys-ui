@@ -8,6 +8,11 @@ export interface AccountTotalBalance {
   reward_shares: Big;
 }
 
+export interface VaultContractMetadata {
+  staked_shares_count: Big;
+  last_reward_time: Big;
+}
+
 type DepositProgressTaskType =
   | "ExchangeDeposit"
   | "HalfSwap"

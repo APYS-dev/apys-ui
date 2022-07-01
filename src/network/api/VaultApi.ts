@@ -1,10 +1,14 @@
 import { nearApi } from "@/network/api/NearApi";
 import type { NearAction } from "@/network/api/NearApi";
 import Big from "big.js";
-import type { AccountTotalBalanceDto } from "@/network/dtos/VaultDtos";
+import type {
+  AccountTotalBalanceDto,
+  VaultContractMetadataDto,
+} from "@/network/dtos/VaultDtos";
 import type {
   AccountProgress,
   AccountTotalBalance,
+  VaultContractMetadata,
 } from "@/network/models/VaultModels";
 import { ONE_YOCTO_NEAR, STOP_STRATEGY_GAS } from "@/utils/constants";
 
@@ -12,6 +16,18 @@ class VaultApi {
   constructor() {
     // TODO
   }
+
+  getMetadata = async (vaultId: string): Promise<VaultContractMetadata> =>
+    await nearApi
+      .viewFunction<VaultContractMetadataDto>({
+        args: {},
+        methodName: "get_metadata",
+        contractId: vaultId,
+      })
+      .then((response) => ({
+        last_reward_time: new Big(response.last_reward_time),
+        staked_shares_count: new Big(response.staked_shares_count),
+      }));
 
   getAccountProgress = async (
     accountId: string,
