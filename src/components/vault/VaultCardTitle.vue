@@ -31,7 +31,7 @@
     <div class="vault__bonus">
       <div class="light-text">
         +rewards
-        <!--          <button class="icon-info" @click.stop="showRewardsModal"></button>-->
+        <button class="icon-info" @click.stop="showRewardsInfoModal"></button>
       </div>
       <div class="tokens">
         <template v-for="token in meta.rewardTokens" :key="token">
@@ -92,6 +92,18 @@ const formattedAPY = computed(() => {
 function showApyInfoModal() {
   $vfm.show({
     component: "ModalApyInfo",
+    bind: {},
+    on: {
+      close() {
+        $vfm.hideAll();
+      },
+    },
+  });
+}
+
+function showRewardsInfoModal() {
+  $vfm.show({
+    component: "ModalRewardsInfo",
     bind: {},
     on: {
       close() {
@@ -169,6 +181,7 @@ function showApyCalculatorModal() {
       align-items: center;
       gap: 4px;
       font-size: 14px;
+      min-width: 72px;
     }
 
     .tokens {

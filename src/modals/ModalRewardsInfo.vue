@@ -9,18 +9,23 @@
       ></button>
 
       <div class="vfm--modal-header">
-        <h3 class="m-b-36">Apy info</h3>
+        <h3 class="m-b-36">Rewards info</h3>
       </div>
 
       <div class="vfm--modal-content modal">
         <div class="modal__inp-group">
-          If you are curious to learn more about the APY details, you may
-          consult the following
-          <a
-            target="_blank"
-            href="https://en.wikipedia.org/wiki/Annual_percentage_yield"
-            >link</a
-          >
+          <p class="modal__inp-group__paragraph">
+            The platform offers APYS rewards to certain selected pools. If a
+            project is looking to attract additional liquidity they have the
+            option of utilizing our vaults. By purchasing APYS they could
+            incentivize the preferred vaults and contribute to the protocol’s
+            liquidity.
+          </p>
+
+          <p class="modal__inp-group__paragraph">
+            Additional APYS rewards will be available in this case. We will
+            prioritize adding the pools which were incentivized by the projects.
+          </p>
         </div>
       </div>
     </div>
