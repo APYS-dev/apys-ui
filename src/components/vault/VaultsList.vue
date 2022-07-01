@@ -3,15 +3,20 @@
     <header>
       <h2>Vaults</h2>
 
-      <!--      <div class="vaults__tabs">-->
-      <!--        <button v-for="tab in tabs" :key="tab.status" :class="{ 'active': tab.isActive }" @click="selectTab(tab)">-->
-      <!--          {{ tab.title }}-->
-      <!--        </button>-->
-      <!--      </div>-->
+      <div class="vaults__tabs">
+        <button
+          v-for="tab in tabs"
+          :key="tab.status"
+          :class="{ active: tab === currentTab }"
+          @click="selectTab(tab)"
+        >
+          {{ tab.title }}
+        </button>
+      </div>
     </header>
     <main>
       <VaultCard
-        v-for="vault in vaults"
+        v-for="vault in filteredVaults()"
         :key="vault.meta.uuid"
         :vault="vault"
       />
@@ -24,12 +29,26 @@ import { defineComponent, watch } from "vue";
 import type { Vault } from "@/stores/types";
 import { useVaultStore } from "@/stores/vault";
 import VaultCard from "@/components/vault/VaultCard.vue";
+import type { VaultMeta } from "@/network/models/InfoServerModels";
+
+interface VaultTab {
+  title: string;
+  status: VaultMeta["status"];
+}
+
+const VAULTS_TABS: VaultTab[] = [
+  { title: "Live", status: "live" },
+  { title: "Upcoming", status: "upcoming" },
+  { title: "Finished", status: "finished" },
+];
 
 export default defineComponent({
   components: { VaultCard },
 
   data() {
     return {
+      tabs: VAULTS_TABS,
+      currentTab: VAULTS_TABS[0],
       vaults: [] as Vault[],
     };
   },
@@ -42,6 +61,18 @@ export default defineComponent({
         this.vaults = state.vaults;
       }
     });
+  },
+
+  methods: {
+    selectTab(tab: VaultTab) {
+      this.currentTab = tab;
+    },
+
+    filteredVaults() {
+      return this.vaults.filter((vault) => {
+        return vault.meta.status === this.currentTab.status;
+      });
+    },
   },
 });
 </script>
