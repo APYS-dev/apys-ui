@@ -125,8 +125,8 @@ class NearApi {
         functionCall(
           action.methodName,
           action.args,
-          action.gas.toString(),
-          action.deposit.toString()
+          action.gas.toFixed(),
+          action.deposit.toFixed()
         )
       )
     );

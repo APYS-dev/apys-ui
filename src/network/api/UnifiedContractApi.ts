@@ -19,8 +19,8 @@ class UnifiedContractApi {
         contractId: contractId,
       })
       .then((response) => ({
-        total: Big(response ? response.total : 0),
-        available: Big(response ? response.available : 0),
+        total: Big(response ? response.total : "0"),
+        available: Big(response ? response.available : "0"),
       }));
 }
 

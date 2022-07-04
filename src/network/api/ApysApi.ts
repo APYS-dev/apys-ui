@@ -9,6 +9,7 @@ import {
   ONE_YOCTO_NEAR,
   WITHDRAW_GAS,
 } from "@/utils/constants";
+import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 class ApysApi {
   constructor() {
@@ -77,7 +78,7 @@ class ApysApi {
         args: {},
         gas: DEFAULT_GAS,
         methodName: "storage_deposit",
-        deposit: Big("0.1"),
+        deposit: Big(parseNearAmount("0.1") || "0"),
       };
       const transaction = await nearApi.actionsToTransaction(
         import.meta.env.VITE_APYS_CONTRACT_ID,
@@ -147,7 +148,7 @@ class ApysApi {
         args: {},
         gas: DEFAULT_GAS,
         methodName: "storage_deposit",
-        deposit: Big("0.00125"),
+        deposit: Big(parseNearAmount("0.00125") || "0"),
       };
       const transaction = await nearApi.actionsToTransaction(tokenId, [action]);
       transactions.push(transaction);
