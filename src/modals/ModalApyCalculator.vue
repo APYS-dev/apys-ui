@@ -85,6 +85,7 @@ const STAKE_DURATIONS: StakeDuration[] = [
 // Define props
 const props = defineProps<{
   apr: Big;
+  bonusApr: Big;
 }>();
 
 // Define data
@@ -96,13 +97,17 @@ const currentAmount = computed(() => {
 
 // Format data
 const formattedApy = computed(() => {
-  return `${aprToApy(props.apr, currentDuration.value.days).toFixed(2)}%`;
+  return `${props.bonusApr
+    .add(aprToApy(props.apr, currentDuration.value.days))
+    .toFixed(2)}%`;
 });
+
 const formattedReceivedAmount = computed(() => {
   return formatPrice(
     receivedAmountForApy(
       currentAmount.value,
       props.apr,
+      props.bonusApr,
       currentDuration.value.days
     )
   );

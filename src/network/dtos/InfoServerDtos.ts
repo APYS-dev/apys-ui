@@ -6,6 +6,7 @@ export interface GetInfoResponseDto {
 
 export interface MetadataDto {
   apysContractId: string;
+  bonusRewardsTokenId: string;
 }
 
 export interface TokenMetaDto {
@@ -32,5 +33,6 @@ export interface VaultMetaDto {
   apr: string;
   tvl: number;
   osc: string;
-  rewardTokens: string[];
+  rewardToken: string;
+  bonusApr: string;
 }

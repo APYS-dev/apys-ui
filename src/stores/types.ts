@@ -23,4 +23,5 @@ export interface Vault {
   balancesLoaded: boolean;
   progressLoaded: boolean;
   contractMetaLoaded: boolean;
+  unclaimedBonusReward: Big;
 }

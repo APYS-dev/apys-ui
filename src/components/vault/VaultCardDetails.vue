@@ -21,35 +21,40 @@
         </div>
       </div>
 
-      <div>
-        <h3 class="vault-more__header">
-          +Rewards
-          <span class="light-text">(coming soon)</span>
-        </h3>
+      <div v-if="isBonusRewardsAvailable(vault.meta.contractId)">
+        <h3 class="vault-more__header">+Rewards</h3>
 
         <div class="vault-more__bonus-body">
-          <div>
-            <template v-for="token in vault.meta.rewardTokens" :key="token">
-              <div class="token-balance">
-                <img :alt="token" :src="`/static/icons/token/${token}.svg`" />
-                <div class="token-amount">{{ "–" }}</div>
-              </div>
-            </template>
-          </div>
-          <button
-            v-if="isSignedIn"
-            :disabled="true"
-            class="btn-small btn-border"
+          <ContentLoader
+            v-if="isUnclaimedBonusRewardsLoader"
+            height="29"
+            viewBox="0 0 100 29"
+            :speed="2"
+            primaryColor="#f3f3f3"
+            secondaryColor="#ecebeb"
           >
-            Claim
-          </button>
+            <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
+          </ContentLoader>
+          <div v-else class="amount">
+            {{ formattedBonusRewardBalance }}
+          </div>
+          <div class="vault-more__bonus-btn-box">
+            <button
+              v-if="isSignedIn"
+              :disabled="!isClaimBonusRewardAvailable"
+              @click="claimBonusReward"
+              class="btn-small btn-border"
+            >
+              Claim
+            </button>
+          </div>
         </div>
       </div>
 
       <div>
         <h3 class="vault-more__header">Rewards</h3>
 
-        <div class="vault-more__body">
+        <div class="vault-more__body rewards__body">
           <ContentLoader
             v-if="isShowBalanceLoader"
             height="29"
@@ -115,7 +120,7 @@ import { useLogger } from "vue-logger-plugin";
 import { useAuthStore } from "@/stores/auth";
 import type { Vault } from "@/stores/types";
 import { computed, ref, watch } from "vue";
-import { formatPrice } from "@/utils/formatters";
+import { formatAmount, formatPrice } from "@/utils/formatters";
 import { useVaultStore } from "@/stores/vault";
 import { nearApi } from "@/network/api/NearApi";
 import { useBalanceStore } from "@/stores/balance";
@@ -134,6 +139,8 @@ const {
   fetchVaultBalance,
   fetchVaultProgress,
   checkVaultProcessing,
+  fetchVaultUnclaimedReward,
+  isBonusRewardsAvailable,
 } = useVaultStore();
 
 // Define props
@@ -147,6 +154,7 @@ const isAppBalanceLoaded = ref(false);
 const isVaultBalanceLoaded = ref(false);
 const isProgressLoaded = ref(false);
 const isDepositAvailable = ref(false);
+const unclaimedBonusRewardsLoaded = ref(false);
 
 // Define computed data
 const isWithdrawAvailable = computed(() => {
@@ -154,6 +162,9 @@ const isWithdrawAvailable = computed(() => {
 });
 const isShowBalance = computed(() => {
   return isSignedIn && props.vault.meta.status !== "upcoming";
+});
+const isClaimBonusRewardAvailable = computed(() => {
+  return props.vault.unclaimedBonusReward.gt(0);
 });
 const isShowRewardCounter = computed(() => {
   return (
@@ -205,12 +216,29 @@ if (isSignedIn) {
         reason
       );
     });
+
+  fetchVaultUnclaimedReward(props.vault.meta.contractId)
+    .then(() => {
+      unclaimedBonusRewardsLoaded.value = true;
+    })
+    .catch((reason) => {
+      unclaimedBonusRewardsLoaded.value = false;
+      logger.error(
+        `Failed to fetch vault unclaimed reward for ${props.vault.meta.contractId}`,
+        reason
+      );
+    });
 }
 
 // Check show loader or not
 const isShowBalanceLoader = computed(() => {
   return !isVaultBalanceLoaded.value && isSignedIn;
 });
+
+const isUnclaimedBonusRewardsLoader = computed(() => {
+  return !unclaimedBonusRewardsLoaded.value && isSignedIn;
+});
+
 const isShowControlLoader = computed(() => {
   return !isAppBalanceLoaded.value && !isProgressLoaded.value && isSignedIn;
 });
@@ -222,6 +250,14 @@ const formattedBalance = computed(() => {
 
 const formattedRewardBalance = computed(() => {
   return formatPrice(props.vault.rewardInDollars.toNumber());
+});
+
+const formattedBonusRewardBalance = computed(() => {
+  const fractions = props.vault.unclaimedBonusReward.gt(10) ? 0 : 2;
+  return formatAmount(props.vault.unclaimedBonusReward, {
+    decimals: 24,
+    fractionDigits: fractions,
+  });
 });
 
 // Listen for balance store changes
@@ -329,6 +365,13 @@ function showWithdrawModal() {
     },
   });
 }
+
+async function claimBonusReward() {
+  const { claimBonusReward } = useVaultStore();
+  if (props.vault.unclaimedBonusReward.gt(0)) {
+    await claimBonusReward(props.vault.meta.contractId);
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -389,38 +432,25 @@ function showWithdrawModal() {
   &__body {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     min-height: 46px;
   }
 
   &__bonus-body {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     padding-right: 24px;
     min-height: 46px;
+  }
 
-    .token-balance {
-      display: flex;
-      flex-direction: row;
-      gap: 8px;
-
-      img {
-        width: 19.2px;
-      }
-
-      .token-amount {
-        font-size: 16px;
-        font-weight: 500;
-        color: rgba(0, 0, 0, 0.3);
-      }
-    }
+  &__bonus-btn-box {
+    display: flex;
+    align-items: center;
   }
 
   .amount {
-    margin: 8px 0;
+    margin-top: 8px;
     font-size: 24px;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--color-main);
   }
 
@@ -444,5 +474,9 @@ function showWithdrawModal() {
       min-width: max-content;
     }
   }
+}
+
+.rewards__body {
+  flex-direction: column;
 }
 </style>

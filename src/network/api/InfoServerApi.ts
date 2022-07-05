@@ -21,11 +21,12 @@ class InfoServerApi {
         ...vault,
         depositTokens: vault.depositTokens.map((token) => ({
           ...token,
-          price: new Big(token.price),
+          price: Big(token.price),
         })),
-        apr: new Big(vault.apr),
-        tvl: new Big(vault.tvl),
-        osc: new Big(vault.osc),
+        apr: Big(vault.apr),
+        tvl: Big(vault.tvl),
+        osc: Big(vault.osc),
+        bonusApr: Big(vault.bonusApr),
       })),
       tokens: data.tokens,
     };

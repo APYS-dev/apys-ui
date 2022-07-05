@@ -8,6 +8,7 @@ export interface GetInfoResponse {
 
 export interface Metadata {
   apysContractId: string;
+  bonusRewardsTokenId: string;
 }
 
 export interface TokenMeta {
@@ -29,10 +30,11 @@ export interface VaultMeta {
   contractId: string;
   status: "live" | "upcoming" | "finished";
   depositTokens: TokenMetaWithPrice[];
-  rewardTokens: string[];
+  rewardToken: string;
   dex: "REF" | "JUMBO";
   dexUrl: string;
   apr: Big;
   tvl: Big;
   osc: Big;
+  bonusApr: Big;
 }

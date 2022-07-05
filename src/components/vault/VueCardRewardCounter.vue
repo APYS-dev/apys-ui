@@ -70,18 +70,17 @@ const startCounter = async () => {
 
 <style lang="scss" scoped>
 .amount {
-  margin: 8px 0;
+  margin-top: 8px;
   font-size: 24px;
   font-weight: 500;
   color: var(--color-main);
 
   &__plus {
-    flex-grow: 1;
-    margin: 0 8px 0 8px;
     color: var(--color-main-90);
     font-family: monospace;
     font-size: 0.8rem;
-    align-self: end;
+    position: absolute;
+    margin: 36px 0 0 8px;
   }
 }
 </style>

@@ -20,6 +20,7 @@ export const useGeneralStore = defineStore({
     totalTvl: new Big(0),
     metadata: {
       apysContractId: "",
+      bonusRewardsTokenId: "",
     },
     vaults: [],
     tokens: [],

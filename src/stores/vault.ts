@@ -9,6 +9,7 @@ import { vaultApi } from "@/network/api/VaultApi";
 import { apysApi } from "@/network/api/ApysApi";
 import Big from "big.js";
 import type { AccountProgress } from "@/network/models/VaultModels";
+import { bonusRewardsApi } from "@/network/api/BonusRewardsApi";
 
 interface State {
   vaults: Vault[];
@@ -22,6 +23,11 @@ export const useVaultStore = defineStore({
   getters: {
     getVaultById: (state: State) => (vaultId: string) => {
       return state.vaults.find((it) => it.meta.contractId === vaultId);
+    },
+    isBonusRewardsAvailable: (state: State) => (vaultId: string) => {
+      return !!state.vaults.find(
+        (it) => it.meta.contractId === vaultId && !!it.meta.rewardToken
+      );
     },
     checkProgressLoadedForVault: (state: State) => (vaultId: string) => {
       return (
@@ -58,6 +64,7 @@ export const useVaultStore = defineStore({
         balancesLoaded: false,
         progressLoaded: false,
         contractMetaLoaded: true,
+        unclaimedBonusReward: Big(0),
       }));
     },
 
@@ -73,6 +80,32 @@ export const useVaultStore = defineStore({
           ...this.vaults[vaultIndex],
           contractMeta: metadata,
           contractMetaLoaded: true,
+        };
+      } else {
+        throw new Error(`Vault ${vaultId} not found`);
+      }
+    },
+
+    async fetchVaultUnclaimedReward(vaultId: string): Promise<void> {
+      if (!this.isBonusRewardsAvailable(vaultId)) {
+        return;
+      }
+
+      const { accountId } = useAuthStore();
+
+      const unclaimedReward = await bonusRewardsApi.getUnclaimedReward(
+        vaultId,
+        accountId
+      );
+      console.log("unclaimedReward", unclaimedReward);
+
+      const vaultIndex = this.vaults.findIndex(
+        (it) => it.meta.contractId === vaultId
+      );
+      if (vaultIndex !== -1) {
+        this.vaults[vaultIndex] = {
+          ...this.vaults[vaultIndex],
+          unclaimedBonusReward: Big(unclaimedReward),
         };
       } else {
         throw new Error(`Vault ${vaultId} not found`);
@@ -160,6 +193,10 @@ export const useVaultStore = defineStore({
 
     async withdraw(vaultId: string, tokenId: string) {
       return vaultApi.withdraw(vaultId, tokenId);
+    },
+
+    async claimBonusReward(strategyId: string) {
+      return bonusRewardsApi.claimBonusRewards(strategyId);
     },
   },
 });

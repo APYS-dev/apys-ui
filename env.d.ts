@@ -10,6 +10,7 @@ interface ImportMetaEnv {
   readonly VITE_NEAR_EXPLORER_URL: string;
   // Contracts
   readonly VITE_APYS_CONTRACT_ID: string;
+  readonly VITE_BONUS_REWARDS_CONTRACT_ID: string;
 }
 
 interface ImportMeta {

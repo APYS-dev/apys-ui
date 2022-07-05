@@ -28,15 +28,16 @@
       </a>
     </div>
 
-    <div class="vault__bonus">
+    <div v-if="!!meta.rewardToken" class="vault__bonus">
       <div class="light-text">
         +rewards
         <button class="icon-info" @click.stop="showRewardsInfoModal"></button>
       </div>
       <div class="tokens">
-        <template v-for="token in meta.rewardTokens" :key="token">
-          <img :alt="token" :src="`/static/icons/token/${token}.svg`" />
-        </template>
+        <img
+          :alt="`${meta.rewardToken}`"
+          :src="`/static/icons/token/${meta.rewardToken}.svg`"
+        />
       </div>
     </div>
 
@@ -85,7 +86,9 @@ const formattedTVL = computed(() => {
 });
 
 const formattedAPY = computed(() => {
-  return `${aprToApy(props.meta.apr, 365).toFixed(2)}%`;
+  return `${props.meta.bonusApr
+    .add(aprToApy(props.meta.apr, 365))
+    .toFixed(2)}%`;
 });
 
 // Buttons
@@ -118,6 +121,7 @@ function showApyCalculatorModal() {
     component: "ModalApyCalculator",
     bind: {
       apr: props.meta.apr,
+      bonusApr: props.meta.bonusApr,
     },
     on: {
       close() {
