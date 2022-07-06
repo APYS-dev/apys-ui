@@ -66,7 +66,18 @@
           />
           <span @click="maxAmount">Max</span>
         </div>
-        <button :disabled="!canDeposit" class="btn-bg" @click="deposit">
+        <div class="modalBalanceFee">
+          <div class="modalBalanceFee__title"><b>Includes fees:</b></div>
+          <div class="modalBalanceFee__amount">Platform: 0%</div>
+          <div class="modalBalanceFee__amount">
+            Dex: {{ vaultMeta.dexFee }}%
+          </div>
+        </div>
+        <button
+          :disabled="!canDeposit"
+          class="btn-bg depositButton"
+          @click="deposit"
+        >
           Deposit
         </button>
       </div>
@@ -169,6 +180,7 @@ async function deposit() {
 }
 
 .modalBalanceInput {
+  margin: 8px 0 0;
   display: flex;
   gap: 8px;
 
@@ -192,5 +204,9 @@ async function deposit() {
   img {
     width: 26px;
   }
+}
+
+.depositButton {
+  width: 100%;
 }
 </style>

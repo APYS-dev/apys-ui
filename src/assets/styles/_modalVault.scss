@@ -6,6 +6,23 @@
   text-align: right;
 }
 
+.modalBalanceFee {
+  margin: 8px 0 8px;
+  text-align: right;
+  font-size: 12px;
+  font-style: normal;
+
+  &__title {
+    font-weight: 500;
+    color: var(--color-main);
+  }
+
+  &__amount {
+    font-weight: 400;
+    color: rgba(13, 13, 13, 0.4);
+  }
+}
+
 .modalBalanceInput {
   margin: 8px 0 16px;
   display: flex;
