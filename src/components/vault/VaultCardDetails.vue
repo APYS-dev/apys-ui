@@ -134,6 +134,7 @@ const logger = useLogger();
 
 // Stores
 const { isSignedIn } = useAuthStore();
+const { fetchAppBalance } = useBalanceStore();
 const {
   fetchVaultContractMeta,
   fetchVaultBalance,
@@ -311,7 +312,15 @@ watch(
 
         // if not processing, then fetch updated balance
         if (!isProcessing) {
-          return await fetchVaultBalance(props.vault.meta.contractId);
+          const updateBalances = async () => {
+            await fetchVaultBalance(props.vault.meta.contractId);
+            await Promise.all(
+              props.vault.meta.depositTokens.map((depositToken) => {
+                return fetchAppBalance(depositToken.contractId);
+              })
+            );
+          };
+          return await updateBalances();
         }
 
         await timeout(750);
