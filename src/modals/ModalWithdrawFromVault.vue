@@ -66,7 +66,18 @@
             </div>
           </span>
         </div>
-        <button :disabled="!canWithdraw" class="btn-bg" @click="withdraw">
+        <div class="modalBalanceFee">
+          <div class="modalBalanceFee__title"><b>Includes fees:</b></div>
+          <div class="modalBalanceFee__amount">Platform: 0%</div>
+          <div class="modalBalanceFee__amount">
+            Dex: {{ vaultMeta.dexFee }}%
+          </div>
+        </div>
+        <button
+          :disabled="!canWithdraw"
+          class="btn-bg withdrawButton"
+          @click="withdraw"
+        >
           Withdraw
         </button>
       </div>
@@ -123,12 +134,14 @@ async function withdraw() {
 }
 
 .modalBalanceInput {
+  margin: 8px 0 0;
+
   .rewards {
     text-align: end;
   }
 
   span {
-    padding: 0px 16px;
+    padding: 0 0;
     text-transform: none;
     text-align: end;
   }
@@ -161,5 +174,9 @@ async function withdraw() {
   img {
     width: 26px;
   }
+}
+
+.withdrawButton {
+  width: 100%;
 }
 </style>

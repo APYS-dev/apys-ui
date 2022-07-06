@@ -32,6 +32,7 @@ export interface VaultMeta {
   rewardTokens: string[];
   dex: "REF" | "JUMBO";
   dexUrl: string;
+  dexFee: number;
   apr: Big;
   tvl: Big;
   osc: Big;

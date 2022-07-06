@@ -29,6 +29,7 @@ export interface VaultMetaDto {
   depositTokens: TokenMetaWithPriceDto[];
   dex: "REF" | "JUMBO";
   dexUrl: string;
+  dexFee: number;
   apr: string;
   tvl: number;
   osc: string;
