@@ -110,7 +110,11 @@ const tokenDropdownRef = ref<HTMLDivElement | null>(null);
 
 // Format data
 const receiveAmount = computed(() => {
-  return props.balanceInDollars.div(currentToken.value.price).toFixed(2);
+  const balance = props.balanceInDollars.div(currentToken.value.price);
+  const rewards = props.rewardInDollars.div(currentToken.value.price);
+  const total = balance.plus(rewards);
+
+  return total.minus(total.mul(props.vaultMeta.dexFee / 100)).toFixed(2);
 });
 
 const receiveRewardAmount = computed(() => {
