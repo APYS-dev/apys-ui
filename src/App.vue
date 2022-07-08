@@ -1,105 +1,86 @@
 <template>
-  <div v-if="isLoading" class="loader"></div>
-  <div v-else>
-    <the-header></the-header>
-    <router-view class="content" />
-    <the-footer></the-footer>
+  <div>
+    <TheHeader />
+    <RouterView class="content" />
+    <TheFooter />
   </div>
+  <ModalsContainer></ModalsContainer>
+  <div id="endofbody"></div>
 </template>
 
-<script>
-import TheHeader from '@/views/TheHeader.vue';
-import TheFooter from './views/TheFooter.vue';
-import { initContract, login, logout, waitForTransactionReady } from '@/near/utils';
-import { mapActions } from 'vuex';
-import axios from 'axios';
-import jwtDecode from 'jwt-decode';
+<script lang="ts">
+import { RouterView } from "vue-router";
+import { defineComponent } from "vue";
+import TheHeader from "@/components/TheHeader.vue";
+import TheFooter from "@/components/TheFooter.vue";
+import { useGeneralStore } from "@/stores/general";
+import { useBalanceStore } from "@/stores/balance";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { ModalsContainer } from "vue-final-modal";
+import { useVaultStore } from "@/stores/vault";
 
-export default {
-  name: 'App',
+export default defineComponent({
+  name: "App",
+  components: {
+    TheFooter,
+    TheHeader,
+    RouterView,
+    ModalsContainer,
+  },
 
-  components: { TheHeader, TheFooter },
-  data: () => ({
-    accountId: 'n/a',
-    isLogged: false,
-    login: () => login(),
-    logout: () => logout(),
-    isLoading: true,
-  }),
+  setup() {
+    return {
+      isLoading: true,
+    };
+  },
 
   async mounted() {
-    // Preload general info about tokens and strategies
-    const response = await axios.get(process.env.VUE_APP_INFO_SERVER_HOST || 'http://localhost:3070/info');
-    if (!response.data) {
-      throw 'Can not preload initial data';
+    // Show full loading screen
+    const loader = this.$loading.show({
+      // Optional parameters
+      container: undefined,
+      canCancel: false,
+      backgroundColor: "#FFF",
+      opacity: 1,
+      loader: "dots",
+      color: "#08AEEA",
+    });
+
+    try {
+      // Fetch general data from info server
+      const generalStore = useGeneralStore();
+      await generalStore.fetchInfo();
+
+      // Star app initialization
+      this.initApp();
+
+      // Hide full loading screen
+      this.isLoading = false;
+      loader.hide();
+    } catch (e) {
+      console.error("Error fetching data", e);
     }
-
-    const metadata = response.data.metadata;
-
-    const { accountId, walletConnection } = await initContract(metadata.apysContractId);
-    console.log('accountId', accountId);
-    this.accountId = accountId;
-    this.walletConnection = walletConnection;
-    this.isLogged = this.walletConnection.isSignedIn();
-
-    // Check transaction status
-    const transactionHashes = this.$route.query.transactionHashes;
-    if (transactionHashes) {
-      await waitForTransactionReady(transactionHashes).then(console.log, console.error);
-
-      // Check prev transaction meta
-      const transactionMeta = this.$route.query.signMeta;
-      console.log('transactionMeta', transactionMeta);
-      if (transactionMeta) {
-        // Save to local storage
-        localStorage.setItem('transactionMeta', transactionMeta);
-      }
-
-      // Clear hash from url
-      location.search = '';
-      return;
-    }
-
-    // Get and remove transaction meta
-    let transactionMeta = localStorage.getItem('transactionMeta');
-    localStorage.removeItem('transactionMeta');
-
-    // Decode transaction meta
-    transactionMeta = transactionMeta !== null ? jwtDecode(transactionMeta) : {};
-
-    // Set vaults
-    this.initVaults(response.data.strategies);
-
-    // Set balance tokens
-    this.initTokens(response.data.tokens);
-
-    // Load balances
-    await this.loadBalances(transactionMeta);
-
-    // Load vaults strategies
-    await this.loadVaultsBalances({ strategies: response.data.strategies, transactionMeta });
-
-    // Change state to loaded
-    this.isLoading = false;
   },
   methods: {
-    ...mapActions(['loadBalances', 'initVaults', 'initTokens', 'loadVaultsBalances']),
+    initApp() {
+      // Get stores
+      const { tokens, vaults } = useGeneralStore();
+
+      // Init balances
+      const { initBalancesByTokensMeta } = useBalanceStore();
+      initBalancesByTokensMeta(tokens);
+
+      // Init vaults
+      const { initVaultsByVaultsMeta } = useVaultStore();
+      initVaultsByVaultsMeta(vaults);
+    },
   },
-};
+});
 </script>
 
 <style lang="scss">
 .content {
   height: 100%;
-}
-
-.loader {
-  position: fixed;
-  left: 0px;
-  top: 0px;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-  background: url('/static/images/loading_spinner.gif') 50% 50% no-repeat rgb(249, 249, 249);
 }
 </style>
