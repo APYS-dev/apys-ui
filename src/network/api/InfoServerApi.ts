@@ -10,7 +10,7 @@ class InfoServerApi {
 
   getInfo = async (): Promise<GetInfoResponse> =>
     await axios
-      .get<GetInfoResponseDto>(`${import.meta.env.VITE_INFO_SERVER_HOST}/info`)
+      .get<GetInfoResponseDto>(`${import.meta.env.VITE_INFO_SERVER_HOST}`)
       .then((response) => response.data)
       .then((data) => this.mapInfoResponse(data));
 
