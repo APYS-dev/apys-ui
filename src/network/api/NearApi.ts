@@ -1,5 +1,4 @@
 import { keyStores, Near, WalletConnection } from "near-api-js";
-import { Buffer } from "buffer";
 import {
   Action,
   functionCall,

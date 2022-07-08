@@ -19,11 +19,14 @@ import ModalApyInfo from "@/modals/ModalApyInfo.vue";
 import AmountInputField from "@/components/input/AmountInputField.vue";
 import DropDown from "@/components/DropDown.vue";
 import Vue3Autocounter from "vue3-autocounter";
+import { Buffer } from "buffer";
 
 import "@/assets/styles/main.scss";
 
 import App from "./App.vue";
 import router from "./router";
+
+window.Buffer = Buffer;
 
 const app = createApp(App);
 
