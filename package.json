@@ -20,7 +20,7 @@
     "big.js": "^6.2.0",
     "borsh": "^0.7.0",
     "moment": "^2.29.3",
-    "near-api-js": "^0.45.1",
+    "near-api-js": "0.44.2",
     "pinia": "^2.0.14",
     "vue": "^3.2.36",
     "vue-content-loader": "^2.0.1",
