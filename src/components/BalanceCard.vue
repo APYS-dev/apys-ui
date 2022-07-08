@@ -195,7 +195,7 @@ function showDepositModal() {
 
   &-amount {
     text-align: center;
-    min-width: 36px;
+    min-width: 62px;
     height: 32px;
 
     .amount {
