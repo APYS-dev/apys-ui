@@ -4,7 +4,7 @@
       <div class="vault__logo">
         <img
           v-for="token in meta.depositTokens"
-          :key="token"
+          :key="token.symbol"
           :alt="token.symbol"
           :src="`/static/icons/token/${token.symbol}.svg`"
         />

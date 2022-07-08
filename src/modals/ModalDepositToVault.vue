@@ -2,7 +2,10 @@
   <VueFinalModal
     v-bind="$attrs"
     classes="vfm--modal"
-    @before-close="tokenDropdownRef.closeDropdown()"
+    @before-close="
+      //@ts-ignore
+      tokenDropdownRef.closeDropdown()
+    "
   >
     <div class="vfm--modal-container">
       <button
@@ -45,6 +48,7 @@
                     :key="token.contractId"
                     @click="
                       currentToken = token;
+                      // @ts-ignore
                       tokenDropdownRef.closeDropdown();
                     "
                   >
