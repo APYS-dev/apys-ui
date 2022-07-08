@@ -28,15 +28,15 @@
       </a>
     </div>
 
-    <div v-if="!!meta.rewardToken" class="vault__bonus">
+    <div class="vault__bonus">
       <div class="light-text">
         +rewards
         <button class="icon-info" @click.stop="showRewardsInfoModal"></button>
       </div>
       <div class="tokens">
         <img
-          :alt="`${meta.rewardToken}`"
-          :src="`/static/icons/token/${meta.rewardToken}.svg`"
+          :alt="`${bonusToken.symbol}`"
+          :src="`/static/icons/token/${bonusToken.symbol}.svg`"
         />
       </div>
     </div>
@@ -74,6 +74,14 @@ import { computed } from "vue";
 import { formatPrice } from "@/utils/formatters";
 import { aprToApy } from "@/utils/math";
 import { $vfm } from "vue-final-modal";
+import { useGeneralStore } from "@/stores/general";
+import { useVaultStore } from "@/stores/vault";
+
+const {
+  metadata: { bonusToken },
+} = useGeneralStore();
+
+const { isBonusRewardsAvailable } = useVaultStore();
 
 // Define props
 const props = defineProps<{
@@ -162,6 +170,7 @@ function showApyCalculatorModal() {
       height: 31px;
       border: 3px solid #ffffff;
       border-radius: 20px;
+      box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 4px;
     }
   }
 

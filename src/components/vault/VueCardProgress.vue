@@ -218,4 +218,17 @@ function getTaskTooltip(task: ProgressTask["type"]) {
 .progress-circle {
   z-index: 3;
 }
+
+.progress-circle > svg {
+  animation: circle 6s linear infinite;
+}
+
+@keyframes circle {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 </style>

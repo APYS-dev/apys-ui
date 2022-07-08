@@ -182,6 +182,8 @@ function showDepositModal() {
   img {
     height: 100%;
     max-height: 26px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 4px;
+    border-radius: 20px;
   }
 
   &-amount {

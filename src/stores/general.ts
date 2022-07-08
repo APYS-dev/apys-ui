@@ -21,6 +21,7 @@ export const useGeneralStore = defineStore({
     metadata: {
       apysContractId: "",
       bonusRewardsTokenId: "",
+      bonusToken: {} as TokenMeta,
     },
     vaults: [],
     tokens: [],

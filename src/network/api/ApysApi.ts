@@ -141,17 +141,21 @@ class ApysApi {
     // Get stores
     const { accountId } = useAuthStore();
 
-    // Check storage deposit and create transaction if necessary
-    const needStorageDeposit = await this.checkNeedStorageDeposit(accountId);
-    if (needStorageDeposit) {
-      const action: NearAction = {
-        args: {},
-        gas: DEFAULT_GAS,
-        methodName: "storage_deposit",
-        deposit: Big(parseNearAmount("0.00125") || "0"),
-      };
-      const transaction = await nearApi.actionsToTransaction(tokenId, [action]);
-      transactions.push(transaction);
+    if (tokenId.toLowerCase() != "usn".toLowerCase()) {
+      // Check storage deposit and create transaction if necessary
+      const needStorageDeposit = await this.checkNeedStorageDeposit(accountId);
+      if (needStorageDeposit) {
+        const action: NearAction = {
+          args: {},
+          gas: DEFAULT_GAS,
+          methodName: "storage_deposit",
+          deposit: Big(parseNearAmount("0.00125") || "0"),
+        };
+        const transaction = await nearApi.actionsToTransaction(tokenId, [
+          action,
+        ]);
+        transactions.push(transaction);
+      }
     }
 
     // Create transfer transaction

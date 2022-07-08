@@ -26,7 +26,7 @@ export const useVaultStore = defineStore({
     },
     isBonusRewardsAvailable: (state: State) => (vaultId: string) => {
       return !!state.vaults.find(
-        (it) => it.meta.contractId === vaultId && !!it.meta.rewardToken
+        (it) => it.meta.contractId === vaultId && it.meta.bonusApr.gt(0)
       );
     },
     checkProgressLoadedForVault: (state: State) => (vaultId: string) => {

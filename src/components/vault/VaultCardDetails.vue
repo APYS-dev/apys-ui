@@ -21,7 +21,7 @@
         </div>
       </div>
 
-      <div v-if="isBonusRewardsAvailable(vault.meta.contractId)">
+      <div>
         <h3 class="vault-more__header">+Rewards</h3>
 
         <div class="vault-more__bonus-body">
@@ -129,6 +129,7 @@ import { $vfm } from "vue-final-modal";
 import { ContentLoader } from "vue-content-loader";
 import StepsProgressBar from "@/components/vault/VueCardProgress.vue";
 import VueCardRewardCounter from "@/components/vault/VueCardRewardCounter.vue";
+import { useGeneralStore } from "@/stores/general";
 
 const logger = useLogger();
 
@@ -136,12 +137,15 @@ const logger = useLogger();
 const { isSignedIn } = useAuthStore();
 const { fetchAppBalance } = useBalanceStore();
 const {
+  metadata: { bonusToken },
+} = useGeneralStore();
+
+const {
   fetchVaultContractMeta,
   fetchVaultBalance,
   fetchVaultProgress,
   checkVaultProcessing,
   fetchVaultUnclaimedReward,
-  isBonusRewardsAvailable,
 } = useVaultStore();
 
 // Define props
@@ -254,9 +258,11 @@ const formattedRewardBalance = computed(() => {
 });
 
 const formattedBonusRewardBalance = computed(() => {
-  const fractions = props.vault.unclaimedBonusReward.gt(10) ? 0 : 2;
+  const fractions = props.vault.unclaimedBonusReward.gt(10)
+    ? 0
+    : bonusToken.fractionDigits;
   return formatAmount(props.vault.unclaimedBonusReward, {
-    decimals: 24,
+    decimals: bonusToken.decimals,
     fractionDigits: fractions,
   });
 });

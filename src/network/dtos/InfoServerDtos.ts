@@ -1,3 +1,5 @@
+import type { TokenMeta } from "@/network/models/InfoServerModels";
+
 export interface GetInfoResponseDto {
   strategies: VaultMetaDto[];
   tokens: TokenMetaDto[];
@@ -7,6 +9,7 @@ export interface GetInfoResponseDto {
 export interface MetadataDto {
   apysContractId: string;
   bonusRewardsTokenId: string;
+  bonusToken: TokenMetaDto;
 }
 
 export interface TokenMetaDto {
@@ -34,6 +37,5 @@ export interface VaultMetaDto {
   apr: string;
   tvl: number;
   osc: string;
-  rewardToken: string;
   bonusApr: string;
 }
