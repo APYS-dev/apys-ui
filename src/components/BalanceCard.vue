@@ -60,6 +60,7 @@ import { useAuthStore } from "@/stores/auth";
 import { formatAmount } from "@/utils/formatters";
 import { $vfm } from "vue-final-modal";
 import { useLogger } from "vue-logger-plugin";
+import Big from "big.js";
 
 const logger = useLogger();
 
@@ -122,9 +123,15 @@ const formattedAppBalance = computed(() => {
 
 // Checkers for deposit and withdraw
 const canDeposit = computed(() => {
-  return (
-    props.balance.walletBalance && props.balance.walletBalance.toNumber() > 0
-  );
+  // Check that wallet balance is not null and zero
+  const hasBalance = props.balance.walletBalance.gt(0);
+
+  // Check that formatted balance is not zero
+  const hasFormattedBalance =
+    formatAmount(props.balance.walletBalance, props.balance.meta) !==
+    formatAmount(Big(0), props.balance.meta);
+
+  return hasBalance && hasFormattedBalance;
 });
 const canWithdraw = computed(() => {
   return props.balance.appBalance && props.balance.appBalance.toNumber() > 0;
