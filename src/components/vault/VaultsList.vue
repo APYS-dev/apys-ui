@@ -81,7 +81,7 @@ export default defineComponent({
 .vaults {
   header {
     margin-bottom: 12px;
-    padding: 16px 30px;
+    padding: 15px 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -89,6 +89,10 @@ export default defineComponent({
     background-color: var(--background-color);
     box-shadow: 0px -4px 50px rgba(47, 91, 96, 0.08);
     border-radius: 4px;
+
+    h2 {
+      margin-right: 15px;
+    }
   }
 
   &__tabs {

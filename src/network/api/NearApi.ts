@@ -40,7 +40,7 @@ class NearApi {
       headers: {},
       helperUrl: import.meta.env.VITE_NEAR_HELPER_URL,
       keyStore: new keyStores.BrowserLocalStorageKeyStore(),
-      networkId: import.meta.env.VITE_NEAR_NETWORK_ID,
+      networkId: import.meta.env.VITE_NEAR_NETWORK_IDN,
       walletUrl: import.meta.env.VITE_NEAR_WALLET_URL,
       nodeUrl: import.meta.env.VITE_NEAR_NODE_URL,
     });

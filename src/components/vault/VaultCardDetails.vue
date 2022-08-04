@@ -1,6 +1,6 @@
 <template>
   <div :class="{ active: true }" class="vault-more-wrap">
-    <div class="vault-more">
+    <div class="vault-more row row-cols-auto">
       <div>
         <h3 class="vault-more__header">Deposited</h3>
 
@@ -453,13 +453,13 @@ async function claimBonusReward() {
   &__bonus-body {
     display: flex;
     justify-content: space-between;
-    padding-right: 24px;
     min-height: 46px;
   }
 
   &__bonus-btn-box {
     display: flex;
     align-items: center;
+    margin-right: 5%;
   }
 
   .amount {
@@ -467,6 +467,7 @@ async function claimBonusReward() {
     font-size: 24px;
     font-weight: 400;
     color: var(--color-main);
+    padding-right: 10px;
   }
 
   .price {
@@ -482,7 +483,7 @@ async function claimBonusReward() {
 
   &__btns {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 8px;
 
     button {

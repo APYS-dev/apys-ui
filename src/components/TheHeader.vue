@@ -49,7 +49,6 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   .logo {
     height: 26px;
     width: auto;

@@ -1,65 +1,67 @@
 <template>
-  <div class="vault">
-    <div class="vault__name-wrap">
-      <div class="vault__logo">
-        <img
-          v-for="token in meta.depositTokens"
-          :key="token.symbol"
-          :alt="token.symbol"
-          :src="`/static/icons/token/${token.symbol}.svg`"
-        />
-      </div>
+  <div class="vault row row-cols-auto">
+    <div class="vault__name-block">
+      <div class="vault__name-wrap">
+        <div class="vault__logo">
+          <img
+            v-for="token in meta.depositTokens"
+            :key="token.symbol"
+            :alt="token.symbol"
+            :src="`/static/icons/token/${token.symbol}.svg`"
+          />
+        </div>
 
-      <div class="vault__name">
-        {{ meta.name }}
-      </div>
+        <div class="vault__name">
+          {{ meta.name }}
+        </div>
 
-      <!--        <button-->
-      <!--          v-if="uuid === 'ref-usdc-usdt-dai'"-->
-      <!--          class="icon-info"-->
-      <!--          @click.stop="showVaultModal"-->
-      <!--        ></button>-->
-    </div>
-
-    <div class="vault__dex">
-      <span class="light-text">dex</span>
-      <a :href="meta.dexUrl" target="_blank">
-        <img :src="`/static/icons/dex/${meta.dex}.svg`" :alt="meta.dex" />
-      </a>
-    </div>
-
-    <div class="vault__bonus">
-      <div class="light-text">
-        +rewards
-        <button class="icon-info" @click.stop="showRewardsInfoModal"></button>
-      </div>
-      <div class="tokens">
-        <img
-          :alt="`${bonusToken.symbol}`"
-          :src="`/static/icons/token/${bonusToken.symbol}.svg`"
-        />
+        <!--        <button-->
+        <!--          v-if="uuid === 'ref-usdc-usdt-dai'"-->
+        <!--          class="icon-info"-->
+        <!--          @click.stop="showVaultModal"-->
+        <!--        ></button>-->
       </div>
     </div>
-
-    <div class="vault__tvl">
-      <span class="light-text">tvl</span>
-      <div class="amount">{{ formattedTVL }}</div>
-    </div>
-
-    <div class="vault__apy">
-      <div class="light-text">
-        apy
-        <button class="icon-info" @click.stop="showApyInfoModal"></button>
+    <div class="vault__data">
+      <div class="vault__dex">
+        <span class="light-text">dex</span>
+        <a :href="meta.dexUrl" target="_blank">
+          <img :src="`/static/icons/dex/${meta.dex}.svg`" :alt="meta.dex" />
+        </a>
       </div>
 
-      <div class="amount">
-        {{ formattedAPY }}
-        <button class="calculator" @click.stop="showApyCalculatorModal">
-          <img alt="Calc" src="/static/icons/other/calculator.png" />
-        </button>
+      <div class="vault__bonus">
+        <div class="light-text">
+          +rewards
+          <button class="icon-info" @click.stop="showRewardsInfoModal"></button>
+        </div>
+        <div class="tokens">
+          <img
+            :alt="`${bonusToken.symbol}`"
+            :src="`/static/icons/token/${bonusToken.symbol}.svg`"
+          />
+        </div>
+      </div>
+
+      <div class="vault__tvl">
+        <span class="light-text">tvl</span>
+        <div class="amount">{{ formattedTVL }}</div>
+      </div>
+
+      <div class="vault__apy">
+        <div class="light-text">
+          apy
+          <button class="icon-info" @click.stop="showApyInfoModal"></button>
+        </div>
+
+        <div class="amount">
+          {{ formattedAPY }}
+          <button class="calculator" @click.stop="showApyCalculatorModal">
+            <img alt="Calc" src="/static/icons/other/calculator.png" />
+          </button>
+        </div>
       </div>
     </div>
-
     <div class="vault__status">
       <div v-if="meta.status === 'upcoming'" class="line line-position">
         coming
@@ -152,11 +154,18 @@ function showApyCalculatorModal() {
   //cursor: pointer;
   position: relative;
 
+  &__name-block {
+    width: 100%;
+    justify-content: center;
+  }
+
   &__name-wrap {
     display: flex;
     align-items: center;
+    justify-content: center;
+    flex-direction: column;
     gap: 12px;
-    min-width: 232px;
+    min-width: 120px;
   }
 
   &__logo {
@@ -179,6 +188,14 @@ function showApyCalculatorModal() {
     font-weight: 500;
   }
 
+  &__data {
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 5%;    
+  }
+
   &__dex,
   &__tvl,
   &__bonus,
@@ -188,6 +205,7 @@ function showApyCalculatorModal() {
     justify-content: space-between;
     min-height: 34px;
     gap: 4px;
+    margin-left: 5%;
 
     .amount {
       display: flex;
@@ -201,6 +219,7 @@ function showApyCalculatorModal() {
       display: flex;
       flex-direction: row;
       gap: 4px;
+      margin-left: 30%;
     }
 
     .calculator img {
