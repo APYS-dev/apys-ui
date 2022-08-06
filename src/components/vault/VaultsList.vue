@@ -1,26 +1,54 @@
 <template>
-  <div class="vaults">
-    <header>
-      <h2>Vaults</h2>
+  <div class="desktop-display">
+    <div class="vaults">
+      <header>
+        <h2>Vaults</h2>
 
-      <div class="vaults__tabs">
-        <button
-          v-for="tab in tabs"
-          :key="tab.status"
-          :class="{ active: tab === currentTab }"
-          @click="selectTab(tab)"
-        >
-          {{ tab.title }}
-        </button>
-      </div>
-    </header>
-    <main>
-      <VaultCard
-        v-for="vault in filteredVaults()"
-        :key="vault.meta.uuid"
-        :vault="vault"
-      />
-    </main>
+        <div class="vaults__tabs">
+          <button
+            v-for="tab in tabs"
+            :key="tab.status"
+            :class="{ active: tab === currentTab }"
+            @click="selectTab(tab)"
+          >
+            {{ tab.title }}
+          </button>
+        </div>
+      </header>
+      <main>
+        <VaultCard
+          v-for="vault in filteredVaults()"
+          :key="vault.meta.uuid"
+          :vault="vault"
+        />
+      </main>
+    </div>
+  </div>
+
+  <div class="mobile-display">
+    <div class="vaults">
+      <header>
+        <h2>Vaults</h2>
+
+        <div class="vaults__tabs">
+          <button
+            v-for="tab in tabs"
+            :key="tab.status"
+            :class="{ active: tab === currentTab }"
+            @click="selectTab(tab)"
+          >
+            {{ tab.title }}
+          </button>
+        </div>
+      </header>
+      <main>
+        <VaultCard
+          v-for="vault in filteredVaults()"
+          :key="vault.meta.uuid"
+          :vault="vault"
+        />
+      </main>
+    </div>
   </div>
 </template>
 
@@ -89,6 +117,13 @@ export default defineComponent({
     background-color: var(--background-color);
     box-shadow: 0px -4px 50px rgba(47, 91, 96, 0.08);
     border-radius: 4px;
+  }
+
+  @media screen and(max-width: 500px) {
+    header {
+      padding: 10px 19px;
+    }
+
   }
 
   &__tabs {

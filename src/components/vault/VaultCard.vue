@@ -27,5 +27,15 @@ const props = defineProps<{
   &:not(:first-child) {
     margin: 16px auto 0;
   }
+
+  @media screen and(max-width: 500px) {
+    overflow: hidden;
+    box-shadow: 0px -4px 50px rgba(47, 91, 96, 0.08);
+    height: 400px;
+
+    &:not(:first-child) {
+      margin: 16px auto 0;
+    }
+  }
 }
 </style>
