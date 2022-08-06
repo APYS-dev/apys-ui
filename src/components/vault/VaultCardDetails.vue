@@ -1,115 +1,248 @@
 <template>
-  <div :class="{ active: true }" class="vault-more-wrap">
-    <div class="vault-more row row-cols-auto">
-      <div>
-        <h3 class="vault-more__header">Deposited</h3>
+  <!-- Destktop -->
+  <div class="desktop-display">
+    <div :class="{ active: true }" class="vault-more-wrap">
+      <div class="vault-more row row-cols-auto">
+        <div>
+          <h3 class="vault-more__header">Deposited</h3>
 
-        <div class="vault-more__body">
-          <ContentLoader
-            v-if="isShowBalanceLoader"
-            height="29"
-            viewBox="0 0 100 29"
-            :speed="2"
-            primaryColor="#f3f3f3"
-            secondaryColor="#ecebeb"
-          >
-            <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
-          </ContentLoader>
-          <div v-else class="amount">
-            {{ isShowBalance ? formattedBalance : "–" }}
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h3 class="vault-more__header">+Rewards</h3>
-
-        <div class="vault-more__bonus-body">
-          <ContentLoader
-            v-if="isUnclaimedBonusRewardsLoader"
-            height="29"
-            viewBox="0 0 100 29"
-            :speed="2"
-            primaryColor="#f3f3f3"
-            secondaryColor="#ecebeb"
-          >
-            <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
-          </ContentLoader>
-          <div v-else class="amount">
-            {{ formattedBonusRewardBalance }}
-          </div>
-          <div class="vault-more__bonus-btn-box">
-            <button
-              v-if="isSignedIn"
-              :disabled="!isClaimBonusRewardAvailable"
-              @click="claimBonusReward"
-              class="btn-small btn-border"
+          <div class="vault-more__body">
+            <ContentLoader
+              v-if="isShowBalanceLoader"
+              height="29"
+              viewBox="0 0 100 29"
+              :speed="2"
+              primaryColor="#f3f3f3"
+              secondaryColor="#ecebeb"
             >
-              Claim
-            </button>
+              <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
+            </ContentLoader>
+            <div v-else class="amount">
+              {{ isShowBalance ? formattedBalance : "–" }}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div>
-        <h3 class="vault-more__header">Rewards</h3>
+        <div>
+          <h3 class="vault-more__header">+Rewards</h3>
 
-        <div class="vault-more__body rewards__body">
-          <ContentLoader
-            v-if="isShowBalanceLoader"
-            height="29"
-            viewBox="0 0 100 29"
-            :speed="2"
-            primaryColor="#f3f3f3"
-            secondaryColor="#ecebeb"
+          <div class="vault-more__bonus-body">
+            <ContentLoader
+              v-if="isUnclaimedBonusRewardsLoader"
+              height="29"
+              viewBox="0 0 100 29"
+              :speed="2"
+              primaryColor="#f3f3f3"
+              secondaryColor="#ecebeb"
+            >
+              <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
+            </ContentLoader>
+            <div v-else class="amount">
+              {{ formattedBonusRewardBalance }}
+            </div>
+            <div class="vault-more__bonus-btn-box">
+              <button
+                v-if="isSignedIn"
+                :disabled="!isClaimBonusRewardAvailable"
+                @click="claimBonusReward"
+                class="btn-small btn-border"
+              >
+                Claim
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="vault-more__header">Rewards</h3>
+
+          <div class="vault-more__body rewards__body">
+            <ContentLoader
+              v-if="isShowBalanceLoader"
+              height="29"
+              viewBox="0 0 100 29"
+              :speed="2"
+              primaryColor="#f3f3f3"
+              secondaryColor="#ecebeb"
+            >
+              <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
+            </ContentLoader>
+            <div v-else class="amount">
+              {{ isShowBalance ? formattedRewardBalance : "–" }}
+            </div>
+            <VueCardRewardCounter
+              v-if="isShowRewardCounter"
+              :last-reward-time="vault.contractMeta.last_reward_time"
+              :balance-in-dollars="vault.balanceInDollars"
+              :reward-in-dollars="vault.rewardInDollars"
+              :apr="vault.meta.apr"
+            />
+          </div>
+        </div>
+
+        <template v-if="vault.isProcessing">
+          <StepsProgressBar :progress="vault.progress" />
+        </template>
+        <button v-else-if="!isSignedIn" class="btn-bg" @click="connectWallet">
+          Connect wallet
+        </button>
+        <ContentLoader
+          v-else-if="isShowControlLoader"
+          height="73"
+          viewBox="0 0 138 73"
+          :speed="2"
+          primaryColor="#f3f3f3"
+          secondaryColor="#ecebeb"
+        >
+          <rect x="0" y="0" rx="0" ry="0" width="138" height="32" />
+          <rect x="0" y="41" rx="0" ry="0" width="138" height="32" />
+        </ContentLoader>
+        <div v-else class="vault-more__btns">
+          <button
+            :disabled="!isDepositAvailable"
+            class="btn-bg"
+            @click="showDepositModal"
           >
-            <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
-          </ContentLoader>
-          <div v-else class="amount">
-            {{ isShowBalance ? formattedRewardBalance : "–" }}
-          </div>
-          <VueCardRewardCounter
-            v-if="isShowRewardCounter"
-            :last-reward-time="vault.contractMeta.last_reward_time"
-            :balance-in-dollars="vault.balanceInDollars"
-            :reward-in-dollars="vault.rewardInDollars"
-            :apr="vault.meta.apr"
-          />
+            Deposit
+          </button>
+          <button
+            :disabled="!isWithdrawAvailable"
+            class="btn-border"
+            @click="showWithdrawModal"
+          >
+            Withdraw
+          </button>
         </div>
       </div>
+    </div>
+  </div>
 
-      <template v-if="vault.isProcessing">
-        <StepsProgressBar :progress="vault.progress" />
-      </template>
-      <button v-else-if="!isSignedIn" class="btn-bg" @click="connectWallet">
-        Connect wallet
-      </button>
-      <ContentLoader
-        v-else-if="isShowControlLoader"
-        height="73"
-        viewBox="0 0 138 73"
-        :speed="2"
-        primaryColor="#f3f3f3"
-        secondaryColor="#ecebeb"
-      >
-        <rect x="0" y="0" rx="0" ry="0" width="138" height="32" />
-        <rect x="0" y="41" rx="0" ry="0" width="138" height="32" />
-      </ContentLoader>
-      <div v-else class="vault-more__btns">
-        <button
-          :disabled="!isDepositAvailable"
-          class="btn-bg"
-          @click="showDepositModal"
-        >
-          Deposit
+  <!-- Mobile -->
+  <div class="mobile-display">
+    <div :class="{ active: true }" class="vault-more-wrap">
+      <div class="vault-more">
+        <div class="vault-more__data">
+          <div>
+            <h3 class="vault-more__header">Deposited</h3>
+
+            <div class="vault-more__body">
+              <ContentLoader
+                v-if="isShowBalanceLoader"
+                height="29"
+                viewBox="0 0 100 29"
+                :speed="2"
+                primaryColor="#f3f3f3"
+                secondaryColor="#ecebeb"
+              >
+                <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
+              </ContentLoader>
+              <div v-else class="amount">
+                {{ isShowBalance ? formattedBalance : "–" }}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="vault-more__rewards-header">
+              <h3 class="vault-more__header">+Rewards</h3>
+
+              <button
+                class="icon-info"
+                @click.stop="showRewardsInfoModal"
+              ></button>
+            </div>
+            <img
+              :alt="`${bonusToken.symbol}`"
+              :src="`/static/icons/token/${bonusToken.symbol}.svg`"
+            />
+            <div class="vault-more__bonus-body">
+              <ContentLoader
+                v-if="isUnclaimedBonusRewardsLoader"
+                height="29"
+                viewBox="0 0 100 29"
+                :speed="2"
+                primaryColor="#f3f3f3"
+                secondaryColor="#ecebeb"
+              >
+                <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
+              </ContentLoader>
+              <div v-else class="amount">
+                {{ formattedBonusRewardBalance }}
+              </div>
+              <div class="vault-more__bonus-btn-box">
+                <button
+                  v-if="isSignedIn"
+                  :disabled="!isClaimBonusRewardAvailable"
+                  @click="claimBonusReward"
+                  class="btn-small btn-border"
+                >
+                  Claim
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="vault-more__header">Rewards</h3>
+
+            <div class="vault-more__body rewards__body">
+              <ContentLoader
+                v-if="isShowBalanceLoader"
+                height="29"
+                viewBox="0 0 100 29"
+                :speed="2"
+                primaryColor="#f3f3f3"
+                secondaryColor="#ecebeb"
+              >
+                <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
+              </ContentLoader>
+              <div v-else class="amount">
+                {{ isShowBalance ? formattedRewardBalance : "–" }}
+              </div>
+              <VueCardRewardCounter
+                v-if="isShowRewardCounter"
+                :last-reward-time="vault.contractMeta.last_reward_time"
+                :balance-in-dollars="vault.balanceInDollars"
+                :reward-in-dollars="vault.rewardInDollars"
+                :apr="vault.meta.apr"
+              />
+            </div>
+          </div>
+        </div>
+
+        <template v-if="vault.isProcessing">
+          <StepsProgressBar :progress="vault.progress" />
+        </template>
+        <button v-else-if="!isSignedIn" class="btn-bg" @click="connectWallet">
+          Connect wallet
         </button>
-        <button
-          :disabled="!isWithdrawAvailable"
-          class="btn-border"
-          @click="showWithdrawModal"
+        <ContentLoader
+          v-else-if="isShowControlLoader"
+          height="73"
+          viewBox="0 0 138 73"
+          :speed="2"
+          primaryColor="#f3f3f3"
+          secondaryColor="#ecebeb"
         >
-          Withdraw
-        </button>
+          <rect x="0" y="0" rx="0" ry="0" width="138" height="32" />
+          <rect x="0" y="41" rx="0" ry="0" width="138" height="32" />
+        </ContentLoader>
+        <div v-else class="vault-more__btns">
+          <button
+            :disabled="!isDepositAvailable"
+            class="btn-bg"
+            @click="showDepositModal"
+          >
+            Deposit
+          </button>
+          <button
+            :disabled="!isWithdrawAvailable"
+            class="btn-border"
+            @click="showWithdrawModal"
+          >
+            Withdraw
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -152,6 +285,19 @@ const {
 const props = defineProps<{
   vault: Vault;
 }>();
+
+// +Rewards modal
+function showRewardsInfoModal() {
+  $vfm.show({
+    component: "ModalRewardsInfo",
+    bind: {},
+    on: {
+      close() {
+        $vfm.hideAll();
+      },
+    },
+  });
+}
 
 // Define states
 const isVaultContractMetaLoaded = ref(false);
@@ -430,7 +576,7 @@ async function claimBonusReward() {
 
     &:nth-child(2) {
       margin-right: 24px;
-      border-right: 1px solid rgba(13, 13, 13, 0.1);
+      //border-right: 1px solid rgba(13, 13, 13, 0.1);
     }
   }
 
@@ -489,6 +635,63 @@ async function claimBonusReward() {
     button {
       min-width: max-content;
     }
+  }
+}
+
+@media screen and(max-width: 500px) {
+  .vault-more {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    &__data {
+      width: 100%;
+    }
+
+    & > div {
+      &:first-child {
+        border-right: none;
+      }
+
+      &:nth-child(2) {
+        border-right: none;
+      }
+    }
+
+    &__data > div {
+      &:first-child {
+        padding: 0 5px;
+        border-bottom: 1px solid rgba(13, 13, 13, 0.1);
+      }
+
+      &:nth-child(2) {
+        padding: 5px 5px;
+        margin-bottom: 5px;
+        border-bottom: 1px solid rgba(13, 13, 13, 0.1);
+      }
+    }
+
+    &__rewards-header {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+    }
+    img {
+      width: 16px;
+      height: 16px;
+    }
+
+    &__btns {
+      margin: 5px;
+    }
+  }
+}
+.vault-more-wrap {
+  overflow: visible;
+  max-height: 100%;
+
+  &__active {
+    max-height: 100%;
   }
 }
 

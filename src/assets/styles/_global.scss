@@ -162,12 +162,6 @@
   }
 }
 
-@media screen and (max-width: 500px) {
-  .width-full-mobile {
-    width: 100%;
-  }
-}
-
 .h {
   &-auto {
     height: auto;
@@ -197,10 +191,10 @@
 
 // body -------------------------------------------------
 body {
-  background-image: url('/static/images/bg.png');
+  background-image: url("/static/images/bg.png");
   background-size: cover;
   background-attachment: fixed;
-  font-family: 'WorkSans', sans-serif;
+  font-family: "WorkSans", sans-serif;
   font-size: 1rem;
   font-weight: 400;
   color: var(--color-text);
@@ -214,34 +208,48 @@ body {
   max-width: 90%;
   width: 100%;
 
+  .desktop-display {
+    display: block;
+  }
+  .mobile-display {
+    display: none;
+  }
+
   @media screen and(min-width: 1600px) {
     max-width: 1600px;
   }
-  @media screen and(max-width: 500px) {
+
+  @media screen and (max-width: 500px) {
     max-width: 100%;
+    .desktop-display {
+      display: none;
+    }
+    .mobile-display {
+      display: block;
+    }
   }
-}
 
-.icon-info {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border: 1px solid var(--color-text);
-  border-radius: 50%;
-  color: var(--color-text);
-  font-size: 10px;
-  opacity: 0.2;
-  cursor: default;
+  .icon-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--color-text);
+    border-radius: 50%;
+    color: var(--color-text);
+    font-size: 10px;
+    opacity: 0.2;
+    cursor: default;
 
-  &:before {
-    content: 'i';
-    margin-top: 1px;
-    font-family: Arial, sans-serif;
+    &:before {
+      content: "i";
+      margin-top: 1px;
+      font-family: Arial, sans-serif;
 
-    @media screen and (max-width: 768px) {
-      margin-left: 1px;
+      @media screen and (max-width: 768px) {
+        margin-left: 1px;
+      }
     }
   }
 }
