@@ -64,6 +64,7 @@
               :speed="2"
               primaryColor="#f3f3f3"
               secondaryColor="#ecebeb"
+              class="rewards-loader"
             >
               <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
             </ContentLoader>
@@ -193,6 +194,7 @@
                 :speed="2"
                 primaryColor="#f3f3f3"
                 secondaryColor="#ecebeb"
+                class="rewards-loader"
               >
                 <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
               </ContentLoader>
@@ -635,6 +637,9 @@ async function claimBonusReward() {
       min-width: max-content;
     }
   }
+  .rewards-loader {
+    width: 100px;
+  }
 }
 
 @media screen and(max-width: 500px) {
@@ -675,6 +680,7 @@ async function claimBonusReward() {
       flex-direction: row;
       gap: 10px;
     }
+
     img {
       width: 16px;
       height: 16px;

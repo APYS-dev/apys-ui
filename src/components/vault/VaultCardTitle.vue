@@ -15,7 +15,6 @@
         <div class="vault__name">
           {{ meta.name }}
         </div>
-
       </div>
 
       <div class="vault__dex">
