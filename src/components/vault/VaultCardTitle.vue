@@ -15,12 +15,6 @@
         <div class="vault__name">
           {{ meta.name }}
         </div>
-
-        <!--        <button-->
-        <!--          v-if="uuid === 'ref-usdc-usdt-dai'"-->
-        <!--          class="icon-info"-->
-        <!--          @click.stop="showVaultModal"-->
-        <!--        ></button>-->
       </div>
 
       <div class="vault__dex">
@@ -95,19 +89,6 @@
             <img :src="`/static/icons/dex/${meta.dex}.svg`" :alt="meta.dex" />
           </a>
         </div>
-
-        <!-- <div class="vault__bonus">
-        <div class="light-text">
-          +rewards
-          <button class="icon-info" @click.stop="showRewardsInfoModal"></button>
-        </div>
-        <div class="tokens">
-          <img
-            :alt="`${bonusToken.symbol}`"
-            :src="`/static/icons/token/${bonusToken.symbol}.svg`"
-          />
-        </div>
-      </div> -->
 
         <div class="vault__tvl">
           <span class="light-text">tvl</span>
@@ -219,7 +200,6 @@ function showApyCalculatorModal() {
   gap: 16px;
   background-color: var(--background-color);
   border-radius: 4px;
-  //cursor: pointer;
   position: relative;
 
   &__name-wrap {

@@ -576,7 +576,6 @@ async function claimBonusReward() {
 
     &:nth-child(2) {
       margin-right: 24px;
-      //border-right: 1px solid rgba(13, 13, 13, 0.1);
     }
   }
 
