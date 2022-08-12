@@ -57,8 +57,6 @@ const isOtherTasks = computed(
   () => props.progress.other_tasks.filter((it) => !it.ready).length > 0
 );
 
-console.log(isDepositTasks);
-
 // Get total steps
 const totalSteps = computed(() => {
   if (isDepositTasks.value) {
