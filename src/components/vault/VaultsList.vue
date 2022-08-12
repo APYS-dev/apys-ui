@@ -1,54 +1,26 @@
 <template>
-  <div class="desktop-display">
-    <div class="vaults">
-      <header>
-        <h2>Vaults</h2>
+  <div class="vaults">
+    <header>
+      <h2>Vaults</h2>
 
-        <div class="vaults__tabs">
-          <button
-            v-for="tab in tabs"
-            :key="tab.status"
-            :class="{ active: tab === currentTab }"
-            @click="selectTab(tab)"
-          >
-            {{ tab.title }}
-          </button>
-        </div>
-      </header>
-      <main>
-        <VaultCard
-          v-for="vault in filteredVaults()"
-          :key="vault.meta.uuid"
-          :vault="vault"
-        />
-      </main>
-    </div>
-  </div>
-
-  <div class="mobile-display">
-    <div class="vaults">
-      <header>
-        <h2>Vaults</h2>
-
-        <div class="vaults__tabs">
-          <button
-            v-for="tab in tabs"
-            :key="tab.status"
-            :class="{ active: tab === currentTab }"
-            @click="selectTab(tab)"
-          >
-            {{ tab.title }}
-          </button>
-        </div>
-      </header>
-      <main>
-        <VaultCard
-          v-for="vault in filteredVaults()"
-          :key="vault.meta.uuid"
-          :vault="vault"
-        />
-      </main>
-    </div>
+      <div class="vaults__tabs">
+        <button
+          v-for="tab in tabs"
+          :key="tab.status"
+          :class="{ active: tab === currentTab }"
+          @click="selectTab(tab)"
+        >
+          {{ tab.title }}
+        </button>
+      </div>
+    </header>
+    <main>
+      <VaultCard
+        v-for="vault in filteredVaults()"
+        :key="vault.meta.uuid"
+        :vault="vault"
+      />
+    </main>
   </div>
 </template>
 
@@ -123,7 +95,6 @@ export default defineComponent({
     header {
       padding: 10px 19px;
     }
-
   }
 
   &__tabs {

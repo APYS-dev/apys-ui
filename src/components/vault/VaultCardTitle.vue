@@ -1,6 +1,5 @@
 <template>
-  <!-- Desktop -->
-  <div class="desktop-display">
+
     <div class="vault">
       <div class="vault__name-wrap">
         <div class="vault__logo">
@@ -16,78 +15,28 @@
           {{ meta.name }}
         </div>
       </div>
-
-      <div class="vault__dex">
-        <span class="light-text">dex</span>
-        <a :href="meta.dexUrl" target="_blank">
-          <img :src="`/static/icons/dex/${meta.dex}.svg`" :alt="meta.dex" />
-        </a>
-      </div>
-
-      <div class="vault__bonus">
-        <div class="light-text">
-          +rewards
-          <button class="icon-info" @click.stop="showRewardsInfoModal"></button>
-        </div>
-        <div class="tokens">
-          <img
-            :alt="`${bonusToken.symbol}`"
-            :src="`/static/icons/token/${bonusToken.symbol}.svg`"
-          />
-        </div>
-      </div>
-
-      <div class="vault__tvl">
-        <span class="light-text">tvl</span>
-        <div class="amount">{{ formattedTVL }}</div>
-      </div>
-
-      <div class="vault__apy">
-        <div class="light-text">
-          apy
-          <button class="icon-info" @click.stop="showApyInfoModal"></button>
-        </div>
-
-        <div class="amount">
-          {{ formattedAPY }}
-          <button class="calculator" @click.stop="showApyCalculatorModal">
-            <img alt="Calc" src="/static/icons/other/calculator.png" />
-          </button>
-        </div>
-      </div>
-
-      <div class="vault__status">
-        <div v-if="meta.status === 'upcoming'" class="line line-position">
-          coming
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Mobile -->
-  <div class="mobile-display">
-    <div class="vault">
-      <div class="vault__name-wrap">
-        <div class="vault__logo">
-          <img
-            v-for="token in meta.depositTokens"
-            :key="token.symbol"
-            :alt="token.symbol"
-            :src="`/static/icons/token/${token.symbol}.svg`"
-          />
-        </div>
-
-        <div class="vault__name">
-          {{ meta.name }}
-        </div>
-      </div>
-
       <div class="vault__data">
         <div class="vault__dex">
           <span class="light-text">dex</span>
           <a :href="meta.dexUrl" target="_blank">
             <img :src="`/static/icons/dex/${meta.dex}.svg`" :alt="meta.dex" />
           </a>
+        </div>
+
+        <div class="vault__bonus">
+          <div class="light-text">
+            +rewards
+            <button
+              class="icon-info"
+              @click.stop="showRewardsInfoModal"
+            ></button>
+          </div>
+          <div class="tokens">
+            <img
+              :alt="`${bonusToken.symbol}`"
+              :src="`/static/icons/token/${bonusToken.symbol}.svg`"
+            />
+          </div>
         </div>
 
         <div class="vault__tvl">
@@ -116,7 +65,7 @@
         </div>
       </div>
     </div>
-  </div>
+
 </template>
 
 <script setup lang="ts">
@@ -201,32 +150,34 @@ function showApyCalculatorModal() {
   background-color: var(--background-color);
   border-radius: 4px;
   position: relative;
-
   &__name-wrap {
     display: flex;
     align-items: center;
     gap: 12px;
     min-width: 232px;
   }
-
   &__logo {
     display: flex;
-
     img {
       &:not(:last-child) {
         margin-right: -12px;
       }
-
       height: 31px;
       border: 3px solid #ffffff;
       border-radius: 20px;
       box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 4px;
     }
   }
-
   &__name {
     font-size: 14px;
     font-weight: 500;
+  }
+
+  &__data {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
   }
 
   &__dex,
@@ -238,7 +189,6 @@ function showApyCalculatorModal() {
     justify-content: space-between;
     min-height: 34px;
     gap: 4px;
-
     .amount {
       display: flex;
       align-items: center;
@@ -246,34 +196,28 @@ function showApyCalculatorModal() {
       font-size: 14px;
       min-width: 72px;
     }
-
     .tokens {
       display: flex;
       flex-direction: row;
       gap: 4px;
     }
-
     .calculator img {
       width: 8px;
       height: 10px;
     }
-
     img {
       width: 19.2px;
     }
-
     button {
       width: 11px;
       height: 11px;
       font-size: 8px;
     }
   }
-
   &__status {
     display: flex;
     min-height: 34px;
     min-width: 40px;
-
     .line {
       color: var(--color-text);
       font-weight: 700;
@@ -281,7 +225,6 @@ function showApyCalculatorModal() {
       font-size: 16px;
       line-height: 24px;
     }
-
     .line-position {
       position: absolute;
       right: 0;
@@ -292,24 +235,38 @@ function showApyCalculatorModal() {
       text-indent: 0;
     }
   }
-
   &__arrow {
     display: flex;
     align-items: center;
     width: 21px;
     transition: all 0.3s;
     cursor: pointer;
-
     &.active {
       transform: rotate(180deg);
     }
   }
-
   .light-text {
     font-size: 11px;
     color: rgba(0, 0, 0, 0.3);
     text-transform: uppercase;
     height: 14px;
+  }
+}
+
+.icon-info {
+  display: inline-flex;
+  cursor: pointer;
+}
+.modal {
+  &__inp-group {
+    &__paragraph {
+      margin-bottom: 5px;
+    }
+    &__topic {
+      margin-top: 8px;
+      font-size: larger;
+      font-weight: bolder;
+    }
   }
 }
 
@@ -320,11 +277,14 @@ function showApyCalculatorModal() {
 
     &__data {
       width: 100%;
-      margin-left: 10%;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      gap: 40px;
+      gap: 25px;
+    }
+
+    &__bonus {
+      display: none;
     }
 
     &__dex,
@@ -345,25 +305,6 @@ function showApyCalculatorModal() {
     }
     &__tvl {
       margin-left: 5%;
-    }
-  }
-}
-
-.icon-info {
-  display: inline-flex;
-  cursor: pointer;
-}
-
-.modal {
-  &__inp-group {
-    &__paragraph {
-      margin-bottom: 5px;
-    }
-
-    &__topic {
-      margin-top: 8px;
-      font-size: larger;
-      font-weight: bolder;
     }
   }
 }
