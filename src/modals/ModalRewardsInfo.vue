@@ -40,7 +40,7 @@ export default defineComponent({});
 
 <style lang="scss" scoped>
 .modal {
-  width: 480px;
+  max-width: 480px;
 
   &__inp-group {
     &__paragraph {

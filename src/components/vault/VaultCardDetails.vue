@@ -1,115 +1,132 @@
 <template>
   <div :class="{ active: true }" class="vault-more-wrap">
     <div class="vault-more">
-      <div>
-        <h3 class="vault-more__header">Deposited</h3>
+      <div class="vault-more__data">
+        <div class="vault-more__mobile">
+          <div>
+            <h3 class="vault-more__header">Deposited</h3>
 
-        <div class="vault-more__body">
-          <ContentLoader
-            v-if="isShowBalanceLoader"
-            height="29"
-            viewBox="0 0 100 29"
-            :speed="2"
-            primaryColor="#f3f3f3"
-            secondaryColor="#ecebeb"
-          >
-            <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
-          </ContentLoader>
-          <div v-else class="amount">
-            {{ isShowBalance ? formattedBalance : "–" }}
+            <div class="vault-more__body">
+              <ContentLoader
+                v-if="isShowBalanceLoader"
+                height="29"
+                viewBox="0 0 100 29"
+                :speed="2"
+                primaryColor="#f3f3f3"
+                secondaryColor="#ecebeb"
+              >
+                <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
+              </ContentLoader>
+              <div v-else class="amount">
+                {{ isShowBalance ? formattedBalance : "–" }}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="vault-more__header-mob-dis">+Rewards</h3>
+            <div class="vault-more__mobile-v">
+              <div class="vault-more__rewards-header">
+                <h3 class="vault-more__header">+Rewards</h3>
+
+                <button
+                  class="icon-info"
+                  @click.stop="showRewardsInfoModal"
+                ></button>
+              </div>
+              <img
+                :alt="`${bonusToken.symbol}`"
+                :src="`/static/icons/token/${bonusToken.symbol}.svg`"
+              />
+            </div>
+            <div class="vault-more__bonus-body">
+              <ContentLoader
+                v-if="isUnclaimedBonusRewardsLoader"
+                height="29"
+                viewBox="0 0 100 29"
+                :speed="2"
+                primaryColor="#f3f3f3"
+                secondaryColor="#ecebeb"
+              >
+                <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
+              </ContentLoader>
+              <div v-else class="amount">
+                {{ formattedBonusRewardBalance }}
+              </div>
+              <div class="vault-more__bonus-btn-box">
+                <button
+                  v-if="isSignedIn"
+                  :disabled="!isClaimBonusRewardAvailable"
+                  @click="claimBonusReward"
+                  class="btn-small btn-border"
+                >
+                  Claim
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="vault-more__header">Rewards</h3>
+
+            <div class="vault-more__body rewards__body">
+              <ContentLoader
+                v-if="isShowBalanceLoader"
+                height="29"
+                viewBox="0 0 100 29"
+                :speed="2"
+                primaryColor="#f3f3f3"
+                secondaryColor="#ecebeb"
+                class="rewards-loader"
+              >
+                <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
+              </ContentLoader>
+              <div v-else class="amount">
+                {{ isShowBalance ? formattedRewardBalance : "–" }}
+              </div>
+              <VueCardRewardCounter
+                v-if="isShowRewardCounter"
+                :last-reward-time="vault.contractMeta.last_reward_time"
+                :balance-in-dollars="vault.balanceInDollars"
+                :reward-in-dollars="vault.rewardInDollars"
+                :apr="vault.meta.apr"
+              />
+            </div>
           </div>
         </div>
-      </div>
-
-      <div>
-        <h3 class="vault-more__header">+Rewards</h3>
-
-        <div class="vault-more__bonus-body">
-          <ContentLoader
-            v-if="isUnclaimedBonusRewardsLoader"
-            height="29"
-            viewBox="0 0 100 29"
-            :speed="2"
-            primaryColor="#f3f3f3"
-            secondaryColor="#ecebeb"
-          >
-            <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
-          </ContentLoader>
-          <div v-else class="amount">
-            {{ formattedBonusRewardBalance }}
-          </div>
-          <div class="vault-more__bonus-btn-box">
-            <button
-              v-if="isSignedIn"
-              :disabled="!isClaimBonusRewardAvailable"
-              @click="claimBonusReward"
-              class="btn-small btn-border"
-            >
-              Claim
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h3 class="vault-more__header">Rewards</h3>
-
-        <div class="vault-more__body rewards__body">
-          <ContentLoader
-            v-if="isShowBalanceLoader"
-            height="29"
-            viewBox="0 0 100 29"
-            :speed="2"
-            primaryColor="#f3f3f3"
-            secondaryColor="#ecebeb"
-          >
-            <rect x="0" y="10" rx="3" ry="3" width="100" height="29" />
-          </ContentLoader>
-          <div v-else class="amount">
-            {{ isShowBalance ? formattedRewardBalance : "–" }}
-          </div>
-          <VueCardRewardCounter
-            v-if="isShowRewardCounter"
-            :last-reward-time="vault.contractMeta.last_reward_time"
-            :balance-in-dollars="vault.balanceInDollars"
-            :reward-in-dollars="vault.rewardInDollars"
-            :apr="vault.meta.apr"
-          />
-        </div>
-      </div>
-
-      <template v-if="vault.isProcessing">
-        <StepsProgressBar :progress="vault.progress" />
-      </template>
-      <button v-else-if="!isSignedIn" class="btn-bg" @click="connectWallet">
-        Connect wallet
-      </button>
-      <ContentLoader
-        v-else-if="isShowControlLoader"
-        height="73"
-        viewBox="0 0 138 73"
-        :speed="2"
-        primaryColor="#f3f3f3"
-        secondaryColor="#ecebeb"
-      >
-        <rect x="0" y="0" rx="0" ry="0" width="138" height="32" />
-        <rect x="0" y="41" rx="0" ry="0" width="138" height="32" />
-      </ContentLoader>
-      <div v-else class="vault-more__btns">
-        <button
-          :disabled="!isDepositAvailable"
-          class="btn-bg"
-          @click="showDepositModal"
-        >
-          Deposit
+        <template v-if="vault.isProcessing">
+          <StepsProgressBar :progress="vault.progress" />
+        </template>
+        <button v-else-if="!isSignedIn" class="btn-bg" @click="connectWallet">
+          Connect wallet
         </button>
-        <button
-          :disabled="!isWithdrawAvailable"
-          class="btn-border"
-          @click="showWithdrawModal"
+        <ContentLoader
+          v-else-if="isShowControlLoader"
+          height="73"
+          viewBox="0 0 138 73"
+          :speed="2"
+          primaryColor="#f3f3f3"
+          secondaryColor="#ecebeb"
         >
-          Withdraw
-        </button>
+          <rect x="0" y="0" rx="0" ry="0" width="138" height="32" />
+          <rect x="0" y="41" rx="0" ry="0" width="138" height="32" />
+        </ContentLoader>
+        <div v-else class="vault-more__btns">
+          <button
+            :disabled="!isDepositAvailable"
+            class="btn-bg"
+            @click="showDepositModal"
+          >
+            Deposit
+          </button>
+          <button
+            :disabled="!isWithdrawAvailable"
+            class="btn-border"
+            @click="showWithdrawModal"
+          >
+            Withdraw
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -152,6 +169,19 @@ const {
 const props = defineProps<{
   vault: Vault;
 }>();
+
+// +Rewards modal
+function showRewardsInfoModal() {
+  $vfm.show({
+    component: "ModalRewardsInfo",
+    bind: {},
+    on: {
+      close() {
+        $vfm.hideAll();
+      },
+    },
+  });
+}
 
 // Define states
 const isVaultContractMetaLoaded = ref(false);
@@ -395,17 +425,14 @@ async function claimBonusReward() {
   align-items: center;
   height: 73px;
 }
-
 .vault-more-wrap {
   overflow: hidden;
   max-height: 0;
   transition: all 0.3s ease-out;
-
   &.active {
     max-height: 120px;
   }
 }
-
 .vault-more {
   padding: 16px 32px;
   display: flex;
@@ -416,82 +443,168 @@ async function claimBonusReward() {
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
 
-  & > div {
-    flex: 0;
+  &__data {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 
+    .btn-bg {
+      height: 32px;
+      width: 171px;
+    }
+  }
+
+  &__header-mob-dis {
+    display: block;
+    font-size: 11px;
+    color: rgba(13, 13, 13, 0.4);
+  }
+
+  &__mobile {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+  }
+
+  &__mobile-v {
+    display: none;
+  }
+
+  &__mobile > div {
+    flex: 0;
     &:not(.vault-more__btns) {
       flex: 1;
     }
-
     &:first-child {
       margin-right: 24px;
       border-right: 1px solid rgba(13, 13, 13, 0.1);
     }
-
     &:nth-child(2) {
       margin-right: 24px;
       border-right: 1px solid rgba(13, 13, 13, 0.1);
     }
   }
-
   &__header {
     font-size: 11px;
     color: rgba(13, 13, 13, 0.4);
-
     .light-text {
       font-size: 11px;
       color: rgba(0, 0, 0, 0.3);
     }
   }
-
   &__body {
     display: flex;
     justify-content: space-between;
     min-height: 46px;
   }
-
   &__bonus-body {
     display: flex;
     justify-content: space-between;
-    padding-right: 24px;
     min-height: 46px;
   }
-
   &__bonus-btn-box {
     display: flex;
     align-items: center;
+    margin-right: 5%;
   }
-
   .amount {
     margin-top: 8px;
     font-size: 24px;
     font-weight: 400;
     color: var(--color-main);
+    padding-right: 10px;
   }
-
   .price {
     font-size: 12px;
     color: rgba(13, 13, 13, 0.3);
   }
-
   .currency {
     margin-right: 12px;
     font-size: 12px;
     color: rgba(13, 13, 13, 0.3);
   }
-
   &__btns {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 8px;
-
     button {
       min-width: max-content;
     }
   }
+  .rewards-loader {
+    width: 100px;
+  }
 }
 
+.vault-more-wrap {
+  overflow: visible;
+  max-height: 100%;
+  &__active {
+    max-height: 100%;
+  }
+}
 .rewards__body {
   flex-direction: column;
+}
+
+@media screen and(max-width: 500px) {
+  .vault-more {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 16px 16px;
+    &__data {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    &__header-mob-dis {
+      display: none;
+    }
+
+    &__mobile {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+    }
+
+    &__mobile-v {
+      display: block;
+    }
+
+    &__mobile > div {
+      &:first-child {
+        padding: 0 5px;
+        border-bottom: 1px solid rgba(13, 13, 13, 0.1);
+        border-right: none;
+        width: 100%;
+      }
+      &:nth-child(2) {
+        padding: 5px 5px;
+        margin-bottom: 5px;
+        border-bottom: 1px solid rgba(13, 13, 13, 0.1);
+        border-right: none;
+        width: 100%;
+      }
+    }
+    &__rewards-header {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+    }
+    img {
+      width: 16px;
+      height: 16px;
+    }
+    &__btns {
+      margin: 5px;
+    }
+  }
 }
 </style>

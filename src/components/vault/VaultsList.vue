@@ -91,6 +91,12 @@ export default defineComponent({
     border-radius: 4px;
   }
 
+  @media screen and(max-width: 500px) {
+    header {
+      padding: 10px 19px;
+    }
+  }
+
   &__tabs {
     display: flex;
     justify-content: space-between;
