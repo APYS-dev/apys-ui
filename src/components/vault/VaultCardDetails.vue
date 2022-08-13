@@ -1,6 +1,6 @@
 <template>
   <div :class="{ active: true }" class="vault-more-wrap">
-    <div class="vault-more row row-cols-auto">
+    <div class="vault-more">
       <div class="vault-more__data">
         <div class="vault-more__mobile">
           <div>
@@ -556,6 +556,7 @@ async function claimBonusReward() {
     display: flex;
     align-items: center;
     flex-direction: column;
+    padding: 16px 16px;
     &__data {
       width: 100%;
       display: flex;

@@ -1,71 +1,66 @@
 <template>
+  <div class="vault">
+    <div class="vault__name-wrap">
+      <div class="vault__logo">
+        <img
+          v-for="token in meta.depositTokens"
+          :key="token.symbol"
+          :alt="token.symbol"
+          :src="`/static/icons/token/${token.symbol}.svg`"
+        />
+      </div>
 
-    <div class="vault">
-      <div class="vault__name-wrap">
-        <div class="vault__logo">
+      <div class="vault__name">
+        {{ meta.name }}
+      </div>
+    </div>
+    <div class="vault__data">
+      <div class="vault__dex">
+        <span class="light-text">dex</span>
+        <a :href="meta.dexUrl" target="_blank">
+          <img :src="`/static/icons/dex/${meta.dex}.svg`" :alt="meta.dex" />
+        </a>
+      </div>
+
+      <div class="vault__bonus">
+        <div class="light-text">
+          +rewards
+          <button class="icon-info" @click.stop="showRewardsInfoModal"></button>
+        </div>
+        <div class="tokens">
           <img
-            v-for="token in meta.depositTokens"
-            :key="token.symbol"
-            :alt="token.symbol"
-            :src="`/static/icons/token/${token.symbol}.svg`"
+            :alt="`${bonusToken.symbol}`"
+            :src="`/static/icons/token/${bonusToken.symbol}.svg`"
           />
         </div>
+      </div>
 
-        <div class="vault__name">
-          {{ meta.name }}
+      <div class="vault__tvl">
+        <span class="light-text">tvl</span>
+        <div class="amount">{{ formattedTVL }}</div>
+      </div>
+
+      <div class="vault__apy">
+        <div class="light-text">
+          apy
+          <button class="icon-info" @click.stop="showApyInfoModal"></button>
+        </div>
+
+        <div class="amount">
+          {{ formattedAPY }}
+          <button class="calculator" @click.stop="showApyCalculatorModal">
+            <img alt="Calc" src="/static/icons/other/calculator.png" />
+          </button>
         </div>
       </div>
-      <div class="vault__data">
-        <div class="vault__dex">
-          <span class="light-text">dex</span>
-          <a :href="meta.dexUrl" target="_blank">
-            <img :src="`/static/icons/dex/${meta.dex}.svg`" :alt="meta.dex" />
-          </a>
-        </div>
 
-        <div class="vault__bonus">
-          <div class="light-text">
-            +rewards
-            <button
-              class="icon-info"
-              @click.stop="showRewardsInfoModal"
-            ></button>
-          </div>
-          <div class="tokens">
-            <img
-              :alt="`${bonusToken.symbol}`"
-              :src="`/static/icons/token/${bonusToken.symbol}.svg`"
-            />
-          </div>
-        </div>
-
-        <div class="vault__tvl">
-          <span class="light-text">tvl</span>
-          <div class="amount">{{ formattedTVL }}</div>
-        </div>
-
-        <div class="vault__apy">
-          <div class="light-text">
-            apy
-            <button class="icon-info" @click.stop="showApyInfoModal"></button>
-          </div>
-
-          <div class="amount">
-            {{ formattedAPY }}
-            <button class="calculator" @click.stop="showApyCalculatorModal">
-              <img alt="Calc" src="/static/icons/other/calculator.png" />
-            </button>
-          </div>
-        </div>
-
-        <div class="vault__status">
-          <div v-if="meta.status === 'upcoming'" class="line line-position">
-            coming
-          </div>
+      <div class="vault__status">
+        <div v-if="meta.status === 'upcoming'" class="line line-position">
+          coming
         </div>
       </div>
     </div>
-
+  </div>
 </template>
 
 <script setup lang="ts">
