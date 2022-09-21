@@ -8,7 +8,9 @@
         <div
           class="auto-farming__strategy"
           v-for="vault in vaultsByCategory(category)"
+          :class="{ active: checkVaultActive(vault) }"
           :key="vault.meta.uuid"
+          @click="toggleVault(vault)"
         >
           <div class="auto-farming__strategy__title">
             <div class="auto-farming__strategy__title__logo">
@@ -49,7 +51,9 @@
       </div>
     </template>
     <div class="auto-farming__buttons">
-      <button class="btn-bg">Apply changes</button>
+      <button class="btn-bg">
+        {{ configChanges.active ? `Apply changes` : `Start auto farming` }}
+      </button>
     </div>
   </div>
 </template>
@@ -64,16 +68,25 @@ import { aprToApy } from "@/utils/math";
 import Big from "big.js";
 import { useAutoFarmingStore } from "@/stores/autoFarming";
 import { useLogger } from "vue-logger-plugin";
+import type {
+  AutoFarmingChanges,
+  AutoFarmingConfig,
+} from "@/network/models/ApysModels";
 
 const logger = useLogger();
 
 // Stores
 const { isSignedIn } = useAuthStore();
-const { config, fetchAutoFarmingConfig } = useAutoFarmingStore();
+const { fetchAutoFarmingConfig } = useAutoFarmingStore();
 
 // Define data
 const vaults: Ref<Vault[]> = ref([]);
 const categories: Ref<VaultMeta["category"][]> = ref([]);
+const configChanges: Ref<{
+  active: boolean;
+  enabled: boolean;
+  changes: Record<VaultMeta["category"], AutoFarmingChanges>;
+}> = ref({ enabled: false, active: false, changes: Object.create({}) });
 
 // Define states
 const isAutoFarmingConfigLoaded = ref(false);
@@ -110,6 +123,12 @@ const getCategoryLabel = (category: VaultMeta["category"]) => {
   return `${categoryLabel} (0/${vaultsByCategory(category).length})`;
 };
 
+const checkVaultActive = (vault: Vault) => {
+  return configChanges.value.changes[vault.meta.category]?.strategies?.includes(
+    vault.meta.contractId
+  );
+};
+
 const formatAPY = (meta: VaultMeta) => {
   if (meta.apr.gte(Big(1000))) {
     return "1000%";
@@ -129,6 +148,69 @@ watch(vaultStore.$state, async (state) => {
   );
   categories.value = [...new Set(allCategories)];
 });
+
+// Listen for auto-farming store changes
+const autoFarmingStore = useAutoFarmingStore();
+watch(autoFarmingStore.$state, async (state) => {
+  // Set default config changes
+  configChanges.value = {
+    active: state.active,
+    enabled: state.enabled,
+    changes: Object.keys(state.config).reduce((acc, category) => {
+      const strategyConfig: AutoFarmingConfig = state.config[
+        category as VaultMeta["category"]
+      ] ?? {
+        strategies: [],
+        cooldown: 0,
+        unlock_at: 0,
+      };
+
+      acc[category] = {
+        cooldown: strategyConfig.cooldown,
+        strategies: strategyConfig.strategies,
+      };
+      return acc;
+    }, Object.create({})),
+  };
+});
+
+// Buttons
+function toggleVault(vault: Vault) {
+  // Check if vault is active
+  const isActive = checkVaultActive(vault);
+
+  // Check that vault category is in config changes, create if not
+  if (!configChanges.value.changes[vault.meta.category]) {
+    configChanges.value.changes[vault.meta.category] = {
+      cooldown: 0,
+      strategies: [],
+    };
+  }
+
+  // Remove vault from config changes if it's active
+  if (isActive) {
+    configChanges.value.changes[vault.meta.category].strategies =
+      configChanges.value.changes[vault.meta.category].strategies.filter(
+        (strategy) => strategy !== vault.meta.contractId
+      );
+
+    // Remove category from config changes if it's empty
+    if (
+      configChanges.value.changes[vault.meta.category].strategies.length === 0
+    ) {
+      delete configChanges.value.changes[vault.meta.category];
+    }
+  } else {
+    // Add vault to config changes if it's not active
+    configChanges.value.changes[vault.meta.category].strategies.push(
+      vault.meta.contractId
+    );
+  }
+}
+
+async function handleAutoFarming() {
+  // Get changes
+}
 </script>
 
 <style lang="scss" scoped>
@@ -167,6 +249,13 @@ watch(vaultStore.$state, async (state) => {
     border-radius: 8px;
     background-color: white;
     padding: 6px;
+    cursor: pointer;
+    -webkit-user-select: none; /* Safari */
+    user-select: none; /* Standard syntax */
+
+    &.active {
+      border: 2px solid rgb(49, 170, 183);
+    }
 
     &__title {
       display: flex;
