@@ -80,7 +80,7 @@ class ApysApi {
     const transferAction: NearAction = {
       args: {
         enabled,
-        configs: changes,
+        changes,
       },
       gas: DEFAULT_GAS,
       deposit: Big(0),
