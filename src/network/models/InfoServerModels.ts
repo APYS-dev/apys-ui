@@ -30,6 +30,7 @@ export interface VaultMeta {
   name: string;
   contractId: string;
   status: "live" | "upcoming" | "finished";
+  category: "StableStable" | "StableUnstable" | "UnstableUnstable";
   depositTokens: TokenMetaWithPrice[];
   dex: "REF" | "JUMBO";
   dexUrl: string;

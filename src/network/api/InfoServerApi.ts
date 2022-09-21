@@ -27,6 +27,7 @@ class InfoServerApi {
         tvl: Big(vault.tvl),
         osc: Big(vault.osc),
         bonusApr: Big(vault.bonusApr),
+        category: vault.category,
       })),
       tokens: data.tokens,
     };
