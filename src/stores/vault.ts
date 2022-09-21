@@ -6,7 +6,6 @@ import type {
 } from "@/network/models/InfoServerModels";
 import { useAuthStore } from "@/stores/auth";
 import { vaultApi } from "@/network/api/VaultApi";
-import { apysApi } from "@/network/api/ApysApi";
 import Big from "big.js";
 import type { AccountProgress } from "@/network/models/VaultModels";
 import { bonusRewardsApi } from "@/network/api/BonusRewardsApi";
@@ -188,7 +187,7 @@ export const useVaultStore = defineStore({
     },
 
     async deposit(vaultId: string, tokenId: string, amount: string) {
-      return apysApi.depositToStrategy(vaultId, tokenId, amount);
+      return vaultApi.deposit(vaultId, tokenId, amount);
     },
 
     async withdraw(vaultId: string, tokenId: string) {

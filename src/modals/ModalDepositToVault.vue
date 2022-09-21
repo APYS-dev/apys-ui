@@ -101,7 +101,7 @@ import { useBalanceStore } from "@/stores/balance";
 import { useVaultStore } from "@/stores/vault";
 
 // Get balance store
-const { getAppBalanceByToken } = useBalanceStore();
+const { getBalanceByToken } = useBalanceStore();
 
 // Define props
 const props = defineProps<{
@@ -117,14 +117,14 @@ const tokenDropdownRef = ref<HTMLDivElement | null>(null);
 
 // Format data
 const readableBalance = computed(() => {
-  return getAppBalanceByToken(currentToken.value.contractId).div(
+  return getBalanceByToken(currentToken.value.contractId).div(
     new Big(10).pow(currentToken.value.decimals)
   );
 });
 
 const formattedBalance = computed(() => {
   return formatAmount(
-    getAppBalanceByToken(currentToken.value.contractId),
+    getBalanceByToken(currentToken.value.contractId),
     currentToken.value
   );
 });
@@ -162,7 +162,7 @@ async function deposit() {
   // Deposit tokens
   let depositAmount: Big;
   if (isMaxAmount) {
-    depositAmount = getAppBalanceByToken(currentToken.value.contractId);
+    depositAmount = getBalanceByToken(currentToken.value.contractId);
   } else {
     // Format currentAmount by decimals
     depositAmount = Big(currentAmount.value).mul(

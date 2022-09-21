@@ -135,7 +135,7 @@ const logger = useLogger();
 
 // Stores
 const { isSignedIn } = useAuthStore();
-const { fetchAppBalance } = useBalanceStore();
+const { fetchWalletBalance } = useBalanceStore();
 const {
   metadata: { bonusToken },
 } = useGeneralStore();
@@ -273,7 +273,7 @@ watch(balanceStore.$state, async () => {
   // Check that balances are loaded for deposit tokens
   isAppBalanceLoaded.value = props.vault.meta.depositTokens
     .map((depositToken) =>
-      balanceStore.checkAppBalanceLoadedForToken(depositToken.contractId)
+      balanceStore.checkWalletBalanceLoadedForToken(depositToken.contractId)
     )
     .reduce((a, b) => a && b, true);
 
@@ -281,7 +281,7 @@ watch(balanceStore.$state, async () => {
   for (const depositToken of props.vault.meta.depositTokens) {
     // Get token app balance
     const appBalance = balanceStore
-      .getAppBalanceByToken(depositToken.contractId)
+      .getBalanceByToken(depositToken.contractId)
       .div(new Big(10).pow(depositToken.decimals));
 
     // Check if deposit available
@@ -322,7 +322,7 @@ watch(
             await fetchVaultBalance(props.vault.meta.contractId);
             await Promise.all(
               props.vault.meta.depositTokens.map((depositToken) => {
-                return fetchAppBalance(depositToken.contractId);
+                return fetchWalletBalance(depositToken.contractId);
               })
             );
           };

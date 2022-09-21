@@ -10,7 +10,11 @@ import type {
   AccountTotalBalance,
   VaultContractMetadata,
 } from "@/network/models/VaultModels";
-import { ONE_YOCTO_NEAR, STOP_STRATEGY_GAS } from "@/utils/constants";
+import {
+  DEFAULT_GAS,
+  ONE_YOCTO_NEAR,
+  STOP_STRATEGY_GAS,
+} from "@/utils/constants";
 
 class VaultApi {
   constructor() {
@@ -50,6 +54,33 @@ class VaultApi {
         contractId: vaultId,
       })
       .then((response) => this.mapAccountTotalBalance(response));
+
+  deposit = async (
+    vaultId: string,
+    tokenId: string,
+    amount: string
+  ): Promise<void> => {
+    const transactions = [];
+
+    // Create transfer transaction
+    const transferAction: NearAction = {
+      args: {
+        receiver_id: vaultId,
+        amount,
+        msg: "",
+      },
+      gas: DEFAULT_GAS,
+      deposit: ONE_YOCTO_NEAR,
+      methodName: "ft_transfer_call",
+    };
+    const transferTransaction = await nearApi.actionsToTransaction(tokenId, [
+      transferAction,
+    ]);
+    transactions.push(transferTransaction);
+
+    // Execute transactions
+    return await nearApi.executeMultipleTransactions(transactions);
+  };
 
   withdraw = async (vaultId: string, tokenId: string): Promise<void> => {
     const transactions = [];
