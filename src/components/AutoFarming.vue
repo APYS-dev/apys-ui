@@ -122,9 +122,9 @@ if (isSignedIn) {
 }
 
 // Check show loader or not
-const isShowAutoFarmingLoader = computed(() => {
-  return !isAutoFarmingConfigLoaded.value && isSignedIn;
-});
+// const isShowAutoFarmingLoader = computed(() => {
+//   return !isAutoFarmingConfigLoaded.value && isSignedIn;
+// });
 
 // Computed data
 const isAutoFarmingAvailable = computed(() => {
@@ -174,7 +174,7 @@ watch(vaultStore.$state, async (state) => {
 // Listen for auto-farming store changes
 const autoFarmingStore = useAutoFarmingStore();
 watch(autoFarmingStore.$state, async (state) => {
-  // Set default config changes
+  // Create config changes
   const changes = {
     active: state.active,
     enabled: state.enabled,
@@ -194,7 +194,10 @@ watch(autoFarmingStore.$state, async (state) => {
       return acc;
     }, Object.create({})),
   };
-  [configChanges.value, defaultConfigChanges.value] = [changes, changes];
+
+  // Set config changes
+  defaultConfigChanges.value = JSON.parse(JSON.stringify(changes));
+  configChanges.value = JSON.parse(JSON.stringify(changes));
 });
 
 // Buttons
@@ -216,13 +219,6 @@ function toggleVault(vault: Vault) {
       configChanges.value.changes[vault.meta.category].strategies.filter(
         (strategy) => strategy !== vault.meta.contractId
       );
-
-    // Remove category from config changes if it's empty
-    if (
-      configChanges.value.changes[vault.meta.category].strategies.length === 0
-    ) {
-      delete configChanges.value.changes[vault.meta.category];
-    }
   } else {
     // Add vault to config changes if it's not active
     configChanges.value.changes[vault.meta.category].strategies.push(
