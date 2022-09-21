@@ -155,7 +155,7 @@ const props = defineProps<{
 
 // Define states
 const isVaultContractMetaLoaded = ref(false);
-const isAppBalanceLoaded = ref(false);
+const isWalletBalanceLoaded = ref(false);
 const isVaultBalanceLoaded = ref(false);
 const isProgressLoaded = ref(false);
 const isDepositAvailable = ref(false);
@@ -209,6 +209,23 @@ if (isSignedIn) {
       );
     });
 
+  // Fetch balance of deposit tokens
+  Promise.all(
+    props.vault.meta.depositTokens.map((depositToken) => {
+      return fetchWalletBalance(depositToken.contractId);
+    })
+  )
+    .then(() => {
+      isWalletBalanceLoaded.value = true;
+    })
+    .catch((reason) => {
+      isWalletBalanceLoaded.value = false;
+      logger.error(
+        `Failed to fetch wallet balance for ${props.vault.meta.contractId}`,
+        reason
+      );
+    });
+
   // Fetch vault progress
   fetchVaultProgress(props.vault.meta.contractId)
     .then(() => {
@@ -245,7 +262,7 @@ const isUnclaimedBonusRewardsLoader = computed(() => {
 });
 
 const isShowControlLoader = computed(() => {
-  return !isAppBalanceLoaded.value && !isProgressLoaded.value && isSignedIn;
+  return !isWalletBalanceLoaded.value && !isProgressLoaded.value && isSignedIn;
 });
 
 // Format balances
@@ -271,7 +288,7 @@ const formattedBonusRewardBalance = computed(() => {
 const balanceStore = useBalanceStore();
 watch(balanceStore.$state, async () => {
   // Check that balances are loaded for deposit tokens
-  isAppBalanceLoaded.value = props.vault.meta.depositTokens
+  isWalletBalanceLoaded.value = props.vault.meta.depositTokens
     .map((depositToken) =>
       balanceStore.checkWalletBalanceLoadedForToken(depositToken.contractId)
     )
@@ -280,13 +297,13 @@ watch(balanceStore.$state, async () => {
   // Check that deposit available
   for (const depositToken of props.vault.meta.depositTokens) {
     // Get token app balance
-    const appBalance = balanceStore
+    const walletBalance = balanceStore
       .getBalanceByToken(depositToken.contractId)
       .div(new Big(10).pow(depositToken.decimals));
 
     // Check if deposit available
     if (
-      appBalance.gt(depositToken.minDepositAmount) &&
+      walletBalance.gt(depositToken.minDepositAmount) &&
       props.vault.meta.status === "live"
     ) {
       isDepositAvailable.value = true;

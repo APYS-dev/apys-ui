@@ -51,18 +51,22 @@ class BonusRewardsApi {
     // Execute transactions
     return await nearApi.executeMultipleTransactions(transactions);
   };
+
   getUnclaimedReward = async (
     strategyId: string,
     accountId: string
-  ): Promise<string> =>
-    nearApi.viewFunction({
-      args: {
-        strategy_id: strategyId,
-        account_id: accountId,
-      },
-      methodName: "get_unclaimed_reward",
-      contractId: this.bonusRewardsContractId,
-    });
+  ): Promise<string> => {
+    return Promise.resolve("0");
+
+    // nearApi.viewFunction({
+    //   args: {
+    //     strategy_id: strategyId,
+    //     account_id: accountId,
+    //   },
+    //   methodName: "get_unclaimed_reward",
+    //   contractId: this.bonusRewardsContractId,
+    // });
+  };
 
   checkNeedStorageDeposit = async (
     bonusRewardTokenId: string,
