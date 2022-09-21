@@ -1,5 +1,3 @@
-import type { TokenMeta } from "@/network/models/InfoServerModels";
-
 export interface GetInfoResponseDto {
   strategies: VaultMetaDto[];
   tokens: TokenMetaDto[];

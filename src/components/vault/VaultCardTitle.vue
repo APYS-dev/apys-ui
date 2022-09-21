@@ -75,13 +75,11 @@ import { formatPrice } from "@/utils/formatters";
 import { aprToApy } from "@/utils/math";
 import { $vfm } from "vue-final-modal";
 import { useGeneralStore } from "@/stores/general";
-import { useVaultStore } from "@/stores/vault";
+import Big from "big.js";
 
 const {
   metadata: { bonusToken },
 } = useGeneralStore();
-
-const { isBonusRewardsAvailable } = useVaultStore();
 
 // Define props
 const props = defineProps<{
@@ -94,6 +92,9 @@ const formattedTVL = computed(() => {
 });
 
 const formattedAPY = computed(() => {
+  if (props.meta.apr.gte(Big(1000))) {
+    return "1000%";
+  }
   return `${props.meta.bonusApr
     .add(aprToApy(props.meta.apr, 365))
     .toFixed(2)}%`;
@@ -170,7 +171,7 @@ function showApyCalculatorModal() {
       height: 31px;
       border: 3px solid #ffffff;
       border-radius: 20px;
-      box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 4px;
+      box-shadow: rgba(0, 0, 0, 0.15) 0 2px 4px;
     }
   }
 

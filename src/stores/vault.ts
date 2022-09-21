@@ -96,7 +96,6 @@ export const useVaultStore = defineStore({
         vaultId,
         accountId
       );
-      console.log("unclaimedReward", unclaimedReward);
 
       const vaultIndex = this.vaults.findIndex(
         (it) => it.meta.contractId === vaultId

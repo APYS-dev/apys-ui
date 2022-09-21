@@ -6,15 +6,12 @@
 </template>
 
 <script setup lang="ts">
-import { useLogger } from "vue-logger-plugin";
 import VaultCardTitle from "@/components/vault/VaultCardTitle.vue";
 import type { Vault } from "@/stores/types";
 import VaultCardDetails from "@/components/vault/VaultCardDetails.vue";
 
-const logger = useLogger();
-
 // Define props
-const props = defineProps<{
+defineProps<{
   vault: Vault;
 }>();
 </script>
