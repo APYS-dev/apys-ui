@@ -51,7 +51,12 @@
       </div>
     </template>
     <div class="auto-farming__buttons">
-      <button class="btn-bg">
+      <button
+        v-if="isSignedIn"
+        :disabled="!isAutoFarmingAvailable"
+        class="btn-bg"
+        @click="handleAutoFarming"
+      >
         {{ configChanges.active ? `Apply changes` : `Start auto farming` }}
       </button>
     </div>
@@ -72,21 +77,33 @@ import type {
   AutoFarmingChanges,
   AutoFarmingConfig,
 } from "@/network/models/ApysModels";
+import deepEqual from "fast-deep-equal";
+
+interface ConfigChanges {
+  active: boolean;
+  enabled: boolean;
+  changes: Record<VaultMeta["category"], AutoFarmingChanges>;
+}
 
 const logger = useLogger();
 
 // Stores
 const { isSignedIn } = useAuthStore();
-const { fetchAutoFarmingConfig } = useAutoFarmingStore();
+const { fetchAutoFarmingConfig, updateAutoFarming } = useAutoFarmingStore();
 
 // Define data
 const vaults: Ref<Vault[]> = ref([]);
 const categories: Ref<VaultMeta["category"][]> = ref([]);
-const configChanges: Ref<{
-  active: boolean;
-  enabled: boolean;
-  changes: Record<VaultMeta["category"], AutoFarmingChanges>;
-}> = ref({ enabled: false, active: false, changes: Object.create({}) });
+const defaultConfigChanges: Ref<ConfigChanges> = ref({
+  enabled: false,
+  active: false,
+  changes: Object.create({}),
+});
+const configChanges: Ref<ConfigChanges> = ref({
+  enabled: false,
+  active: false,
+  changes: Object.create({}),
+});
 
 // Define states
 const isAutoFarmingConfigLoaded = ref(false);
@@ -107,6 +124,11 @@ if (isSignedIn) {
 // Check show loader or not
 const isShowAutoFarmingLoader = computed(() => {
   return !isAutoFarmingConfigLoaded.value && isSignedIn;
+});
+
+// Computed data
+const isAutoFarmingAvailable = computed(() => {
+  return !deepEqual(configChanges.value, defaultConfigChanges.value);
 });
 
 // Getters
@@ -153,7 +175,7 @@ watch(vaultStore.$state, async (state) => {
 const autoFarmingStore = useAutoFarmingStore();
 watch(autoFarmingStore.$state, async (state) => {
   // Set default config changes
-  configChanges.value = {
+  const changes = {
     active: state.active,
     enabled: state.enabled,
     changes: Object.keys(state.config).reduce((acc, category) => {
@@ -172,6 +194,7 @@ watch(autoFarmingStore.$state, async (state) => {
       return acc;
     }, Object.create({})),
   };
+  [configChanges.value, defaultConfigChanges.value] = [changes, changes];
 });
 
 // Buttons
@@ -209,7 +232,10 @@ function toggleVault(vault: Vault) {
 }
 
 async function handleAutoFarming() {
-  // Get changes
+  return await updateAutoFarming(
+    configChanges.value.enabled,
+    configChanges.value.changes
+  );
 }
 </script>
 

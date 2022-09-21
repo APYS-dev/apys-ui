@@ -1,8 +1,14 @@
 import { nearApi } from "@/network/api/NearApi";
+import type { NearAction } from "@/network/api/NearApi";
 import type { AccountAutoFarmingDto } from "@/network/dtos/ApysDtos";
-import type { AccountAutoFarming } from "@/network/models/ApysModels";
+import type {
+  AccountAutoFarming,
+  AutoFarmingChanges,
+} from "@/network/models/ApysModels";
 import type { VaultMeta } from "@/network/models/InfoServerModels";
 import Big from "big.js";
+import { DEFAULT_GAS } from "@/utils/constants";
+import { parseNearAmount } from "near-api-js/lib/utils/format";
 
 class ApysApi {
   constructor() {
@@ -38,6 +44,56 @@ class ApysApi {
       balances,
       config: response.config,
     };
+  };
+
+  startAutoFarming = async (
+    configs: Record<VaultMeta["category"], AutoFarmingChanges>
+  ): Promise<void> => {
+    const transactions = [];
+
+    // Create transfer transaction
+    const transferAction: NearAction = {
+      args: {
+        configs: configs,
+      },
+      gas: DEFAULT_GAS,
+      deposit: Big(parseNearAmount("1") || "0"),
+      methodName: "start_auto_farming",
+    };
+    const transferTransaction = await nearApi.actionsToTransaction(
+      import.meta.env.VITE_APYS_CONTRACT_ID,
+      [transferAction]
+    );
+    transactions.push(transferTransaction);
+
+    // Execute transactions
+    return await nearApi.executeMultipleTransactions(transactions);
+  };
+
+  updateAutoFarming = async (
+    enabled: boolean,
+    changes: Record<VaultMeta["category"], AutoFarmingChanges>
+  ): Promise<void> => {
+    const transactions = [];
+
+    // Create transfer transaction
+    const transferAction: NearAction = {
+      args: {
+        enabled,
+        configs: changes,
+      },
+      gas: DEFAULT_GAS,
+      deposit: Big(0),
+      methodName: "update_auto_farming",
+    };
+    const transferTransaction = await nearApi.actionsToTransaction(
+      import.meta.env.VITE_APYS_CONTRACT_ID,
+      [transferAction]
+    );
+    transactions.push(transferTransaction);
+
+    // Execute transactions
+    return await nearApi.executeMultipleTransactions(transactions);
   };
 }
 

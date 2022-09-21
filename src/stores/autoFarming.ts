@@ -30,17 +30,17 @@ export const useAutoFarmingStore = defineStore({
       this.config = config.config;
     },
 
-    async startAutoFarming(
-      configs: Record<VaultMeta["category"], AutoFarmingChanges>
-    ) {
-      return apysApi.startAutoFarming(configs);
-    },
-
     async updateAutoFarming(
       enabled: boolean,
       changes: Record<VaultMeta["category"], AutoFarmingChanges>
     ) {
-      return apysApi.updateAutoFarming(enabled, changes);
+      // Start auto-farming if it's not active
+      // Otherwise, update auto-farming config
+      if (!this.active) {
+        return apysApi.startAutoFarming(changes);
+      } else {
+        return apysApi.updateAutoFarming(enabled, changes);
+      }
     },
   },
 });
