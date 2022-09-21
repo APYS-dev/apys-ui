@@ -7,8 +7,6 @@ import type {
 
 export interface TokenBalance {
   meta: TokenMeta;
-  appBalance: Big;
-  appBalanceLoaded: boolean;
   walletBalance: Big;
   walletBalanceLoaded: boolean;
 }
