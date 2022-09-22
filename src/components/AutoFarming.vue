@@ -53,7 +53,7 @@
     <div class="auto-farming__buttons">
       <button
         v-if="isSignedIn"
-        :disabled="!isAutoFarmingAvailable"
+        :disabled="!isAutoFarmingAvailable()"
         class="btn-bg"
         @click="handleAutoFarming"
       >
@@ -127,9 +127,71 @@ if (isSignedIn) {
 // });
 
 // Computed data
-const isAutoFarmingAvailable = computed(() => {
-  return !deepEqual(configChanges.value, defaultConfigChanges.value);
-});
+const isAutoFarmingAvailable = () => {
+  // Compare `enabled` to check if there are any changes
+  const hasEnabledChanged =
+    configChanges.value.enabled !== defaultConfigChanges.value.enabled;
+  if (hasEnabledChanged) {
+    console.log(
+      "[Auto-farming]: Has enabled changed",
+      configChanges.value.enabled,
+      defaultConfigChanges.value.enabled
+    );
+    return true;
+  }
+
+  // Compare categories to check if there are any changes
+  const categories = Object.keys(
+    configChanges.value.changes
+  ) as VaultMeta["category"][];
+  const defaultCategories = Object.keys(
+    defaultConfigChanges.value.changes
+  ) as VaultMeta["category"][];
+  const hasCategoryChanged =
+    categories.filter((x) => !defaultCategories.includes(x)).length > 0;
+  if (hasCategoryChanged) {
+    console.log(
+      "[Auto-farming]: Has category changes",
+      categories,
+      defaultCategories
+    );
+    return true;
+  }
+
+  // Compare vaults to check if there are strategies changes
+  let hasVaultChanged = false;
+  for (const category of categories) {
+    const vaults = configChanges.value.changes[category].strategies;
+    const defaultVaults =
+      defaultConfigChanges.value.changes[category].strategies;
+    if (defaultVaults.filter((x) => !vaults.includes(x)).length > 0) {
+      hasVaultChanged = true;
+      break;
+    }
+  }
+  if (hasVaultChanged) {
+    console.log("[Auto-farming]: Has vault changes");
+    return true;
+  }
+
+  // Compare vaults to check if there are cooldown changes
+  let hasCooldownChanged = false;
+  for (const category of categories) {
+    const cooldown = configChanges.value.changes[category].cooldown;
+    const defaultCooldown =
+      defaultConfigChanges.value.changes[category].cooldown;
+    if (cooldown !== defaultCooldown) {
+      hasCooldownChanged = true;
+      break;
+    }
+  }
+  if (hasCooldownChanged) {
+    console.log("[Auto-farming]: Has cooldown changes");
+    return true;
+  }
+
+  return false;
+};
 
 // Getters
 const vaultsByCategory = (category: VaultMeta["category"]) => {
@@ -219,6 +281,15 @@ function toggleVault(vault: Vault) {
       configChanges.value.changes[vault.meta.category].strategies.filter(
         (strategy) => strategy !== vault.meta.contractId
       );
+
+    // Remove category from config changes if it's empty, and it is not included in default config changes
+    if (
+      configChanges.value.changes[vault.meta.category].strategies.length ===
+        0 &&
+      !defaultConfigChanges.value.changes[vault.meta.category]
+    ) {
+      delete configChanges.value.changes[vault.meta.category];
+    }
   } else {
     // Add vault to config changes if it's not active
     configChanges.value.changes[vault.meta.category].strategies.push(
