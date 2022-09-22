@@ -199,12 +199,22 @@ const vaultsByCategory = (category: VaultMeta["category"]) => {
 };
 
 const getCategoryLabel = (category: VaultMeta["category"]) => {
+  // Category label text
   const categoryLabel = {
     StableStable: "Stable",
     StableUnstable: "Stable/Non-stable",
     UnstableUnstable: "Non-stable",
   }[category];
-  return `${categoryLabel} (0/${vaultsByCategory(category).length})`;
+
+  // Get number of selected vaults in this category
+  const selectedVaults = (
+    configChanges.value.changes[category]?.strategies ?? []
+  ).length;
+
+  // Return label
+  return `${categoryLabel} (${selectedVaults}/${
+    vaultsByCategory(category).length
+  })`;
 };
 
 const checkVaultActive = (vault: Vault) => {
