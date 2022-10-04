@@ -239,7 +239,14 @@ watch(vaultStore.$state, async (state) => {
   const allCategories: VaultMeta["category"][] = state.vaults.map(
     (vault) => vault.meta.category
   );
-  categories.value = [...new Set(allCategories)];
+
+  // Filter categories
+  const filteredCategories: VaultMeta["category"][] = allCategories.filter(
+    (it) => it === "StableStable"
+  );
+
+  // Update value
+  categories.value = [...new Set(filteredCategories)];
 });
 
 // Listen for auto-farming store changes
