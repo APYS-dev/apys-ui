@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, Ref, ref, watch } from "vue";
+import { Ref, ref, watch } from "vue";
 import type { VaultMeta } from "@/network/models/InfoServerModels";
 import { useVaultStore } from "@/stores/vault";
 import type { Vault } from "@/stores/types";
@@ -77,7 +77,6 @@ import type {
   AutoFarmingChanges,
   AutoFarmingConfig,
 } from "@/network/models/ApysModels";
-import deepEqual from "fast-deep-equal";
 
 interface ConfigChanges {
   active: boolean;
@@ -255,7 +254,7 @@ watch(autoFarmingStore.$state, async (state) => {
         category as VaultMeta["category"]
       ] ?? {
         strategies: [],
-        cooldown: 0,
+        cooldown: 1209600000000003, // 2 weeks
         unlock_at: 0,
       };
 
@@ -280,7 +279,7 @@ function toggleVault(vault: Vault) {
   // Check that vault category is in config changes, create if not
   if (!configChanges.value.changes[vault.meta.category]) {
     configChanges.value.changes[vault.meta.category] = {
-      cooldown: 0,
+      cooldown: 1209600000000003, // 2 weeks
       strategies: [],
     };
   }
