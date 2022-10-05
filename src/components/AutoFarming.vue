@@ -64,7 +64,8 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, ref, watch } from "vue";
+import { ref, watch } from "vue";
+import type { Ref } from "vue";
 import type { VaultMeta } from "@/network/models/InfoServerModels";
 import { useVaultStore } from "@/stores/vault";
 import type { Vault } from "@/stores/types";
